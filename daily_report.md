@@ -1,5 +1,12 @@
 # daliy report
 
+## 2021-11-9
+
+阅读linux command
+http://billie66.github.io/TLCL/
+
+整理读书笔记
+
 ## 2021-11-8
 
 阅读linux command
