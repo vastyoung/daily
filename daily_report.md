@@ -1,5 +1,9 @@
 # daliy report
 
+## 2021-11-13
+
+- 阅读[《linux command》](http://billie66.github.io/TLCL/) 第十一章至第十三章
+
 ## 2021-11-12
 
 - 阅读[《linux command》](http://billie66.github.io/TLCL/) 第十一章至第十三章
@@ -8,6 +12,9 @@
 ## 2021-11-11
 
 - 阅读[《linux command》](http://billie66.github.io/TLCL/) 第八章至第十章
+- 没有学习 markdown
+- 学习 markdown
+- 到底有没有学习 markdown
 
 ## 2021-11-10
 
