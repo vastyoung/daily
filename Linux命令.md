@@ -1,6 +1,14 @@
 
 # `Linux命令行笔记:`
 
+`ssh itzou@192.168.200.128` :登录到itzou@192.168.200.130
+
+`ifconfig` :查看linux ip地址
+
+`g`按键 :跳转到文件头部
+
+`SHIFT+g` :跳转到文件尾部
+
 ## 第一章
 
 `exit` :终止一个终端会话
@@ -684,3 +692,64 @@ vi 轻量级且执行快
 `PS1='\[\033[0;31m\]<\u@\h \W>\$'` :制作一个红色提示符
 
 `PS1='\[\033[0;31m\]<\u@\h \W>\$\[\033[0m\]`' :终端仿真器恢复到原来的颜色
+
+## 十四 软件包管理
+
+`yum search emacs` :从yum资源库查找emacs文本编辑器
+
+`apt-get update; apt-get install emacs` :从apt资源库安装emacs文本编辑器
+
+`rpm -i emacs-22.1-7.fc7-i386.rpm` :(已经从一个并非资源库的网站下载了软件包文件 emacs-22.1-7.fc7-i386.rpm)通过软件包文件来安装软件
+
+`yum erase package_name` :卸载 emacs 软件包
+
+`apt-get update; apt-get upgrade` :经过软件库来更新软件包
+
+`rpm -U emacs-22.1-7.fc7-i386.rpm` :经过软件包文件来升级软件
+
+`rpm -qa` :列出所安装的软件包
+
+`rpm -q package_name` :确定是否安装一个软件包
+
+`yum info package_name` :显示所安装软件包的信息
+
+`rpm -qf /usr/bin/vim` :查看哪个软件包安装了/usr/bin/vim 这个文件
+
+## 十五章 存储媒介
+
+`mount` :查看挂载的文件系统列表
+
+`umount /dev/hdc` :卸载光盘(我们拥有 CD-ROM 光盘的设备名字)
+
+`mkdir /mnt/cdrom` :创建一个新的光盘挂载点
+
+`mount -t iso9660 /dev/hdc /mnt/cdrom` :把这个 CD-ROW 挂载到一个新的挂载点上。这个-t 选项用来指定文件系统类型
+
+原因是我们不能卸载一个设备，如果某个用户或进程正在使用这个设备
+的话。在这种情况下，我们把工作目录更改到了 CD-ROW 的挂载点，这个挂载点导致设备忙碌。我们可以很容易地修复这个问题通过把工作目录改到其它目录而不是这个挂载点
+
+`ls /dev` :列出目录/dev（所有设备的住所）的内容
+
+`/dev/fd*` :软盘驱动器
+
+`/dev/hd*` :老系统中的 IDE(PATA) 磁盘
+
+`/dev/lp*` :打印机
+
+`/dev/sd*` :SCSI 磁盘
+
+`/dev/sr*` :光盘（CD/DVD 读取器和烧写器）
+
+`sudo tail -f /var/log/messages` :实时查看文件/var/log/messages （你可能需要超级用户权限）
+
+`sudo fdisk /dev/sdb` : fdisk 命令操作分区
+
+`m`按键 :显示程序菜单
+
+`p`按键 :打印出这个设备的分区表
+
+`t`按键 :更改分区id号
+
+`w`按键 :保存
+
+`q`按键 :不保存,退出
