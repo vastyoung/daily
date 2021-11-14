@@ -753,3 +753,87 @@ vi 轻量级且执行快
 `w`按键 :保存
 
 `q`按键 :不保存,退出
+
+`mkfs` :命令创建一个新的文件系统
+
+`sudo mkfs -t ext3 /dev/sdb1` :在此设备上创建一个 ext3 文件系统，我们使用 “-t” 选项来指定这个 “ext3” 系统类型，随后是我们要格式化的设备分区名称
+
+`sudo mkfs -t vfat /dev/sdb1` :把这个设备重新格式化为它最初的 FAT32 文件系统，指定 “vfat” 作为文件系统类型
+
+`sudo fsck /dev/sdb1` :检查文件系统的完整性之外，fsck 还能修复受损的文件系统
+
+`sudo fdformat /dev/fd0` :格式化硬盘同时指定软盘设备名称（通常为/dev/fd0
+
+`sudo mkfs -t msdos /dev/fd0` :通过 mkfs 命令，给这个软盘创建一个 FAT 文件系统
+
+`dd if=/dev/sdb of=/dev/sdc` :把第一个驱动器中的所有数据复制到第二个驱动器中(有两个相同容量的 USB 闪存驱动器，并且要精确地把第一个驱动器（中的内容）复制给第二个。如果连接两个设备到计算机上)
+
+`dd if=/dev/sdb of=flash_drive.img` :果只有第一个驱动器被连接到计算机上，我们可以把它的内容复制到一个普通文件中供以后恢复或复制数据
+
+`dd if=/dev/cdrom of=ubuntu.iso` :制作一张现有 CD-ROM 的 iso 映像,拷贝到Ubuntu.iso
+
+`genisoimage -o cd-rom.iso -R -J ~/cd-rom-files` :文件集合中创建一个映像(如果我们已经创建一个叫做 ∼/cd-rom-files 的目录，然后用文件填充此目录，再通过下面的命令来创建一个叫做 cd-rom.iso 映像文件)“-R” 选项添加元数据为 Rock Ridge 扩展，这允许使用长文件名和 POSIX 风格的文件权限。同样地，这个 “-J” 选项使 Joliet 扩展生效，这样 Windows 中就支持长文件名了
+
+`mkdir /mnt/iso_image`
+`mount -t iso9660 -o loop image.iso /mnt/iso_image` :添加 “-o loop” 选项来挂载（同时带有必需的 “-t iso9660” 文件系统类型），挂载这个映像文件就好像它是一台设备，把它连接到文件系统树上
+我们创建了一个挂载点叫做/mnt/iso_image，然后把此映像文件image.iso挂载到挂载点上。映像文件被挂载之后，可以把它当作，就好像它是一张真正的 CD-ROM 或者 DVD
+
+`wodim dev=/dev/cdrw blank=fast` :用 wodim 命令，指
+定设备名称和清空的类型,清除一张可重写入的 CD-ROM(最小（且最快）的是 “fast” 类型)
+
+`wodim dev=/dev/cdrw image.iso` :写入镜像(写入一个映像文件，我们再次使用 wodim 命令，指定光盘设备名称和映像文件名)
+
+## 十六章 网络系统
+
+`ping linuxcommand.org` :看看我们能否连接到网站 linuxcommand.org
+
+`netstat -ie` :查看系统中的网络接口
+
+`netstat -r`  :显示内核的网络路由表
+
+`wget http://linuxcommand.org/index.php` :下载linuxcommand.org 网站的首页
+
+`ssh itzou@192.168.200.129 free` :在名为 itzou@192.168.200.129 的远端主机上，执行 free 命令，并把输出结果显示到本地系统
+shell 会话中
+
+`ssh remote-sys 'ls \*' > dirlist.txt` :在远端系统中执行 ls 命令，并把命令输出重定向到本地系统中的一个文件里面
+
+`ssh remote-sys 'ls * > dirlist.txt'` :把输出结果重定向到远端主机的文件中，我们可以把重定向操作符和文件名都放到单引号里面
+
+`ssh -X itzou@192.168.200.129` :在名为 itzou@192.168.200.129 的远端系统中运行 xload 程序
+
+`scp bob@remote-sys:document.txt .` :从 remote-sys 远端系统的家目录下复制文档 document.txt，到我们本地系统的当前工作目录下
+
+`scp bob@remote-sys:document.txt .`
+
+## 十七章 查找文件
+
+`locate bin/zip` :locate 命令将会搜索它的路径名数据库，输出任一个包含字符串“bin/zip”的路径名
+
+`locate zip | grep bin` :(输出包含字符串 zip) 然后查找 bin 的路径名并打印
+
+`find ~` :输出我们的家目录的路径名列表
+
+`find ~ | wc -l` :(输出我们的家目录的路径名列表)统计数量
+
+`find ~ -type d | wc -l` :-type d 限制了只搜索目录
+
+`find ~ -type f | wc -l` :限定搜索普通文件
+
+`find ~ -type f -name "*.JPG" -size +1M | wc -l` :查找所有文件名匹配通配符模式“*.JPG”和文件大小大于 1M 的普通文件
+
+`find ~ \( -type f -not -perm 0600 \) -or \( -type d -not -perm 0700 \)` :查找家目录下文件权限不是0600或目录权限不是0700的(我们想要知道它是具有错误权限的文件还是有错误权限的目录。它不可能同时符合这两个条件)
+
+`-and` :如果操作符两边的测试条件都是真，则匹配。可以简写为-a。注意若没有使用操作符，则默认使用 -and。
+
+`-or` :若操作符两边的任一个测试条件为真，则匹配。可以简写为-o。
+
+`-not` :若操作符后面的测试条件是假，则匹配。可以简写为一个感叹号（!）
+
+`()` :把测试条件和操作符组合起来形成更大的表达式。这用来控制逻辑计算的优先级
+
+`find ~ -type f -name '*.BAK' -delete` :删除扩展名为“.BAK”（这通常用来指定备份文件）的文件
+
+`find ~ -type f -name '*.txt' -print` :命令会查找每个文件名以.txt (-name ‘*.txt’) 结尾的普通文件(-type f)，并把每个匹配文件的相对路径名输出到标准输出
+
+`find ~ -type f -name 'foo*' -ok ls -l '{}' ';'` :搜索以字符串“foo”开头的文件名，并且对每个匹配的文件执行 ls-l 命令。(使用 -ok 行为来代替 -exec)使用 -ok 行为，会在 ls 命令执行之前提示用户
