@@ -837,3 +837,258 @@ shell 会话中
 `find ~ -type f -name '*.txt' -print` :命令会查找每个文件名以.txt (-name ‘*.txt’) 结尾的普通文件(-type f)，并把每个匹配文件的相对路径名输出到标准输出
 
 `find ~ -type f -name 'foo*' -ok ls -l '{}' ';'` :搜索以字符串“foo”开头的文件名，并且对每个匹配的文件执行 ls-l 命令。(使用 -ok 行为来代替 -exec)使用 -ok 行为，会在 ls 命令执行之前提示用户
+
+`find ~ -type f -name 'foo*' -exec ls -l '{}' +` :得到一样的结果，但是系统只需要执行一次 ls 命令
+
+`find ~ -type f -name 'foo*' -print | xargs ls -l` :到 find 命令的输出被管道到 xargs 命令，之后，xargs 会为 ls 命令构建参数列表，然后执行 ls 命令
+
+`mkdir -p playground/dir-{00{1..9},0{10..99},100}` :创建100个文件夹
+
+`touch playground/dir-{00{1..9},0{10..99},100}/file-{A..Z}` :在每个文件夹中创建A-Z个文件
+
+`find playground -type f -name 'file-A'` :找到在playground中名字带有file-A的文件
+
+`find playground -type f -name 'file-A' | wc -l` :确认文件的数量
+
+`touch playground/timestamp` :在playground下创建了一个空文件timestamp
+
+`stat playground/timestamp` :会展示系统对timestamp及其属性所知道的所有信息
+
+`find playground -type f -name 'file-B' -exec touch '{}' ';'` :更新操练场中所有名为 file-B 的文件
+
+`touch playground/timestamp` :把它的修改时间设置为当前时间
+
+`find playground -type f -name 'file-B' -exec touch '{}' ';'` :更新一些操练场中的文件
+
+`find playground -type f -newer playground/timestamp` :通过把所有文件与参考文件 timestamp 做比较，来找到已更新的文件
+
+## 第十八章 归档和备份
+
+`gzip` :压缩或者展开文件
+
+`gzip foo.txt` :压缩foo.txt文件
+
+`gunzip foo.txt.gz` :解压foo.txt.gz文件
+
+gzip 命令有许多选项
+`-c` :把输出写入到标准输出，并且保留原始文件。也有可能用--stdout 和--to-stdout 选项来指定
+
+`-d` :解压缩。正如 gunzip 命令一样。也可以用--decompress 或者--uncompress 选项来指定
+
+`-f` :强制压缩，即使原始文件的压缩文件已经存在了，也要执行。也可以用--force 选项来指定
+
+`-l` :列出每个被压缩文件的压缩数据。也可用--list 选项
+
+`-h` :显示用法信息。也可用--help 选项来指定
+
+`-r` :若命令的一个或多个参数是目录，则递归地压缩目录中的文件。也可用--recursive 选项来指定
+
+`-t` :测试压缩文件的完整性。也可用--test 选项来指定
+
+`-v` :显示压缩过程中的信息。也可用--verbose 选项来指定
+
+`-number` :设置压缩指数。number 是一个在 1（最快，最小压缩）到
+9（最慢，最大压缩）之间的整数。数值 1 和 9 也可以各自用--fast 和--best 选项来表示。默认值是整数 6
+
+`ls -l /etc | gzip > foo.txt.gz` :创建了一个目录列表的压缩文件
+
+`gunzip foo.txt.gz` :解压
+
+`gunzip -c foo.txt.gz | less` :浏览一下压缩文本文件的内容
+
+`ls -l /etc > foo.txt` :把etc 目录下的文件重定向到foo.txt中
+
+`bzip2 foo.txt` :bzip2 程序使用起来和 gzip 程序一样
+
+ `bunzip2 foo.txt.bz2` :bunzip2 和 bzcat 程序来解压缩文件。bzip2 文件也带有 bzip2recover 程序，其会试图恢复受损的.bz2 文件
+
+`mkdir -p playground/dir-{00{1..9},0{10..99},100}`
+
+`touch playground/dir-{00{1..9},0{10..99},100}/file-{A..Z}`
+
+`tar cf playground.tar playground` :创建整个操练场的 tar 包(模式 c 和选项 f，其被用来指定这个 tar 包的名字)
+
+`tar tf playground.tar` :列出归档文件的内容
+
+`tar tvf playground.tar` :更详细的列表信息，我们可以添加选项 v
+
+`mkdir foo`
+
+`cd foo`
+
+`tar xf ../playground.tar` :抽取 tar 包中的文件
+
+`find playground -name 'file-A' -exec tar rf playground.tar '{}' '+'` :们使用 find 命令来匹配 playground 目录中所有名为 file-A 的文件，然后使用-exec行为，来唤醒带有追加模式（r）的 tar 命令，把匹配的文件添加到归档文件 playground.tar 里面
+
+`find playground -name 'file-A' | tar czf playground.tgz -T -` :创建一个由 gzip 压缩的归档文件
+
+`find playground -name 'file-A' | tar cjf playground.tbz -T -` :创建一个由 bzip2 压缩的归档文件
+
+`mkdir remote-stuff`
+
+`cd remote-stuff`
+
+`ssh remote-sys 'tar cf - Documents' | tar xf -` :从远端系统 remote-sys 中复制目录 Documents 到本地系统名为 remote-stuff目录中
+
+`zip -r playground.zip playground` :制作一个 playground 的 zip 版本的文件包(除非我们包含-r 选项，要不然只有 playground 目录（没有任何它的内容）被存储)
+
+`zip -r playground.zip playground` :制作一个 playground 的 zip 版本的文件包
+
+`cd foo`
+
+`unzip ../playground.zip` :使用 unzip 程序，来直接抽取一个 zip 文件的内容
+
+`find playground -name "file-A" | zip -@ file-A.zip` :使用 find 命令产生一系列与“file-A”相匹配的文件列表，并且把此列表管道到zip 命令，然后创建包含所选文件的文件包 file-A.zip
+
+`ls -l /etc/ | zip ls-etc.zip -` :把 ls 命令的输出管道到 zip 命令。像 tar 命令，zip 命令把末尾的横杠解释为“使用标准输入作为输入文件。”
+
+`unzip -p ls-etc.zip | less` :将解压缩的结果显示到屏幕上
+
+`rsync options source destination` :rsync 被这样唤醒(这个程序能同步本地与远端的目录，通过使用
+rsync 远端更新协议，此协议允许 rsync 快速地检测两个目录的差异，执行最小量的复制来达到目录间的同步。比起其它种类的复制程序，这就使 rsync 命令非常快速和高效。)
+
+`rm -rf foo/*` :清空我们的 foo 目录
+
+`rsync -av playground foo` :-a 选项（递归和保护文件属性）和-v 选项（冗余输出），来在 foo 目录中制作一个 playground 目录的镜像
+
+`mkdir /media/BigDisk/backup` :创建一个目录，名为/backup
+
+`sudo rsync -av --delete /etc /home /usr/local /media/BigDisk/backup` :我们把/etc，/home，和/usr/local 目录从我们的系统中复制到假想的存储设备中。我们包含了–delete 这个选项，来删除可能在备份设备中已经存在但却不再存在于源设备中的文件
+
+`alias backup='sudo rsync -av --delete /etc /home /usr/local /media/BigDisk/backup'` :创建一个别名，并把它添加
+到.bashrc 文件中
+
+`sudo rsync -av --delete --rsh=ssh /etc /home /usr/local remote-sys:/backup` :我们添加了--rsh=ssh 选项，其
+指示 rsync 使用 ssh 程序作为它的远程 shell。以这种方式，我们就能够使用一个 ssh 加密通道，把数据安全地传送到远程主机中。其次，通过在目标路径名前加上远端主机的名字（在这种情况下，远端主机名为 remote-sys），来指定远端主机
+
+`mkdir fedora-devel`
+
+`rsync -av -delete rsync://rsync.gtlib.gatech.edu/fedora-linuxcore/development/i386/os fedora-devel` :我们使用了远端 rsync 服务器的 URI，其由协议（rsync://），远端主机名（rsync.gtlib.gatech.edu），和软件仓库的路径名组成
+
+## 第十九章 正则表达式
+
+`ls /usr/bin | grep zip` :列出，位于目录 /usr/bin 中，文件名中包含子字符串“zip”的所有文件
+
+`-i` :忽略大小写。不会区分大小写字符。也可用--ignore-case 来
+指定。
+
+`-v` :不匹配。通常，grep 程序会打印包含匹配项的文本行。这
+个选项导致 grep 程序只会打印不包含匹配项的文本行
+
+`-c` :打印匹配的数量（或者是不匹配的数目，若指定了-v 选项），
+而不是文本行本身。也可用--count 选项来指定
+
+`-l` :打印包含匹配项的文件名，而不是文本行本身，也可用--
+files-with-matches 选项来指定
+
+`-L` :相似于-l 选项，但是只是打印不包含匹配项的文件名。也可
+用--files-without-match 来指定
+
+`-n` :在每个匹配行之前打印出其位于文件中的相应行号。也可
+用--line-number 选项来指定
+
+`-h` :应用于多文件搜索，不输出文件名。也可用--no-filename 选
+项来指定
+
+创建一些文本文件来搜寻
+`ls /bin > dirlist-bin.txt`
+
+`ls /usr/bin > dirlist-usr-bin.txt`
+
+`ls /sbin > dirlist-sbin.txt`
+
+`ls /usr/sbin > dirlist-usr-sbin.txt`
+
+`ls dirlist*.txt`
+
+`grep bzip dirlist*.txt` :grep 程序在所有列出的文件中搜索字符串 bzip，然后找到两个匹配项，其都在文件 dirlist-bin.txt 中
+
+`grep -l bzip dirlist*.txt` :如果我们只是对包含匹配项的文件列表，而不是对匹配项本身感兴趣的话，我们可以指定-l 选项
+
+`grep -L bzip dirlist*.txt` :查看不包含匹配项的文件列表
+
+`grep -h '.zip' dirlist*.txt` :查找包含正则表达式“.zip”的文本行
+有几点需要注意一下。
+注意没有找到这个 zip 程序。这是因为在我们的正则表达式中包含的圆点字符把所要求的匹配项的长度增加到四个字符，并且因为字符串“zip”只包含三个字符，所以这个 zip 程序不匹配。另外，如果我们的文件列表中有一些文件的扩展名是.zip，则它们也会成为匹配项，因为文件扩展名中的圆点符号也会被看作是“任意字符”
+
+`grep -h '^zip' dirlist*.txt` :在正则表达式中，插入符号和美元符号被看作是锚点。这意味着正则表达式只有在文本行的开头或末尾被找到时，才算发生一次匹配
+
+`grep -h 'zip$' dirlist*.txt`
+
+`grep -h '^zip$' dirlist*.txt`
+
+这里我们分别在文件列表中搜索行首、行尾以及行首和行尾同时包含字符串“zip”（例如，zip 独占一行）的匹配行。注意正则表达式‘ˆ$’（行首和行尾之间没有字符）会匹配空行
+
+`grep -i '^..j.r$' /usr/share/dict/words` :“一个有五个字母的单词，它的第三个字母是‘j’，最后一个字母是‘r’
+
+`grep -h '[bg]zip' dirlist*.txt` :们匹配包含字符串“bzip”或者“gzip”的任意行
+
+`grep -h '[^bg]zip' dirlist*.txt` :激活否定操作，我们得到一个文件列表，它们的文件名都包含字符串“zip”，并且“zip”的前一个字符是除了“b”和“g”之外的任意字符
+
+`grep -h '^[ABCDEFGHIJKLMNOPQRSTUVWXZY]' dirlist*.txt` :在列表中找到每个以大写字母开头的文件
+
+`grep -h '^[A-Z]' dirlist*.txt`
+
+`grep -h '^[A-Za-z0-9]' dirlist*.txt`
+
+`grep -h '[A-Z]' dirlist*.txt` :匹配包含一个大写字母的文件名
+
+`grep -h '[-AZ]' dirlist*.txt` :匹配包含一个连字符，或一个大写字母“A”，或一个大写字母“Z”的文件名
+
+`grep -Eh '^(bz|gz|zip)' dirlist*.txt` :匹配以“bz”，或“gz”，或“zip”开头的文件名
+
+`grep -Eh '^bz|gz|zip' dirlist*.txt` :匹配任意以“bz”开头，或包含“gz”，或包含“zip”的文件名
+
+`echo "(555) 123-4567" | grep -E '^\(?[0-9][0-9][0-9]\)? [0-9][0-9][0-9]-[0-9]` :我们在圆括号之后加上一个问号，来表示它们将被匹配零次或一次。再一次，因为通常圆括号都是元字符（在 ERE 中），所以我们在圆括号之前加上了反斜杠，使它们成为文本字符(? 匹配零个或一个元素)
+
+`echo "This works." | grep -E '[[:upper:]][[:upper:][:lower:] ]*\.'` :(*- 匹配零个或多个元素)这个表达式由三个元素组成：一个包含 [:upper:] 字符集的中括号表达式，一个包含 [:upper:]和 [:lower:] 两个字符集以及一个空格的中括号表达式，和一个被反斜杠字符转义过的圆点。第二个元素末尾带有一个* 元字符，所以在开头的大写字母之后，可能会跟随着任意数目的大写和小写字母和空格，并且匹配
+
+`[:alnum:]` :字母数字字符。在 ASCII 中，等价于：[A-Za-z0-9]
+`[:word:]` :与 [:alnum:] 相同, 但增加了下划线字符。
+`[:alpha:]` :字母字符。在 ASCII 中，等价于：[A-Za-z]
+`[:blank:]` :包含空格和 tab 字符。
+`[:cntrl:]` :ASCII 的控制码。包含了 0 到 31，和 127 的 ASCII 字符。
+`[:digit:]` :数字 0 到 9
+`[:graph:]` :可视字符。在 ASCII 中，它包含 33 到 126 的字符。
+`[:lower:]` :小写字母。
+`[:punct:]` :标 点 符 号 字 符。 在 ASCII 中， 等 价 于：[-!”#$%&’()*+,./:;<=>?@[\\\]_‘|˜]
+`[:print:]` :可打印的字符。在 [:graph:] 中的所有字符，再加上空格字符。
+`[:space:]` :空白字符，包括空格、tab、回车、换行、vertical tab 和form feed. 在 ASCII 中，等价于：[ \t\r\n\v\f]
+`[:upper:]` :大写字母。
+`[:xdigit:]` :用来表示十六进制数字的字符。在 ASCII 中，等价于：[0-9A-Fa-f]
+
+`echo "This that" | grep -E '^([[:alpha:]]+ ?)+$'` :(+  匹配一个或多个元素)
+
+`echo "(555) 123-4567" | grep -E '^\(?[0-9]{3}\)? [0-9]{3}-[0-9]{4}$'` :({ } :匹配特定个数的元素)
+
+`n` :匹配前面的元素，如果它确切地出现了 n 次。
+
+`n,m` :匹配前面的元素，如果它至少出现了 n 次，但是不多于 m
+次
+
+`n,` :匹配前面的元素，如果它出现了 n 次或多于 n 次
+
+`,m` :匹配前面的元素，如果它出现的次数不多于 m 次
+
+`for i in {1..10}; do echo "($ {RANDOM: 0:3}) $ {RANDOM: 0:3}- $ {RANDOM:0:4}" >> phonelist.txt; done` :会创建一个包含 10 个电话号码的名为 phonelist.txt 的文件。每次重复这个命令的时候，另外 10 个号码会被添加到这个列表中
+
+`cat phonelist.txt`
+
+`grep -Ev '^\([0-9]{3}\) [0-9]{3}-[0-9]{4}$' phonelist.txt` :查找无效的号码，并把搜索结果显示到屏幕上,使用-v 选项来产生相反的匹配，因此我们将只输出不匹配指定表达式的文本行
+
+`find . -regex '.*[^-\_./0-9a-zA-Z].*'` :扫描发现包含空格和其他潜在不规范的路径名
+
+`locate --regex 'bin/(bz|gz|zip)'` :搜索包含 bin/bz，bin/gz，或/bin/zip 字符串的路径名
+
+less 和 vim 中查找文本
+`less phonelist.txt`
+
+`/([0-9]\{3\}) [0-9]\{3\}-[0-9]\{4\}`
+
+## 第二十一章 文本处理
+
+`cat > foo.txt` : cat命令（随后指定了用于重定向输出的文件），然后输入我们的文本，最后按下 Enter 键来结束这一行，然后按下组合键 Ctrl-d，来指示 cat 程序
+
+`cat -A foo.txt` :显示foo.txt的文本
+
+`sort > foo.txt` :sort 程序对标准输入的内容，或命令行中指定的一个或多个文件进行排序，然后把排序结果发送到标准输出。使用与 cat 命令相同的技巧
