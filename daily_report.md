@@ -1,5 +1,9 @@
 # daliy report
 
+## 2021-11-15
+
+- 阅读[《linux command》](http://billie66.github.io/TLCL/) 第十八章至第二十一章
+
 ## 2021-11-14
 
 - 阅读[《linux command》](http://billie66.github.io/TLCL/) 第十五章至第十七章
