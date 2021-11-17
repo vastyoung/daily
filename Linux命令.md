@@ -1331,3 +1331,67 @@ nl 在计算文件行数的时候支持一个叫“逻辑页面”的概念。�
 `lpq` :显示打印机队列状态
 
 `cancel 603` :终止并移除任务
+
+## 第二十三章 编译程序
+
+`which gcc` :查看编译器是否存在
+
+`mkdir src`
+
+`cd src`
+
+`ftp ftp.gnu.org` :使用 ftp 协议把源码下载下来
+
+因为我们是这个源码的“维护者”，当我们编译它的时候，我们把它保存在 ∼/src 目录下。由你的系统发行版源码会把源码安装在 /usr/src 目录下，而供多个用户使用的源码，通常安装在 /usr/local/src 目录下
+
+`tar xzf diction-1.11.tar.gz` :一旦 tar 文件下载下来之后，必须解包。通过 tar 程序可以完成
+
+`tar tzvf tarfile | head ---` :使用下面的命令，检查 tar 文件的内容
+
+`less diction.c` :源码文件都是普通文本，可以用 less 命令查看
+
+`make`  :只是构建需要构建的部分
+
+`sudo make install` :安装程序
+
+## 第二十四章 编写一个Shell脚本
+
+`vi hello_world` :创建hello_world文本文件
+
+`chmod 755 hello_world` :给文件设置权限为 755
+
+`./hello_world` :执行脚本(加上./ 字符，来表明程序位于当前工作目录)
+
+`echo $PATH` :这里我们看到了我们的目录列表。如果我们的脚本位于此列表中任意目录下，那么我们的问题将会被解决
+
+`mkdir bin`
+
+`mv hello_world bin`
+
+`hello_world`
+
+如果这个 PATH 变量不包含这个目录，我们能够轻松地添加它，通过在我们的.bashrc 文件中包含下面这一行文本：export PATH=~/bin:"$PATH"
+
+`. .bashrc` :让 shell 重新读取这个.bashrc 文件
+
+## 第二十五章 启动一个项目
+
+`vim ~/bin/sys_info_page` :创建一个名为 ∼/bin/sys_info_page 的新文件
+
+`chmod 755 ~/bin/sys_info_page` :修改权限为755
+
+`filename="myfile"` :创建一个变量
+
+`touch $filename` :确保他存在,没有就创建
+
+`mv $filename ${filename}1` :把一个文件名从 myfile 改myfile1(通过添加花括号，shell 不再把末尾的 1 解释为变量名的一部分)
+
+`df -h` :命令来确定磁盘空间的数量
+
+`du -sh /home` :返回该目录的大小
+
+## 第二十六章 流程控制语句: if 分支结构
+
+当命令执行完毕后，命令（包括我们编写的脚本和 shell 函数）会给系统发送一个值，叫做退出状态。这个值是一个 0 到 255 之间的整数，说明命令执行成功或是失败。按照惯例，一个零值说明成功，其它所有值说明失败
+
+`echo $?` :查看上一个命令的退出状态
