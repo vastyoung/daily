@@ -1527,3 +1527,140 @@ bash 还提供了一种名为追踪的方法，这种方法可通过 -x 选项�
 until 是[条件]为假，则执行；while则是[条件]为真，则执行。
 
 以下测试代码，只变化第4行，可观察执行结果的异同。-gt是大于的意思
+
+## 第二十九章 流程控制：case 分支
+
+case 命令检查一个变量值，在我们这个例子中，就是 REPLY 变量的变量值，然后试图去匹配其中一个具体的模式。当与之相匹配的模式找到之后，就会执行与该模式相关联的命令。若找到一个模式之后，就不会再继续寻找
+
+case 语句使用的模式和路径展开中使用的那些是一样的。模式以一个“)”为终止符。这里是一些有效的模式
+
+`a)` :若单词为“a”，则匹配
+
+`[[:alpha:]])` :若单词是一个字母字符，则匹配
+
+`???)` :若单词只有 3 个字符，则匹配
+
+`*.txt)` :若单词以“.txt”字符结尾，则匹配
+
+`*)` :匹配任意单词。把这个模式做为 case 命令的最后一个模式，是一个很好的做法，可以捕捉到任意一个与先前模式不匹配的数值；也就是说，捕捉到任何可能的无效
+
+例如，字符“a”既是小写字母，也是一个十六进制的数字。早于 4.0的 bash，对于 case 语法绝不能匹配多个测试条件。现在的 bash 版本，添加“;;&”表达式来终止每个行动
+
+`$0` :脚本自身的名称(总会包含命令行中出现的第一个单词，也就是已执行程序的路径名)
+
+`$1` :传入脚本的第一个参数
+
+`$2` :传入脚本的第二个参数
+
+`$$` :脚本执行的进程id
+
+`$#` :这个程式的参数个数
+
+如果结束分解符EOF前有制表符或者空格，则EOF不会被当做结束分界符，只会继续被当做stdin来输入。
+
+而<<-就是为了解决这一问题：
+cat <<-EOF
+Hello,world!
+      EOF
+上面的写法，虽然最后的EOF前面有多个制表符和空格，但仍然会被当做结束分界符，表示stdin的结束。
+这就是<<和<<-的区别
+
+`echo aaa | wc -c`:显示文本字节数
+
+## 第三十章 字符串和数字
+
+`a="foo"`
+
+`echo "$a_file"`
+
+试图创建一个文件名，通过把字符串“_file”附加到变量 a 的值的后面如果我们执行这个序列，没有任何输出结果，因为 shell 会试着展开一个称为 a_file 的变量，而不是 a。通过添加花括号可以解决这个问题
+
+`echo "${a}_file"`
+
+${parameter:-word}     若 parameter 没有设置（例如，不存在）或者为空，展开结果是 word 的值。若 parameter不为空，则展开结果是 parameter 的值
+
+`foo=`
+
+`echo ${foo:-"substitute value if unset"}` :substitute value if unset
+
+`echo $foo`
+
+`foo=bar`
+
+`echo ${foo:-"substitute value if unset"}` :bar
+
+`echo $foo`:bar
+
+${parameter:=word}      若 parameter 没有设置或为空，展开结果是 word 的值。另外，word 的值会赋值给parameter。若 parameter 不为空，展开结果是 parameter 的值
+
+`foo=`
+
+`echo ${foo:="default value if unset"}` :default value if unset
+
+`foo=bar`
+
+`echo ${foo:="default value if unset"}` :bar
+
+`echo $foo` :bar
+
+${parameter:?word}      若 parameter 没有设置或为空，这种展开导致脚本带有错误退出，并且 word 的内容会发送到标准错误。若 parameter 不为空，展开结果是 parameter 的值
+
+`foo=`
+
+`echo ${foo:?"parameter is empty"}` :bash: foo: parameter is empty
+
+`echo $?` :1
+
+`foo=bar`
+
+`echo ${foo:?"parameter is empty"}` :bar
+
+`echo $?` :0
+
+${parameter:+word}      若 parameter 没有设置或为空，展开结果为空。若 parameter 不为空，展开结果是 word 的值会替换掉 parameter 的值；然而，parameter 的值不会改变
+
+`foo=`
+
+`echo ${foo:+"substitute value if set"}` :结果也为空
+
+`foo=bar`
+
+`echo ${foo:+"substitute value if set"}` :substitute value if set
+
+${!prefix*}
+${!prefix@}      这种展开会返回以 prefix 开头的已有变量名。根据 bash 文档，这两种展开形式的执行结果相同。这里，我们列出了所有以 BASH 开头的环境变量名
+
+`echo ${!BASH*}`
+
+${#parameter}     展开成由 parameter 所包含的字符串的长度。通常，parameter 是一个字符串；然而，如果parameter 是 @ 或者是 * 的话，则展开结果是位置参数的个数
+
+`foo="This string is long."`
+
+`echo "'$foo' is ${#foo} characters long."` :'This string is long.' is 20 characters long.
+
+${parameter:offset}
+${parameter:offset:length}    这些展开用来从 parameter 所包含的字符串中提取一部分字符。提取的字符始于第 offset个字符（从字符串开头算起）直到字符串的末尾，除非指定提取的长度
+
+`foo="This string is long."`
+
+`echo ${foo:5}` :string is long.
+
+`echo ${foo:5:6}` :string
+
+若 offset 的值为负数，则认为 offset 值是从字符串的末尾开始算起，而不是从开头。注意负数前面必须有一个空格，为防止与 ${parameter:-word} 展开形式混淆。length，若出现，则必须不能小于零。
+如果 parameter 是 @，展开结果是 length 个位置参数，从第 offset 个位置参数开始
+
+`foo="This string is long."`
+
+`echo ${foo: -5}` :long.
+
+`echo ${foo: -5:2}` :lo
+
+${parameter#pattern}
+${parameter##pattern}   这些展开会从 paramter 所包含的字符串中清除开头一部分文本，这些字符要匹配定义的pattern。pattern 是通配符模式，就如那些用在路径名展开中的模式。这两种形式的差异之处是该 # 形式清除最短的匹配结果，而该 ## 模式清除最长的匹配结果
+
+`foo=file.txt.zip`
+
+`echo ${foo#*.}` :txt.zip
+
+`echo ${foo##*.}` :zip
