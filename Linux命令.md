@@ -1814,3 +1814,158 @@ bash 有四个参数展开和 declare 命令的两个选项来支持大小写转
 `days=(Sun Mon Tue Wed Thu Fri Sat)` :把星期几的英文简写赋值给数组 days
 
 `days=([0]=Sun [1]=Mon [2]=Tue [3]=Wed [4]=Thu [5]=Fri [6]=Sat)`
+
+输出整个数组的内容
+下标 * 和 @ 可以被用来访问数组中的每一个元素。与位置参数一样，@ 表示法在两者之中更有用处
+
+`animals=("a dog" "a cat" "a fish")`
+
+`for i in ${animals[*]}; do echo $i; done` :    a
+                                                dog
+                                                a
+                                                cat
+                                                a
+                                                fish
+
+`for i in ${animals[@]}; do echo $i; done` :    a
+                                                dog
+                                                a
+                                                cat
+                                                a
+                                                fish
+
+`for i in "${animals[*]}"; do echo $i; done` :a dog a cat a fish
+
+`for i in "${animals[@]}"; do echo $i; done` :  a dog
+                                                a cat
+                                                a fish
+
+我们创建了数组 animals，并把三个含有两个字的字符串赋值给数组。然后我们执行四个循环看一下对数组内容进行分词的效果。表示法 ${animals[*]} 和 ${animals[@]} 的行为是一致的直到它们被用引号引起来
+
+确定数组元素个数
+
+`a[100]=foo`
+
+`echo ${#a[@]} # number of array elements` :1
+
+`${#变量名[@]}` :表示数组的个数
+
+`echo ${#a[100]} # length of element 100` :3
+
+我们创建了数组 a，并把字符串“foo”赋值给数组元素 100。下一步，我们使用参数展开来检查数组的长度，使用 @ 表示法。最后，我们查看了包含字符串“foo”的数组元素 100 的长度。有趣的是，尽管我们把字符串赋值给数组元素 100，bash 仅仅报告数组中有一个元素。这不同于一些其它语言的行为，这种行为是数组中未使用的元素（元素 0-99）会初始化为空值，并把它们计入数组长度
+
+找到数组使用的下标
+
+${!array[*]}
+${!array[@]}      :因为 bash 允许赋值的数组下标包含“间隔”，有时候确定哪个元素真正存在是很有用的
+
+`foo=([2]=a [4]=b [6]=c)`
+
+`for i in "${foo[@]}"; do echo $i; done` :a
+                                          b
+                                          c
+
+`for i in "${!foo[@]}"; do echo $i; done` :2
+                                           4
+                                           6
+
+在数组末尾添加元素
+
+`foo=(a b c)`
+
+`echo ${foo[@]}` :a b c
+
+`foo+=(d e f)`
+
+`echo ${foo[@]}` :a b c d e f
+
+删除数组
+
+`foo=(a b c d e f)`
+
+`echo ${foo[@]}`:a b c d e f
+
+`unset foo` :删除foo数组
+
+`echo ${foo[@]}`
+
+也可以使用 unset 命令删除单个的数组元素
+
+`foo=(a b c d e f)`
+
+`echo ${foo[@]}` :a b c d e f
+
+`unset 'foo[2]'` :删除索引为2的元素
+
+`echo ${foo[@]}` :a b d e f
+
+任何没有下标的对数组变量的引用都指向数组元素 0
+
+`foo=(a b c d e f)`
+
+`echo ${foo[@]}` :a b c d e f
+
+`foo=A`
+
+`echo ${foo[@]}` :A b c d e f
+
+## 第三十二章 奇珍异宝
+
+组命令和子 shell
+
+`{ command1; command2; [command3; ...] }` :组命令
+
+`(command1; command2; [command3;...])` :子shell
+
+`ls -l > output.txt`
+
+`echo "Listing of foo.txt" >> output.txt`
+
+`cat foo.txt >> output.txt`
+
+三个命令的输出都重定向到一个名为 output.txt 的文件中
+
+`{ ls -l; echo "Listing of foo.txt"; cat foo.txt; } > output.txt` :使用一个组命令
+
+`(ls -l; echo "Listing of foo.txt"; cat foo.txt) > output.txt` :使用一个子命令
+
+`{ ls -l; echo "Listing of foo.txt"; cat foo.txt; } | lpr` :把我们的三个命令的输出结果合并在一起，并把它们用管道输送给命令 lpr的输入，以便产生一个打印报告
+
+进程替换
+虽然组命令和子 shell 看起来相似，并且它们都能用来在重定向中合并流，但是两者之间有一个很重要的不同之处。然而，一个组命令在当前 shell 中执行它的所有命令，而一个子 shell（顾名思义）在当前 shell 的一个子副本中执行它的命令。这意味着运行环境被复制给了一个新的shell 实例。当这个子 shell 退出时，环境副本会消失，所以在子 shell 环境（包括变量赋值）中的任何更改也会消失。因此，在大多数情况下，除非脚本要求一个子 shell，组命令比子 shell更受欢迎。组命令运行很快并且占用的内存也少
+
+`echo "foo" | read`
+
+`echo $REPLY`
+
+该 REPLY 变量的内容总是为空，是因为这个 read 命令在一个子 shell 中执行，所以当该子 shell 终止的时候，它的 REPLY 副本会被毁掉。因为管道线中的命令总是在子 shell 中执行任何给变量赋值的命令都会遭遇这样的问题。幸运地是，shell 提供了一种奇异的展开方式，叫
+做进程替换，它可以用来解决这种麻烦.进程替换有两种表达方式
+
+`<(list)` :适用于产生标准输出的进程
+
+`>(list)` :适用于接受标准输入的进程
+
+为了解决我们的 read 命令问题，我们可以雇佣进程替换
+
+`read < <(echo "foo")`
+
+`echo $REPLY`
+
+`echo <(echo "foo")` :/dev/fd/63(通过使用 echo 命令，查看展开结果，我们看到子 shell 的输出结果，由一个名为 /dev/fd/63 的文件提供)
+
+异步执行
+bash 有一个内置命令，能帮助管理诸如此类的异步执行的任务。wait 命令导致一个父脚本暂停运行，直到一个特定的进程（例如，子脚本）运行结束
+
+命名管道
+
+`mkfifo pipe1` :创建命名管道
+
+`ls -l pipe1` :使用 ls 命令，我们查看这个文件，看到位于属性字段的第一个字母是“p”，表明它是一个命名管道
+
+`ls -l > pipe1`
+
+我们按下 Enter 按键之后，命令将会挂起。这是因为在管道的另一端没有任何对象来接收数据。这种现象被称为管道阻塞。一旦我们绑定一个进程到管道的另一端，该进程开始从管道中读取输入的时候，管道阻塞现象就不存在了。
+
+使用第二个终端窗口，我们输入这个命令
+
+`cat < pipe1`
