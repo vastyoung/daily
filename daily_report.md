@@ -1,5 +1,10 @@
 # daliy report
 
+## 2021-11-23
+
+- 阅读[《linux command》](http://billie66.github.io/TLCL/) 第三十章一至第三十二章
+- 安装 mangaro Linux 虚拟机
+
 ## 2021-11-22
 
 - 阅读[《linux command》](http://billie66.github.io/TLCL/) 第三十章至第三十一章
