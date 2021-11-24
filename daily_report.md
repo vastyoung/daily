@@ -1,5 +1,9 @@
 # daliy report
 
+## 2021-11-24
+
+- 阅读[Archlinux pacman](https://wiki.archlinux.org/title/Pacman_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87))
+
 ## 2021-11-23
 
 - 阅读[《linux command》](http://billie66.github.io/TLCL/) 第三十章一至第三十二章
