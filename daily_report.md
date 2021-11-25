@@ -1,5 +1,11 @@
 # daliy report
 
+## 2021-11-25
+
+- 阅读[General recommendations](https://wiki.archlinux.org/title/General_recommendations_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87))
+- 阅读[List of applications](https://wiki.archlinux.org/title/List_of_applications_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87))
+- 阅读[Arch compared to other distributions](https://wiki.archlinux.org/title/Arch_compared_to_other_distributions_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87))
+
 ## 2021-11-24
 
 - 阅读[Archlinux pacman](https://wiki.archlinux.org/title/Pacman_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87))

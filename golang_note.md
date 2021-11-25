@@ -3,7 +3,7 @@
 
 `sudo pacman -Syy` :强制更新
 
-# Archlinux pacman
+## Archlinux pacman
 
 `pacman -Si` :浏览已安装软件的可选依赖
 
@@ -104,3 +104,26 @@ pacman 的配置文件位于/etc/pacman.conf
 `NoExtract=usr/lib/systemd/system/*` :总是跳过某些文件夹的安装，可以将它们放到 NoExtract 中，例如不想安装 systemd 模块
 
 `Include = /path/to/common/settings` :如果你有多个配置文件（比如，主配置和启用了测试仓库的配置文件），需要共享一些设置，你可以在配置文件中使用Include选项
+
+"Failed to commit transaction (invalid or corrupted package)" 错误
+看看/var/cache/pacman/pkg中是否有*.part结尾的文件，它们是没有完全下载的文件，删除它们并重新执行更新。这些程序一般是自定义的XferCommand 下载命令造成的
+
+`find /var/cache/pacman/pkg/ -iname "*.part" -delete`
+
+`find-iname"MyProgram.c"` :查找指定的文件名不区分大小写
+
+"Failed to init transaction (unable to lock database)" 错误
+pacman 在改变软件包数据库前，比如安装软件包时，会创建一个文件锁 /var/lib/pacman/db.lck。这会阻止其他 pacman 实例在同一时间修改软件包数据库
+如果 pacman 在更新数据库时被打断，旧锁可能保留下来。如果确认没有 pacman 实例在运行，那么删掉文件锁
+
+`rm /var/lib/pacman/db.lck`
+
+`pacman -Q $(pactree -u pacman)` :查看依赖项的完整列表
+
+## List of applications
+
+`command | curl -F c=@- https://ptpb.pw` :使用curl访问ptpb.pw, sprunge.us 和 ix.io 的pastebins. 比如把一个命令的管道输出到ptpb
+
+`curl -F c=@- https://ptpb.pw < file` :传一个文件 (包括图片)
+
+## 第一章入门
