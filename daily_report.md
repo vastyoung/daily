@@ -1,5 +1,9 @@
 # daliy report
 
+## 2021-11-26
+
+- 阅读[Go 程序设计语言]
+
 ## 2021-11-25
 
 - 阅读[General recommendations](https://wiki.archlinux.org/title/General_recommendations_
