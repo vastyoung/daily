@@ -127,3 +127,42 @@ pacman 在改变软件包数据库前，比如安装软件包时，会创建一�
 `curl -F c=@- https://ptpb.pw < file` :传一个文件 (包括图片)
 
 ## 第一章入门
+
+Go 是编译型的语言.通过 go 命令配合其子命令进行使用.最简单的子命令是 run,它将一个或多个以.go为后缀的源文件进行编译,链接然后运行生成可执行文件
+
+`go run helloworld.go` :Helloworld
+
+`go build helloworld.go` :编译输出一个可复用的程序
+
+`./helloworld`
+
+fmt 包中的函数用来格式化输出和扫描输入,Println 是 fmt 中的一个基本的输出函数.
+我们先告诉辨编译器源文件需要那些,用 Package 声明后面的 import 来导入这些包.
+
+os 包提供了一些函数和变量,命令行参数以 os 包中 Args名字的变量供程序访问,在 os 包外以 os.Args 这个名字
+变量 os.Args 是一个字符串 slice 他是用动态容量的数组 s,可以通过 s[i] 来访问单个元素,通过 s[s:n]来访问一段连续子区间,数组长度用 len(s) 表示
+os.Args的第一个元素是 os.Args[0]
+
+`sep + os.Args[i]` :将 sep 和 os.Args[i] 追加到一起
+
+`s += sep + os.Args[i]` :将 sep 和 os.Args 追加到旧 s 上面,并重新赋值给 s,等价于 s = s + sep + os.Args[i]
+
+condition 是一个布尔表达式,在循环的每一次迭代开始前推演,如果推演结果是真,循环则继续
+
+//传统的 while 循环
+for condition {
+    //...
+}
+
+//传统的无限循环
+for {
+    //...
+}
+
+循环可以通过 break 或 return 等语句终止
+
+每一次迭代 range 产生一对值 :索引和这个索引出元素的值
+
+声明字符串变量的方式
+s := ""
+var s = ""
