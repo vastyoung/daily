@@ -1,8 +1,14 @@
 # daliy report
 
+## 2021-11-27
+
+- 阅读[Go 程序设计语言](https://books.studygolang.com/gopl-zh/) 第二章至第三章
+- 学习[包管理](./pacman.md)
+- 学习[服务管理](./systemd.md)
+
 ## 2021-11-26
 
-- 阅读[Go 程序设计语言]
+- 阅读[Go 程序设计语言](https://books.studygolang.com/gopl-zh/) 第一章
 
 ## 2021-11-25
 
