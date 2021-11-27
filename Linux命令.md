@@ -1694,18 +1694,20 @@ ${parameter/%pattern/string}  这种形式的展开对 parameter 的内容执行
 
 bash 有四个参数展开和 declare 命令的两个选项来支持大小写转换
 
-            # !/bin/bash
+```bash
+# !/bin/bash
+# ul-declare: demonstrate case conversion via declare
 
-      # ul-declare: demonstrate case conversion via declare
+declare -u upper
+declare -l lower
 
-`declare -u upper`
-`declare -l lower`
-`if [[ $1 ]]; then`
-`upper="$1"`
-`lower="$1"`
-`echo $upper`
-`echo $lower`
-`fi`
+if [[ $1 ]]; then
+      upper="$1"
+      lower="$1"
+      echo $upper
+      echo $lower
+fi
+```
 
 我们使用 declare 命令来创建两个变量，upper 和 lower。我们把第一个
 命令行参数的值（位置参数 1）赋给每一个变量，然后把变量值在屏幕上显示出来：ABC  abc
@@ -1720,16 +1722,17 @@ bash 有四个参数展开和 declare 命令的两个选项来支持大小写转
 
 `\${parameter^}` :仅仅把 parameter 的第一个字符转换成大写字母（首字母大写）
 
-      # !/bin/bash-x
+```bash
+# !/bin/bash-x
+# ul-param - demonstrate case conversion via parameterexpansion
 
-      # ul-param - demonstrate case conversion via parameterexpansion
-
-`if [[ $1 ]]; then`
-`echo ${1,,}`
-`echo ${1,}`
-`echo ${1^^}`
-`echo ${1^}`
-`fi`
+if [[ $1 ]]; then
+      echo ${1,,}
+      echo ${1,}
+      echo ${1^^}
+      echo ${1^}
+fi
+```
 
 `ul-param aBc` :脚本运行结果abc aBc ABC ABc
 
