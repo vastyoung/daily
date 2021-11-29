@@ -1,5 +1,9 @@
 # daliy report
 
+## 2021-11-29
+
+- 阅读[Go 程序设计语言](https://books.studygolang.com/gopl-zh/) 第四章
+
 ## 2021-11-28
 
 - 阅读[Go 程序设计语言](https://books.studygolang.com/gopl-zh/) 第三章
