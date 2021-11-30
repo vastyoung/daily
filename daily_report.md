@@ -1,5 +1,9 @@
 # daliy report
 
+## 2021-11-30
+
+- 阅读[python](https://a-byte-of-python-bnu.gitbook.io/book/07.data_structures)
+
 ## 2021-11-29
 
 - 阅读[Go 程序设计语言](https://books.studygolang.com/gopl-zh/) 第四章
