@@ -367,3 +367,904 @@ while True:
 ```
 
 ## 核心：数据结构
+
+```python
+a = [99 , "bottles of beer", ["on", "the", "wall"]]
+
+>>>a[0] = 9
+>>>a[1:2] = ["bottles", "of", "beer"]
+>>>print(a)
+[98, "bottles", "of", "beer", ["on", "the", "wall"]]
+>>>del a[-1]
+>>>print(a)
+[98, "bottles", "of", "beer"]
+```
+
+```python
+# This is my shopping list
+shoplist = ['apple', 'mango', 'carrot', 'banana']
+print('I have', len(shoplist), 'items to purchase.')
+print('These items are:', end=' ')
+for item in shoplist:
+    print(item, end=' ')
+print('\nI also have to buy rice.')
+shoplist.append('rice')
+print('My shopping list is now', shoplist)
+print('I will sort my list now')
+shoplist.sort()
+print('Sorted shopping list is', shoplist)
+print('The first item I will buy is', shoplist[0])
+olditem = shoplist[0]
+del shoplist[0]
+print('I bought the', olditem)
+print('My shopping list is now', shoplist)
+
+输出:
+$ python ds_using_list.py
+I have 4 items to purchase.
+These items are: apple mango carrot banana
+I also have to buy rice.
+My shopping list is now ['apple', 'mango', 'carrot', 'banana', 'rice']
+I will sort my list now
+Sorted shopping list is ['apple', 'banana', 'carrot', 'mango', 'rice']
+The first item I will buy is apple
+I bought the apple
+My shopping list is now ['banana', 'carrot', 'mango', 'rice']
+```
+
+## 列表方法
+
+```python
+>>> a = range(5)      # [0,1,2,3,4]
+>>> print(list(a))
+>>> a.append(5)       # [0,1,2,3,4,5]
+#最先进入的元素最后一个被释放（后进先出）。用 append() 方法可以把一个元素添加到堆栈顶。用不指定索引的 pop() 方法可以把一个元素从堆栈顶释放出来
+>>> a.pop()           # [0,1,2,3,4]
+5
+>>> a.insert(0, 42)   # [42,0,1,2,3,4]
+>>> a.pop(0)          # [0,1,2,3,4]
+42
+#sort() 函数用于对原列表进行排
+>>> a.sort()          # [0,1,2,3,4]
+>>> a.reverse()       # [4,3,2,1,0]
+# 字符串排序使用字典序,逐位比较字母
+```
+
+## 列表函数
+
+```python
+# range()  生成数组列表
+>>> list(range(10))
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+>>> list(range(2, 30, 5))
+[2, 7, 12, 17, 22, 27] 
+# sum()   求和
+# min()   返回列表中最小元素
+# max()   返回列表中最大元素
+```
+
+## 列表排序
+
+```python
+mylist = ["b", "C", "A", "a"]
+# method of list
+mylist.sort()
+mylist.sort(key=str.lower)
+# general function
+nlist = sorted(mylist)
+nlist = sorted(mylist,reverse=True)
+```
+
+## 元组
+
+元组（Tuple）用于将多个对象保存到一起。你可以将它们近似地看作列表，但是元组不能提供列表类能够提供给你的广泛的功能。元组的一大特征类似于字符串，它们是不可变的，也就是说，你不能编辑或更改元组.
+
+```python
+# 我会推荐你总是使用括号
+# 来指明元组的开始与结束
+# 尽管括号是一个可选选项。
+# 明了胜过晦涩，显式优于隐式。
+zoo = ('python', 'elephant', 'penguin')
+print('Number of animals in the zoo is', len(zoo))
+new_zoo = 'monkey', 'camel', zoo
+print('Number of cages in the new zoo is', len(new_zoo))
+print('All animals in new zoo are', new_zoo)
+print('Animals brought from old zoo are', new_zoo[2])
+print('Last animal brought from old zoo is', new_zoo[2][2])
+print('Number of animals in the new zoo is',
+      len(new_zoo)-1+len(new_zoo[2]))
+
+#输出:
+$ python ds_using_tuple.py
+Number of animals in the zoo is 3
+Number of cages in the new zoo is 3
+All animals in new zoo are ('monkey', 'camel', ('python', 'elephant', 'penguin'))
+Animals brought from old zoo are ('python', 'elephant', 'penguin')
+Last animal brought from old zoo is penguin
+Number of animals in the new zoo is 5
+```
+
+## 字典
+
+字典就像一本地址簿，如果你知道了他或她的姓名，你就可以在这里找到其地址或是能够联系上对方的更多详细信息，换言之，我们将键值（Keys）（即姓名）与值（Values）（即地址等详细信息）联立到一起。在这里要注意到键值必须是唯一的，正如在现实中面对两个完全同名的人你没办法找出有关他们的正确信息。
+
+```python
+# “ab”是地址（Address）簿（Book）的缩写
+ab = {
+    'Swaroop': 'swaroop@swaroopch.com',
+    'Larry': 'larry@wall.org',
+    'Matsumoto': 'matz@ruby-lang.org',
+    'Spammer': 'spammer@hotmail.com'
+}
+print("Swaroop's address is", ab['Swaroop'])
+# 删除一对键值—值配对
+del ab['Spammer']
+print('\nThere are {} contacts in the address-book\n'.format(len(ab)))
+#items() 方法的遍历：items() 方法把字典中每对 key 和 value 组成一个元组，并把这些元组放在列表中返回。
+for name, address in ab.items():
+    print('Contact {} at {}'.format(name, address))
+# 添加一对键值—值配对
+ab['Guido'] = 'guido@python.org'
+if 'Guido' in ab:
+    print("\nGuido's address is", ab['Guido'])
+
+#输出:
+$ python ds_using_dict.py
+Swaroop's address is swaroop@swaroopch.com
+There are 3 contacts in the address-book
+Contact Swaroop at swaroop@swaroopch.com
+Contact Matsumoto at matz@ruby-lang.org
+Contact Larry at larry@wall.org
+Guido's address is guido@python.org
+```
+
+## 字典构造
+
+```python
+sub = {'zhao':1, 'li':2, 'qian':3}
+print(sub)
+sub = dict(zhao = 1, li = 2, qian = 3)
+print(sub)
+keys = ['zhao', 'li', 'qian', 'sun']
+vals = [1, 2 ,3, 4]
+sub = dict(zip(keys,vals))
+print(sub)
+```
+
+## 字典方法
+
+```python
+# Keys, values, items:
+d.keys()  -> ["duck", "back"]
+d.values()  -> ["duik", "rug"]
+d.items() -> [("duck","duik"), ("back","rug")]
+# 存在性检验
+d.has_key("duck") -> 1; d.has_key("spam") -> 0
+# 键值类型均随意
+{"name":"Guido", "age":43, ("hello","world"):1, 42:"yes", "flag":["red", "white", "blue"]}
+```
+
+## 字典遍历
+
+```python
+d = dict(a=12, b="abc",c=15)
+print(d)
+for item in d.items():
+    print(item)
+for key in d:
+    print(key,d[key])
+for value in d.values():
+    print(value)
+```
+
+## 字典排序
+
+```python
+disordered = {10: 'b', 3: 'a', 5: 'c'}
+sorted_dict = {k: disordered[k] for k in sorted(disordered)}
+print(sorted_dict)
+sorted_dict = sorted([(v,k) for (k,v) in disordered.items()], reverse=True)
+print(sorted_dict)
+```
+
+## 序列
+
+```python
+shoplist = ['apple', 'mango', 'carrot', 'banana']
+name = 'swaroop'
+# Indexing or 'Subscription' operation #
+# 索引或“下标（Subscription）”操作符 #
+print('Item 0 is', shoplist[0])
+print('Item 1 is', shoplist[1])
+print('Item 2 is', shoplist[2])
+print('Item 3 is', shoplist[3])
+print('Item -1 is', shoplist[-1])
+print('Item -2 is', shoplist[-2])
+print('Character 0 is', name[0])
+# Slicing on a list #
+print('Item 1 to 3 is', shoplist[1:3])
+print('Item 2 to end is', shoplist[2:])
+print('Item 1 to -1 is', shoplist[1:-1])
+print('Item start to end is', shoplist[:])
+# 从某一字符串中切片 #
+print('characters 1 to 3 is', name[1:3])
+print('characters 2 to end is', name[2:])
+print('characters 1 to -1 is', name[1:-1])
+print('characters start to end is', name[:])
+
+#输出:
+$ python ds_seq.py
+Item 0 is apple
+Item 1 is mango
+Item 2 is carrot
+Item 3 is banana
+Item -1 is banana
+Item -2 is carrot
+Character 0 is s
+Item 1 to 3 is ['mango', 'carrot']
+Item 2 to end is ['carrot', 'banana']
+Item 1 to -1 is ['mango', 'carrot']
+Item start to end is ['apple', 'mango', 'carrot', 'banana']
+characters 1 to 3 is wa
+characters 2 to end is aroop
+characters 1 to -1 is waroo
+characters start to end is swaroop
+```
+
+你同样可以在切片操作中提供第三个参数，这一参数将被视为切片的步长（Step）（在默认情况下，步长大小为 1）：
+
+```python
+>>> shoplist = ['apple', 'mango', 'carrot', 'banana']
+>>> shoplist[::1]
+['apple', 'mango', 'carrot', 'banana']
+>>> shoplist[::2]
+['apple', 'carrot']
+>>> shoplist[::3]
+['apple', 'banana']
+>>> shoplist[::-1]
+['banana', 'carrot', 'mango', 'apple']
+```
+
+你会注意到当步长为 2 时，我们得到的是第 0、2、4…… 位项目。当步长为 3 时，我们得到的是第 0、3……位项目。
+
+## 集合
+
+```python
+>>> bri = set(['brazil', 'russia', 'india'])
+>>> 'india' in bri
+True
+>>> 'usa' in bri
+False
+>>> bric = bri.copy()
+>>> bric.add('china')
+#issuperset() 方法用于判断指定集合的所有元素是否都包含在原始的集合中，如果是则返回 True，否则返回 False
+>>> bric.issuperset(bri)
+True
+>>> bri.remove('russia')
+>>> bri & bric # OR bri.intersection(bric)
+{'brazil', 'india'}
+```
+
+## 引用
+
+```python
+print('Simple Assignment')
+shoplist = ['apple', 'mango', 'carrot', 'banana']
+# mylist 只是指向同一对象的另一种名称
+mylist = shoplist
+# 我购买了第一项项目，所以我将其从列表中删除
+del shoplist[0]
+print('shoplist is', shoplist)
+print('mylist is', mylist)
+# 注意到 shoplist 和 mylist 二者都
+# 打印出了其中都没有 apple 的同样的列表，以此我们确认
+# 它们指向的是同一个对象
+print('Copy by making a full slice')
+# 通过生成一份完整的切片制作一份列表的副本
+mylist = shoplist[:]
+# 删除第一个项目
+del mylist[0]
+print('shoplist is', shoplist)
+print('mylist is', mylist)
+# 注意到现在两份列表已出现不同
+
+#输出:
+$ python ds_reference.py
+Simple Assignment
+shoplist is ['mango', 'carrot', 'banana']
+mylist is ['mango', 'carrot', 'banana']
+Copy by making a full slice
+shoplist is ['mango', 'carrot', 'banana']
+mylist is ['carrot', 'banana']
+```
+
+```python
+# 这是一个字符串对象
+name = 'Swaroop'
+if name.startswith('Swa'):
+    print('Yes, the string starts with "Swa"')
+if 'a' in name:
+    print('Yes, it contains the string "a"')
+if name.find('war') != -1:
+    print('Yes, it contains the string "war"')
+delimiter = '_*_'
+mylist = ['Brazil', 'Russia', 'India', 'China']
+print(delimiter.join(mylist))
+
+#输出:
+$ python ds_str_methods.py
+Yes, the string starts with "Swa"
+Yes, it contains the string "a"
+Yes, it contains the string "war"
+Brazil_*_Russia_*_India_*_China
+```
+
+## 核心：函数
+
+数（Functions）是指可重复使用的程序片段。它们允许你为某个代码块赋予名字，允许你通过这一特殊的名字在你的程序任何地方来运行代码块，并可重复任何次数。这就是所谓的调用（Calling）函数。我们已经使用过了许多内置的函数，例如 len 和 range
+
+```python
+def say_hello():
+    # 该块属于这一函数
+    print('hello world')
+# 函数结束
+say_hello()  # 调用函数
+say_hello()  # 再次调用函数
+
+#输出:
+$ python function1.py
+hello world
+hello world
+```
+
+```python
+def print_max(a, b):
+    if a > b:
+        print(a, 'is maximum')
+    elif a == b:
+        print(a, 'is equal to', b)
+    else:
+        print(b, 'is maximum')
+# 直接传递字面值
+print_max(3, 4)
+x = 5
+y = 7
+# 以参数的形式传递变量
+print_max(x, y)
+
+#输出:
+$ python function_param.py
+4 is maximum
+7 is maximum
+```
+
+第一次调用函数 print_max 时，我们以实参的形式直接向函数提供这一数字。在第二次调用时，我们将变量作为实参来调用函数。print_max(x, y) 将使得实参 x 的值将被赋值给形参 a，而实参 y 的值将被赋值给形参 b。在两次调用中，print_max 都以相同的方式工作。
+
+## 局部变量
+
+```python
+x = 50
+def func(x):
+    print('x is', x)
+    x = 2
+    print('Changed local x to', x)
+func(x)
+print('x is still', x)
+
+#输出:
+$ python function_local.py
+x is 50
+Changed local x to 2
+x is still 50
+```
+
+## global 语句
+
+如果你想给一个在程序顶层的变量赋值（也就是说它不存在于任何作用域中，无论是函数还是类），那么你必须告诉 Python 这一变量并非局部的，而是全局（Global）的。我们需要通过 global 语句来完成这件事。因为在不使用 global 语句的情况下，不可能为一个定义于函数之外的变量赋值。
+
+```python
+x = 50
+def func():
+    global x
+    print('x is', x)
+    x = 2
+    print('Changed global x to', x)
+func()
+print('Value of x is', x)
+
+#输出:
+$ python function_global.py
+x is 50
+Changed global x to 2
+Value of x is 2
+```
+
+global 语句用以声明 x 是一个全局变量——因此，当我们在函数中为 x 进行赋值时，这一改动将影响到我们在主代码块中使用的 x 的值。
+
+## 默认参数值
+
+```python
+def say(message, times=1):
+    print(message * times)
+say('Hello')
+say('World', 5)
+
+#输出:
+$ python function_default.py
+Hello
+WorldWorldWorldWorldWorld
+```
+
+## 关键字参数
+
+```python
+def func(a, b=5, c=10):
+    print('a is', a, 'and b is', b, 'and c is', c)
+func(3, 7)
+func(25, c=24)
+func(c=50, a=100)
+
+#输出:
+$ python function_keyword.py
+a is 3 and b is 7 and c is 10
+a is 25 and b is 5 and c is 24
+a is 100 and b is 5 and c is 50
+```
+
+## 可变参数
+
+```python
+def total(a=5, *numbers, **phonebook):
+    print('a', a)
+    #遍历元组中的所有项目
+    for single_item in numbers:
+        print('single_item', single_item)
+    #遍历字典中的所有项目
+    for first_part, second_part in phonebook.items():
+        print(first_part,second_part)
+print(total(10,1,2,3,Jack=1123,John=2231,Inge=1560))
+
+#输出:
+$ python function_varargs.py
+a 10
+single_item 1
+single_item 2
+single_item 3
+Inge 1560
+John 2231
+Jack 1123
+None
+```
+
+## return 语句
+
+```python
+def maximum(x, y):
+    if x > y:
+        return x
+    elif x == y:
+        return 'The numbers are equal'
+    else:
+        return y
+print(maximum(2, 3))
+
+#输出:
+$ python function_return.py
+3
+```
+
+## DocStrings
+
+```python
+def print_max(x, y):
+    '''打印两个数值中的最大数。
+    这两个数都应该是整数'''
+    # 如果可能，将其转换至整数类型
+    x = int(x)
+    y = int(y)
+    if x > y:
+        print(x, 'is maximum')
+    else:
+        print(y, 'is maximum')
+print_max(3, 5)
+print(print_max.__doc__)
+
+#输出:
+
+$ python function_docstring.py
+5 is maximum
+打印两个数值中的最大数。
+    这两个数都应该是整数
+```
+
+## 核心：模块
+
+```python
+import sys
+print('The command line arguments are:')
+for i in sys.argv:
+    print(i)
+print('\n\nThe PYTHONPATH is', sys.path, '\n')
+
+#输出:
+
+$ python module_using_sys.py we are arguments
+The command line arguments are:
+module_using_sys.py
+we
+are
+arguments
+The PYTHONPATH is ['/tmp/py',
+# many entries here, not shown here
+'/Library/Python/2.7/site-packages',
+'/usr/local/lib/python2.7/site-packages']
+```
+
+## from..import 语句
+
+如果你希望直接将 argv 变量导入你的程序（为了避免每次都要输入 sys.），那么你可以通过使用 from sys import argv 语句来实现这一点。
+警告：一般来说，你应该尽量避免使用 from...import 语句，而去使用 import 语句。这是为了避免在你的程序中出现名称冲突，同时也为了使程序更加易读。
+
+```python
+from math import sqrt
+print("Square root of 16 is", sqrt(16))
+```
+
+## 模块的 __name__
+
+```python
+if __name__ == '__main__':
+    print('This program is being run by itself')
+else:
+    print('I am being imported from another module')
+
+#输出:
+$ python module_using_name.py
+This program is being run by itself
+$ python
+>>> import module_using_name
+I am being imported from another module
+>>>
+```
+
+```python
+def say_hi():
+    print('Hi, this is mymodule speaking.')
+__version__ = '0.1'
+
+```
+
+```python
+import mymodule
+mymodule.say_hi()
+print('Version', mymodule.__version__)
+
+#输出:
+$ python mymodule_demo.py
+Hi, this is mymodule speaking.
+Version 0.1
+```
+
+```python
+from mymodule import say_hi, __version__
+say_hi()
+print('Version', __version__)
+```
+
+`from mymodule import *` :这将导入诸如 say_hi 等所有公共名称，但不会导入 __version__ 名称，因为后者以双下划线开头。
+
+## dir 函数
+
+```python
+$ python
+>>> import sys
+# 给出 sys 模块中的属性名称
+>>> dir(sys)
+['__displayhook__', '__doc__',
+'argv', 'builtin_module_names',
+'version', 'version_info']
+# 此处只展示部分条目
+# 给出当前模块的属性名称
+>>> dir()
+['__builtins__', '__doc__',
+'__name__', '__package__','sys']
+# 创建一个新的变量 'a'
+>>> a = 5
+>>> dir()
+['__builtins__', '__doc__', '__name__', '__package__', 'a']
+# 删除或移除一个名称
+>>> del a
+>>> dir()
+['__builtins__', '__doc__', '__name__', '__package__']
+```
+
+## 核心：输入输出
+
+```python
+def reverse(text):
+    return text[::-1]
+def is_palindrome(text):
+    return text == reverse(text)
+something = input("Enter text: ")
+if is_palindrome(something):
+    print("Yes, it is a palindrome")
+else:
+    print("No, it is not a palindrome")
+
+#输出:
+$ python3 io_input.py
+Enter text: sir
+No, it is not a palindrome
+$ python3 io_input.py
+Enter text: madam
+Yes, it is a palindrome
+$ python3 io_input.py
+Enter text: racecar
+Yes, it is a palindrome
+```
+
+我们同样可以提供第三个参数来确定切片的步长（Step）。默认的步长为 1，它会返回一份连续的文本。如果给定一个负数步长，如 -1，将返回翻转过的文本
+input() 函数可以接受一个字符串作为参数，并将其展示给用户。尔后它将等待用户输入内容或敲击返回键。一旦用户输入了某些内容并敲下返回键，input() 函数将返回用户输入的文本。
+我们获得文本并将其进行翻转。如果原文本与翻转后的文本相同，则判断这一文本是回文。
+
+## 文件
+
+```python
+poem = '''\
+Programming is fun
+When the work is done
+if you wanna make your work also fun:
+    use Python!
+'''
+# 打开文件以编辑（'w'riting）
+f = open('poem.txt', 'w')
+# 向文件中编写文本
+f.write(poem)
+# 关闭文件
+f.close()
+# 如果没有特别指定，
+# 将假定启用默认的阅读（'r'ead）模式
+f = open('poem.txt')
+while True:
+    line = f.readline()
+    # 零长度指示 EOF
+    if len(line) == 0:
+        break
+    # 每行（`line`）的末尾
+    # 都已经有了换行符
+    #因为它是从一个文件中进行读取的
+    print(line, end='')
+# 关闭文件
+f.close()
+
+#输出:
+$ python3 io_using_file.py
+Programming is fun
+When the work is done
+if you wanna make your work also fun:
+    use Python!
+```
+
+首先，我们使用内置的 open 函数并指定文件名以及我们所希望使用的打开模式来打开一个文件。打开模式可以是阅读模式（'r'），写入模式（'w'）和追加模式（'a'）。我们还可以选择是通过文本模式（'t'）还是二进制模式（'b'）来读取、写入或追加文本。实际上还有其它更多的模式可用，help(open) 会给你有关它们的更多细节。在默认情况下，open() 会将文件视作文本（text）文件，并以阅读（read）模式打开它。
+
+## Pickle
+
+```python
+import pickle
+# 我们存储相关对象的文件的名称
+shoplistfile = 'shoplist.data'
+# 需要购买的物品清单
+shoplist = ['apple', 'mango', 'carrot']
+# 准备写入文件
+f = open(shoplistfile, 'wb')
+# 转储对象至文件
+pickle.dump(shoplist, f)
+f.close()
+# 清除 shoplist 变量
+del shoplist
+# 重新打开存储文件
+f = open(shoplistfile, 'rb')
+# 从文件中载入对象
+storedlist = pickle.load(f)
+print(storedlist)
+
+#输出:
+$ python io_pickle.py
+['apple', 'mango', 'carrot']
+```
+
+要想将一个对象存储到一个文件中，我们首先需要通过 open 以写入（write）二进制（binary）模式打开文件，然后调用 pickle 模块的 dump 函数。这一过程被称作封装（Pickling）。
+接着，我们通过 pickle 模块的 load 函数接收返回的对象。这个过程被称作拆封（Unpickling）
+
+## Unicode
+
+```python
+>>> "hello world"
+'hello world'
+>>> type("hello world")
+<class 'str'>
+>>> u"hello world"
+'hello world'
+>>> type(u"hello world")
+<class 'str'>
+```
+
+```python
+# encoding=utf-8
+import io
+f = io.open("abc.txt", "wt", encoding="utf-8")
+f.write(u"Imagine non-English language here")
+f.close()
+text = io.open("abc.txt", encoding="utf-8").read()
+print(text)
+```
+
+## 核心：标准库
+
+系统内置模块
+
+```python
+os ： 对操作系统服务提供了可移植的（ portable）的接口。
+sys： 包括跟python解析器和环境相关的变量和函数。
+decimal： python中的float使用双精度的二进制浮点编码来表示的，这种编码导致了小数不能被精确的表示，例如0.1实际上内存中为0.100000000000000001，还有3*0.1 == 0.3 为False.decimal就是为了解决类似的问题的，拥有更高的精确度，能表示更大范围的数字，更精确地四舍五入。
+math： 定义了标准的数学方法，例如cos(x),sin(x)等。
+random： 随机数生成。
+string： 包含大量处理字符串的函数。
+io： 实现了各种IO形式和内置的open()函数。
+datetime： 时间日期相关函数。
+timeit： 计时函数，调试相关。
+logging： 将一些调试（Debugging）信息或一些重要的信息储存在某个地方。
+```
+
+## OS 模块
+
+```python
+os.name： 获取当前体系平台， Windows下返回""nt""， Linux下返回""posix""。
+os.linesep： 获取当前平台应用的行终止符。 Windows下返回""/r/n""， Linux应用""/n""。
+os.getcwd(): 获取当前工作目录，即当前python脚本工作的目录路径。
+os.listdir(path)：返回指定目录下的所有文件和目录名。
+os.path.split()：分离路径中的目录名和文件名。
+os.path.exists()：检查路径是否存在。
+os.path.isfile()： 判断是否为文件。
+```
+
+```python
+>>> import os
+>>> print(os.getcwd())
+>>> print(os.listdir("D:\\"))
+>>> print(os.path.exists("D:\\test"))
+```
+
+## sys 模块
+
+```python
+>>> import sys
+>>> sys.version_info
+sys.version_info(major=3, minor=5, micro=1, releaselevel='final', serial=0)
+>>> sys.version_info.major == 3
+True
+```
+
+sys 模块包含一个 version_info 元组，它提供给我们版本信息。第一个条目是主版本信息。我们可以调出这些信息并使用它。
+除此之外，sys 模块还有以下功能：
+sys.argv 获取命令行传入参数。– sys.argv[0] 为脚本名， sys.argv[1] 为第一个参数sys.getdefaultencoding(): 获取当前终端编码，一般默认为ascii。sys.getfilesystemencoding(): 获取文件系统编码， Windows下返回""mbcs""， mac下返回""utf-8""。sys.path: 命令搜索路径。
+
+## decimal 模块
+
+```python
+>>> a="%.20f" %(1/3.)
+>>> a="%.20f" %(2.645)
+>>> a="%.20f" %(2.675)
+>>> round(2.675,2)
+>>> print(0.1+0.1+0.1-0.3)
+5.55111512313e-17
+>>> from decimal import Decimal as D
+>>> D('0.1') + D('0.1') + D('0.1') - D('0.3')
+Decimal("0.0")
+```
+
+## decimal 精度控制
+
+```python
+>>> from decimal import Decimal as D
+>>> from decimal import getcontext
+>>> getcontext().prec
+28
+>>> D(1)/D(7)
+Decimal('0.1428571428571428571428571429')
+>>> getcontext().prec=6
+>>> D(1)/D(7)
+Decimal('0.142857')
+>>> D(str(1.12)/D(7))
+```
+
+## math 数学模块
+
+```python
+>>> import math
+>>> math.pi
+>>> math.e
+>>> math.sin(2*math.pi/180)
+>>> math.fmod(9.8,4.0)
+```
+
+## random 模块
+
+```python
+>>> import random
+>>> random.randint(0,99) #随机整数
+>>> random.randrange(0, 101, 2) #随机偶数
+>>> random.random() #随机浮点数
+>>> random.uniform(1, 10) #均匀分布
+>>> random.choice('?abc&%^*f') #随机字符
+>>> random.sample('abcdefghij',3)
+>>> items = [1, 2, 3, 4, 5, 6]
+>>> random.shuffle(items) #洗牌
+```
+
+## datetime 模块
+
+```python
+>>> import datetime as dt
+>>> print('date.max:', dt.date.max)
+>>> print('date.min:', dt.date.min)
+>>> print('date.today():', dt.date.today())
+>>> dt.date.isoweekday(dt.date.today())
+>>> dt.date.today()+dt.timedelta(7)
+>>> print('Time:', dt.time(12,5,4))
+>>> dt.datetime.now()
+```
+
+## 时间与字符串
+
+```python
+>>> from datetime import datetime as dtdt
+>>> dtdt.now()
+>>> dtdt.strftime(dtdt.now(),'%c')
+>>> d = dtdt.now() - dtdt.strptime('2015/12/2020:56:30','%Y/%m/%d %H:%M:%S')
+>>> (d.days, d.seconds, d.microseconds)
+```
+
+## timeit 模块
+
+```python
+>>> import timeit as ti
+>>> t = ti.Timer('x=range(100)')
+>>> t.timeit()
+>>> t.timeit(100)
+>>> ti.timeit('x=range(100)',number=100)
+>>> t.repeat(3, 20000)
+```
+
+## 日志模块
+
+```python
+import os
+import platform
+import logging
+if platform.platform().startswith('Windows'):
+    logging_file = os.path.join(os.getenv('HOMEDRIVE'),
+                                os.getenv('HOMEPATH'),
+                                'test.log')
+else:
+    logging_file = os.path.join(os.getenv('HOME'),
+                                'test.log')
+print("Logging to", logging_file)
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s : %(levelname)s : %(message)s',
+    filename=logging_file,
+    filemode='w',
+)
+logging.debug("Start of the program")
+logging.info("Doing something")
+logging.warning("Dying now")
+
+#输出:
+$ python stdlib_logging.py
+Logging to /Users/swa/test.log
+$ cat /Users/swa/test.log
+2014-03-29 09:27:36,660 : DEBUG : Start of the program
+2014-03-29 09:27:36,660 : INFO : Doing something
+2014-03-29 09:27:36,660 : WARNING : Dying now
+```

@@ -1,5 +1,9 @@
 # daliy report
 
+## 2021-12-1
+
+- 阅读[python](https://a-byte-of-python-bnu.gitbook.io/book/07.data_structures)
+
 ## 2021-11-30
 
 - 阅读[python](https://a-byte-of-python-bnu.gitbook.io/book/07.data_structures)
