@@ -10,7 +10,9 @@
 
 `help('len')` :显示出有关 len 函数的帮助
 
-## 注释
+## 基础：基本概念
+
+### 注释
 
 `print('hello world')` #注意 print 是一个函数
 
@@ -20,7 +22,7 @@ print('hello world')
 
 ```
 
-## 变量
+### 变量
 
 命名需要遵守以下规则：
 
@@ -77,7 +79,7 @@ print('b', end=' ')
 print('c')          #输出a b c
 ```
 
-## 转义序列
+### 转义序列
 
 如果你希望生成一串包含单引号（'）的字符串，你应该如何指定这串字符串？例如，你想要的字符串是 "What's your name?"。你不能指定 'What's your name?'，因为这会使 Python 对于何处是字符串的开始、何处又是结束而感到困惑
 你必须指定这个单引号不代表这串字符串的结尾。这可以通过 转义序列（Escape Sequence） 来实现。你通过 \ 来指定单引号：要注意它可是反斜杠。现在，你可以将字符串指定为 'What\'s your name?'
@@ -96,7 +98,7 @@ This is the second sentence." #"This is the first sentence. This is the second s
 
 `r"Newlines are indicated by \n"`
 
-## 字符串方法
+### 字符串方法
 
 我们可以通过使用字符串方法来对字符串进行操作。
 
@@ -151,7 +153,7 @@ print("1.23".isalnum())     #False
 print("123.abc".isalnum())  #False
 ```
 
-## 数据类型
+### 数据类型
 
 布尔类型：True/False
 
@@ -167,7 +169,7 @@ print("123.abc".isalnum())  #False
 
 集合(set):set('abca'),{'a','b','c'}
 
-## 布尔类型
+### 布尔类型
 
 ```python
 >>> bool('')
@@ -193,7 +195,7 @@ False
 0
 ```
 
-## 逻辑行与物理行
+### 逻辑行与物理行
 
 如果你希望在一行物理行中指定多行逻辑行，那么你必须通过使用分号(;)来明确表明逻辑行或语句的结束
 
@@ -229,7 +231,7 @@ and （布尔“与”）如果 x 是 False，则 x and y 返回 False，否则�
 or（布尔“或”）如果 x 是 True，则返回 True，否则它将返回 y 的计算值。x = Ture; y = False; x or y 将返回 Ture。在这里短路计算同样适用
 ```
 
-## 数值运算与赋值的快捷方式
+### 数值运算与赋值的快捷方式
 
 ```python
 #变量 = 变量 运算 表达式 会演变成 变量 运算 = 表达式
@@ -237,7 +239,7 @@ a = 2       #a = 2
 a = a * 3   #a *= 3
 ```
 
-## 求值顺序
+### 求值顺序
 
 ```python
 lambda：Lambda 表达式
@@ -258,7 +260,7 @@ x[index], x[index:index], x(arguments...), x.attribute：下标、切片、调�
 (expressions...), [expressions...], {key: value...}, {expressions...}：表示绑定或元组、表示列表、表示字典、表示集合
 ```
 
-## 改变运算顺序
+### 改变运算顺序
 
 `2 + (3 * 4) 自是要比 2 + 3 * 4` 要更加容易理解，因为后者还要求你要了解运算符的优先级
 
@@ -287,7 +289,7 @@ print('Done')
 # if 语句执行完毕后执行。
 ```
 
-## while 语句
+### while 语句
 
 ```python
 number = 23
@@ -308,7 +310,7 @@ else:
 print('Done')
 ```
 
-## for 循环
+### for 循环
 
 ```python
 for i in range(1, 5):
@@ -340,7 +342,7 @@ else:
 
 另外需要注意的是，range() 每次只会生成一个数字，如果你希望获得完整的数字列表，要在使用 range() 时调用 list()。例如下面这样：list(range(5)) ，它将会返回 [0, 1, 2, 3, 4]
 
-## break 语句
+### break 语句
 
 ```python
 while True:
@@ -351,7 +353,7 @@ while True:
 print('Done')
 ```
 
-## continue 语句
+### continue 语句
 
 ```python
 #continue 语句用以告诉 Python 跳过当前循环块中的剩余语句，并继续该循环的下一次迭代
@@ -412,7 +414,7 @@ I bought the apple
 My shopping list is now ['banana', 'carrot', 'mango', 'rice']
 ```
 
-## 列表方法
+### 列表方法
 
 ```python
 >>> a = range(5)      # [0,1,2,3,4]
@@ -430,7 +432,7 @@ My shopping list is now ['banana', 'carrot', 'mango', 'rice']
 # 字符串排序使用字典序,逐位比较字母
 ```
 
-## 列表函数
+### 列表函数
 
 ```python
 # range()  生成数组列表
@@ -443,7 +445,7 @@ My shopping list is now ['banana', 'carrot', 'mango', 'rice']
 # max()   返回列表中最大元素
 ```
 
-## 列表排序
+### 列表排序
 
 ```python
 mylist = ["b", "C", "A", "a"]
@@ -455,7 +457,7 @@ nlist = sorted(mylist)
 nlist = sorted(mylist,reverse=True)
 ```
 
-## 元组
+### 元组
 
 元组（Tuple）用于将多个对象保存到一起。你可以将它们近似地看作列表，但是元组不能提供列表类能够提供给你的广泛的功能。元组的一大特征类似于字符串，它们是不可变的，也就是说，你不能编辑或更改元组.
 
@@ -484,7 +486,7 @@ Last animal brought from old zoo is penguin
 Number of animals in the new zoo is 5
 ```
 
-## 字典
+### 字典
 
 字典就像一本地址簿，如果你知道了他或她的姓名，你就可以在这里找到其地址或是能够联系上对方的更多详细信息，换言之，我们将键值（Keys）（即姓名）与值（Values）（即地址等详细信息）联立到一起。在这里要注意到键值必须是唯一的，正如在现实中面对两个完全同名的人你没办法找出有关他们的正确信息。
 
@@ -518,7 +520,7 @@ Contact Larry at larry@wall.org
 Guido's address is guido@python.org
 ```
 
-## 字典构造
+### 字典构造
 
 ```python
 sub = {'zhao':1, 'li':2, 'qian':3}
@@ -531,7 +533,7 @@ sub = dict(zip(keys,vals))
 print(sub)
 ```
 
-## 字典方法
+### 字典方法
 
 ```python
 # Keys, values, items:
@@ -544,7 +546,7 @@ d.has_key("duck") -> 1; d.has_key("spam") -> 0
 {"name":"Guido", "age":43, ("hello","world"):1, 42:"yes", "flag":["red", "white", "blue"]}
 ```
 
-## 字典遍历
+### 字典遍历
 
 ```python
 d = dict(a=12, b="abc",c=15)
@@ -557,7 +559,7 @@ for value in d.values():
     print(value)
 ```
 
-## 字典排序
+### 字典排序
 
 ```python
 disordered = {10: 'b', 3: 'a', 5: 'c'}
@@ -567,7 +569,7 @@ sorted_dict = sorted([(v,k) for (k,v) in disordered.items()], reverse=True)
 print(sorted_dict)
 ```
 
-## 序列
+### 序列
 
 ```python
 shoplist = ['apple', 'mango', 'carrot', 'banana']
@@ -627,7 +629,7 @@ characters start to end is swaroop
 
 你会注意到当步长为 2 时，我们得到的是第 0、2、4…… 位项目。当步长为 3 时，我们得到的是第 0、3……位项目。
 
-## 集合
+### 集合
 
 ```python
 >>> bri = set(['brazil', 'russia', 'india'])
@@ -645,7 +647,7 @@ True
 {'brazil', 'india'}
 ```
 
-## 引用
+### 引用
 
 ```python
 print('Simple Assignment')
@@ -740,7 +742,7 @@ $ python function_param.py
 
 第一次调用函数 print_max 时，我们以实参的形式直接向函数提供这一数字。在第二次调用时，我们将变量作为实参来调用函数。print_max(x, y) 将使得实参 x 的值将被赋值给形参 a，而实参 y 的值将被赋值给形参 b。在两次调用中，print_max 都以相同的方式工作。
 
-## 局部变量
+### 局部变量
 
 ```python
 x = 50
@@ -758,7 +760,7 @@ Changed local x to 2
 x is still 50
 ```
 
-## global 语句
+### global 语句
 
 如果你想给一个在程序顶层的变量赋值（也就是说它不存在于任何作用域中，无论是函数还是类），那么你必须告诉 Python 这一变量并非局部的，而是全局（Global）的。我们需要通过 global 语句来完成这件事。因为在不使用 global 语句的情况下，不可能为一个定义于函数之外的变量赋值。
 
@@ -781,7 +783,7 @@ Value of x is 2
 
 global 语句用以声明 x 是一个全局变量——因此，当我们在函数中为 x 进行赋值时，这一改动将影响到我们在主代码块中使用的 x 的值。
 
-## 默认参数值
+### 默认参数值
 
 ```python
 def say(message, times=1):
@@ -795,7 +797,7 @@ Hello
 WorldWorldWorldWorldWorld
 ```
 
-## 关键字参数
+### 关键字参数
 
 ```python
 def func(a, b=5, c=10):
@@ -811,7 +813,7 @@ a is 25 and b is 5 and c is 24
 a is 100 and b is 5 and c is 50
 ```
 
-## 可变参数
+### 可变参数
 
 ```python
 def total(a=5, *numbers, **phonebook):
@@ -836,7 +838,7 @@ Jack 1123
 None
 ```
 
-## return 语句
+### return 语句
 
 ```python
 def maximum(x, y):
@@ -853,7 +855,7 @@ $ python function_return.py
 3
 ```
 
-## DocStrings
+### DocStrings
 
 ```python
 def print_max(x, y):
@@ -900,7 +902,7 @@ The PYTHONPATH is ['/tmp/py',
 '/usr/local/lib/python2.7/site-packages']
 ```
 
-## from..import 语句
+### from..import 语句
 
 如果你希望直接将 argv 变量导入你的程序（为了避免每次都要输入 sys.），那么你可以通过使用 from sys import argv 语句来实现这一点。
 警告：一般来说，你应该尽量避免使用 from...import 语句，而去使用 import 语句。这是为了避免在你的程序中出现名称冲突，同时也为了使程序更加易读。
@@ -910,7 +912,7 @@ from math import sqrt
 print("Square root of 16 is", sqrt(16))
 ```
 
-## 模块的 __name__
+### 模块的 __name__
 
 ```python
 if __name__ == '__main__':
@@ -953,7 +955,7 @@ print('Version', __version__)
 
 `from mymodule import *` :这将导入诸如 say_hi 等所有公共名称，但不会导入 __version__ 名称，因为后者以双下划线开头。
 
-## dir 函数
+### dir 函数
 
 ```python
 $ python
@@ -1007,7 +1009,7 @@ Yes, it is a palindrome
 input() 函数可以接受一个字符串作为参数，并将其展示给用户。尔后它将等待用户输入内容或敲击返回键。一旦用户输入了某些内容并敲下返回键，input() 函数将返回用户输入的文本。
 我们获得文本并将其进行翻转。如果原文本与翻转后的文本相同，则判断这一文本是回文。
 
-## 文件
+### 文件
 
 ```python
 poem = '''\
@@ -1047,7 +1049,7 @@ if you wanna make your work also fun:
 
 首先，我们使用内置的 open 函数并指定文件名以及我们所希望使用的打开模式来打开一个文件。打开模式可以是阅读模式（'r'），写入模式（'w'）和追加模式（'a'）。我们还可以选择是通过文本模式（'t'）还是二进制模式（'b'）来读取、写入或追加文本。实际上还有其它更多的模式可用，help(open) 会给你有关它们的更多细节。在默认情况下，open() 会将文件视作文本（text）文件，并以阅读（read）模式打开它。
 
-## Pickle
+### Pickle
 
 ```python
 import pickle
@@ -1076,7 +1078,7 @@ $ python io_pickle.py
 要想将一个对象存储到一个文件中，我们首先需要通过 open 以写入（write）二进制（binary）模式打开文件，然后调用 pickle 模块的 dump 函数。这一过程被称作封装（Pickling）。
 接着，我们通过 pickle 模块的 load 函数接收返回的对象。这个过程被称作拆封（Unpickling）
 
-## Unicode
+### Unicode
 
 ```python
 >>> "hello world"
@@ -1116,7 +1118,7 @@ timeit： 计时函数，调试相关。
 logging： 将一些调试（Debugging）信息或一些重要的信息储存在某个地方。
 ```
 
-## OS 模块
+### OS 模块
 
 ```python
 os.name： 获取当前体系平台， Windows下返回""nt""， Linux下返回""posix""。
@@ -1135,7 +1137,7 @@ os.path.isfile()： 判断是否为文件。
 >>> print(os.path.exists("D:\\test"))
 ```
 
-## sys 模块
+### sys 模块
 
 ```python
 >>> import sys
@@ -1149,7 +1151,7 @@ sys 模块包含一个 version_info 元组，它提供给我们版本信息。�
 除此之外，sys 模块还有以下功能：
 sys.argv 获取命令行传入参数。– sys.argv[0] 为脚本名， sys.argv[1] 为第一个参数sys.getdefaultencoding(): 获取当前终端编码，一般默认为ascii。sys.getfilesystemencoding(): 获取文件系统编码， Windows下返回""mbcs""， mac下返回""utf-8""。sys.path: 命令搜索路径。
 
-## decimal 模块
+### decimal 模块
 
 ```python
 >>> a="%.20f" %(1/3.)
@@ -1163,7 +1165,7 @@ sys.argv 获取命令行传入参数。– sys.argv[0] 为脚本名， sys.argv[
 Decimal("0.0")
 ```
 
-## decimal 精度控制
+### decimal 精度控制
 
 ```python
 >>> from decimal import Decimal as D
@@ -1178,7 +1180,7 @@ Decimal('0.142857')
 >>> D(str(1.12)/D(7))
 ```
 
-## math 数学模块
+### math 数学模块
 
 ```python
 >>> import math
@@ -1188,7 +1190,7 @@ Decimal('0.142857')
 >>> math.fmod(9.8,4.0)
 ```
 
-## random 模块
+### random 模块
 
 ```python
 >>> import random
@@ -1202,7 +1204,7 @@ Decimal('0.142857')
 >>> random.shuffle(items) #洗牌
 ```
 
-## datetime 模块
+### datetime 模块
 
 ```python
 >>> import datetime as dt
@@ -1215,7 +1217,7 @@ Decimal('0.142857')
 >>> dt.datetime.now()
 ```
 
-## 时间与字符串
+### 时间与字符串
 
 ```python
 >>> from datetime import datetime as dtdt
@@ -1225,7 +1227,7 @@ Decimal('0.142857')
 >>> (d.days, d.seconds, d.microseconds)
 ```
 
-## timeit 模块
+### timeit 模块
 
 ```python
 >>> import timeit as ti
@@ -1236,7 +1238,7 @@ Decimal('0.142857')
 >>> t.repeat(3, 20000)
 ```
 
-## 日志模块
+### 日志模块
 
 ```python
 import os
@@ -1268,3 +1270,472 @@ $ cat /Users/swa/test.log
 2014-03-29 09:27:36,660 : INFO : Doing something
 2014-03-29 09:27:36,660 : WARNING : Dying now
 ```
+
+## 科学计算 numpy和scipy
+
+```python
+Numpy：Arrays manipulation library 科学计算的必装模块，几乎所有的其他科学模块都依赖于它
+Scipy：扩展的科学计算模块
+PyGSL：C/C++语言中著名的科学计算函数库GNU Scientific Library(GSL)的python版
+Matplotlib：高质量的2D作图模块，足以替代GNUPlot
+Mayavi：强大的三维作图模块，属于EPD公司套件的一部分（注意：此模块支持Python2，官方未支持Python3）
+Sympy：符号计算模块
+StatLib：统计学工具箱
+Escript/Finley：偏微分方程求解
+Parallel Python：并行计算模块
+```
+
+### Numpy数组创建
+
+```python
+>>> import numpy as np
+>>> a = np.array([1, 2, 3, 4], dtype='int32')
+>>> a = np.array([[3,4,5],[3,6,7]])
+np.arange(0,1,0.1) np.zeros(2,3) np.ones(5)
+np.linspace(0, 1, 12) np.logspace(0, 2, 20)
+```
+
+函数式创建：
+
+```python
+def func(i, j):
+    return (i+1) * (j+1)
+a = np.fromfunction(func, (9,9))
+```
+
+### np.array 与 list 的区别
+
+```python
+>>> a=range(5)
+>>> a + 1
+>>> a * 2
+>>> a + a
+>>> a > 3
+>>> np.array(a)
+>>> b=np.arange(5)
+>>> b + 1
+>>> b * 2
+>>> b + b
+>>> b > 3
+>>> b / 2
+>>> list(b)
+```
+
+### 一维数组取样
+
+```python
+>>> a = np.arange(10)
+>>> a[5] # 用整数作为下标可以获取数组中的某个元素
+>>> a[3:5] # 用范围作为下标获取数组的一个切片，包括a[3]不包括a[5]
+>>> a[:5] # 省略开始下标，表示从a[0]开始
+>>> a[:-1] # 下标可以使用负数，表示从数组后往前数，array([0, 1, 2, 3, 4, 5, 6, 7, 8])
+>>> a[2:4] = 100,101 # 下标还可以用来修改元素的值
+>>> a[1:-1:2] # 范围中的第三个参数表示步长， 2表示隔一个元素取一个元素
+```
+
+### 二维数组取样
+
+```python
+>>> a = np.arange(10).reshape(2,-1)
+>>> a
+array([[0, 1, 2, 3, 4],
+       [5, 6, 7, 8, 9]])
+>>> a[1,1] #单个元素
+6
+>>> a[1] #整行
+array([5, 6, 7, 8, 9])
+>>> a[:,2] #整列
+array([2, 7])
+>>> a[0][::2] #抽取某行特定元素
+array([0, 2, 4])
+```
+
+### 条件取样
+
+```python
+>>> a = np.arange(10).reshape(-1,2)
+>>> a[a[:,1]>3]
+array([[4, 5],
+       [6, 7],
+       [8, 9]])
+>>> a[a[:,1]%3==0]
+array([[2, 3],
+       [8, 9]])
+>>> a[(a[:,1]>3)*(a[:,1]%3==0)]
+```
+
+### 数组排序
+
+```python
+#argsort函数返回数组值从小到大的索引
+>>> x = np.array([3,1,2])
+>>> np.argsort(x)
+>>> x[np.argsort(x)] # 排序后的数组
+>>> x=np.array([[0,3],[4,2]])
+>>> np.argsort(x, axis=1) # 排序每行
+>>> a[a[:,1].argsort()] # 按第二列排序
+```
+
+### 数学数组方法
+
+```python
+>>> a = np.arange(6).reshape(2,3)
+>>> a.shape 
+(2, 3)
+>>> a.dtype 
+dtype('int32')
+分别试试a.sum() a.min() a.max() a.mean()
+>> a.reshape(3,2) #转置a.T
+>> a.ravel() #展开数组
+>> a.repeat(2,axis=0) #复制元素
+```
+
+### 数组合并
+
+```python
+>>> a = np.array([1, 2, 3])
+>>> b = np.array([2, 3, 4])
+>>> np.r_[a,b]
+>>> np.hstack((a,b))
+array([1, 2, 3, 2, 3, 4])
+>>> np.vstack((a,b))
+array([[1, 2, 3],
+       [2, 3, 4]])
+>>> np.c_[a,b]
+array([[1, 2],
+       [2, 3],
+       [3, 4]])
+```
+
+### 数据存储
+
+```python
+numpy.savetxt(fname, X, fmt='%.18e',delimiter=' ', newline='\n', header='',footer='', comments='# ')
+>>> x = y = z = np.arange(0.0,5.0,0.5)
+>>> np.savetxt('test.out', x, delimiter=',')
+# X is an array
+>>> np.savetxt('test.out', (x,y,z))
+# x,y,z equal sized 1D arrays
+>>> np.savetxt('test.out', x, fmt='%6.4f')you
+# use exponential notation
+```
+
+### 数据读取
+
+```python
+numpy.loadtxt(fname, dtype=<type 'float'>,comments='#', delimiter=None,converters=None, skiprows=0, usecols=None,unpack=False, ndmin=0)
+让我们来读取刚才已经存储的数据
+>>> data = np.loadtxt('test.out', dtype = float)
+>>> data = np.loadtxt('test.out', usecols=[1])
+```
+
+### 和math函数比较
+
+```python
+import time, math
+import numpy as np
+n = 1e+6
+x = range(int(n))
+start = time.clock()
+for i in x:
+    tmp = math.sin(i/n)
+print("math.sin:", time.clock() - start)
+x = np.array(x)/n
+start = time.clock()
+np.sin(x)
+print("numpy.sin:", time.clock() - start)
+```
+
+## 绘图模块 matplotlib
+
+```python
+
+import numpy as np
+import matplotlib.pyplot as plt
+x = np.linspace(0, 10, 1000)
+y = np.sin(x) ; z = np.cos(x**2)
+plt.figure()
+plt.plot(x,y,label="$sin(x)$",color="red",linewidth=2)
+plt.plot(x,z,"b--",label="$cos(x^2)$")
+plt.legend(loc=3)
+plt.show() #保存图像可用 plt.savefig('fig.jpg')
+plt.close()
+```
+
+### Plot参数
+
+```python
+• alpha : float
+• color or c : any matplotlib color
+• label : any string , 图注名称
+• linestyle or ls : [ '-' | '--' | '-.' | ':' | 'steps' | ...]
+• linewidth or lw: float value (points, 0.3527mm )
+• marker [ '+' | ',' | '.' | '1' | '2' | '3' | '4' ]
+• markersize or ms : float
+• zorder: any number 叠放顺序
+```
+
+### 颜色
+
+```python
+• 蓝色： 'b' (blue)
+• 绿色： 'g' (green)
+• 红色： 'r' (red)
+• 青色： 'c' (cyan)
+• 洋红： 'm' (magenta)
+• 黄色： 'y' (yellow)
+• 黑色： 'k' (black)
+• 白色： 'w' (white)
+• 灰度表示： e.g. 0.75 ([0,1]内任意浮点数)
+• RGB表示法： 由红色、绿色和蓝色的值组成的十六进制符号来定义 e.g. '#2F4F4F' 或 (0.18,0.31,0.31)
+```
+
+### 坐标轴定制
+
+```python
+• plt.title('sine function demo')
+• plt.xlabel('time(s)')
+• plt.ylabel('votage(mV)')
+• plt.xlim([0.0,5.0])
+• plt.ylim([-1.2,1.2])
+• plt.hold('on') # 保持之前plot的结果
+• plt.grid('on') # 添加网格
+• plt.text(4,0,'$\mu=100$') # 文本
+• plt.axis('equal') # 等比例坐标轴
+• plt.ylim(plt.ylim()[::-1]) # 翻转Y轴
+• plt.gca().invert_yaxis() # 翻转Y轴
+```
+
+### 极坐标
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+r = np.arange(0, 3.0, 0.01)
+theta = 2 * np.pi * r
+ax = plt.subplot(111, polar=True)
+ax.plot(theta, r, color='r', linewidth=3)
+ax.set_rmax(2.0)
+ax.grid(True)
+ax.set_title("polar plot")
+plt.show()
+```
+
+### 图表类型
+
+### 直方图
+
+```python
+import numpy as np
+import matplotlib.mlab as mlab
+import matplotlib.pyplot as plt
+mu = 100 # mean of distribution
+sigma = 15 # standard deviation of distribution
+x = mu + sigma * np.random.randn(10000)
+num_bins = 50
+# the histogram of the data
+n, bins, patches = plt.hist(x, num_bins, normed=1,
+facecolor='green', alpha=0.5)
+y = mlab.normpdf(bins, mu, sigma) # add a 'best fit' line
+plt.plot(bins, y, 'r--')
+plt.show()
+```
+
+### 散点图
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+n = 150
+x = np.random.rand(n,3)
+c = np.random.rand(n,3)
+plt.scatter(x[:,0], x[:,1], s=x[:,2]*500, alpha=0.5, color=c)
+plt.show()
+```
+
+### 柱状图
+
+```python
+from matplotlib.ticker import FuncFormatter
+import matplotlib.pyplot as plt
+import numpy as np
+x = np.arange(4)
+money = [1.5e5, 2.5e6, 5.5e6, 2.0e7]
+def millions(x, pos):
+    'The two args are the value and tick position'
+    return '$%1.1fM' % (x * 1e-6)
+formatter = FuncFormatter(millions)
+fig, ax = plt.subplots()
+ax.yaxis.set_major_formatter(formatter)
+plt.bar(x, money)
+plt.xticks(x, ('Bill', 'Fred', 'Mary', 'Sue'))
+plt.show()
+```
+
+### 多子图
+
+```python
+• subplot(numRows, numCols, plotNum)
+– plt.subplot(221) # 第一行的左图
+– plt.subplot(222) # 第一行的右图
+– plt.subplot(212) # 第二整行
+– plt.show()
+– ax1 = plt.subplot(211) # 创建子图1
+– ax1.plot(x,y)
+– ax2 = plt.subplot(212) # 创建子图2
+– ax2.plot(x,y)
+```
+
+### colormap
+
+```python
+• 查看可用色表
+import pylab as pl
+pl.colormaps()
+• 查看色表内容
+pl.cm.hot(0.001)
+pl.cm.hot(0.999)
+pl.cm.hot(0.5)
+pl.cm.hot(0.5, 0.5)
+```
+
+### 三维作图
+
+```python
+from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
+fig = plt.figure()
+ax = Axes3D(fig)
+data = np.random.random([100,3])
+np.random.shuffle(data)
+ax.scatter(data[:,0],data[:,1],data[:,2], marker='o')
+plt.show()
+```
+
+### 三维曲面
+
+```python
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+import numpy as np
+cmap = plt.cm.jet
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+X = np.arange(-5, 5, 0.25)
+Y = np.arange(-5, 5, 0.25)
+X, Y = np.meshgrid(X, Y)
+Z = np.sin(np.sqrt(X**2 + Y**2))
+ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cmap )
+ax.set_zlim(-1.01, 1.01)
+plt.show()
+```
+
+### 等高线图
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+plt.figure()
+X = np.arange(-5, 5, 0.25)
+Y = np.arange(-5, 5, 0.25)
+X, Y = np.meshgrid(X, Y)
+Z = np.sin(np.sqrt(X**2 + Y**2))
+levels = np.arange(-1,1,0.25)
+cs = plt.contour(X, Y, Z, levels)
+plt.clabel(cs,inline=1,fontsize=8)
+plt.axis('equal')
+plt.show()
+```
+
+### 三维投影
+
+```python
+from mpl_toolkits.mplot3d import axes3d
+import matplotlib.pyplot as plt
+from matplotlib import cm
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+X, Y, Z = axes3d.get_test_data(0.1)
+ax.plot_surface(X, Y, Z, rstride=8,cstride=8, alpha=0.3)
+cset = ax.contour(X, Y, Z, zdir='z', offset=-100)
+cset = ax.contour(X, Y, Z, zdir='x', offset=-40)
+cset = ax.contour(X, Y, Z, zdir='y', offset=40)
+plt.show()
+```
+
+### mplot3d 函数
+
+```python
+• plot3D：三维控件绘图
+• plot_surface： 三维网格曲面
+• plot_trisurf： 三维三角曲面
+• plot_wireframe：三维线图
+• quiver： 矢量图
+• quiver3D： 三维矢量图
+• scatter: 散点图
+```
+
+### 三维球面
+
+```python
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+import numpy as np
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+u = np.linspace(0, 2 * np.pi, 100)
+v = np.linspace(0, np.pi, 100)
+x = 10 * np.outer(np.cos(u), np.sin(v))
+y = 10 * np.outer(np.sin(u), np.sin(v))
+z = 10 * np.outer(np.ones(np.size(u)), np.cos(v))
+ax.plot_surface(x, y, z, rstride=4, cstride=4, color='b')
+plt.show()
+```
+
+```python
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+import numpy as np
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+u, v = np.ogrid[0:2*np.pi:20j, 0:np.pi:20j]
+x=np.cos(u)*np.sin(v)
+y=np.sin(u)*np.sin(v)
+z=np.cos(v)
+ax.plot_surface(x, y, z, rstride=1, cstride=1, alpha=0.3)
+plt.show()
+```
+
+### pylab实时动画
+
+```python
+import pylab as pl
+import numpy as np
+pl.ion() #实时绘图
+pl.show()
+x = np.arange(0,2*np.pi,0.01)
+line, = pl.plot(x,np.sin(x))
+for i in np.arange(1,200):
+    line.set_ydata(np.sin(x+i/10.0))
+    pl.pause(0.05)
+pl.ioff() #关闭实时绘图
+```
+
+### 动画模块 animation
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as ani
+fig = plt.figure()
+x = np.arange(0, 2*np.pi, 0.01) # x-array
+line, = plt.plot(x, np.sin(x))
+def animate(i):
+    line.set_ydata(np.sin(x+i/10.0)) # update the data
+    return line
+ani.FuncAnimation(fig, animate, np.arange(1, 200), interval=25, blit=True)
+plt.show()
+```
+
+## 解决问题
