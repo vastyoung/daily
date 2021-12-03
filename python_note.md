@@ -1739,3 +1739,367 @@ plt.show()
 ```
 
 ## 解决问题
+
+## 进阶：错误和异常
+
+### 错误
+
+你可以想象一个简单的 print 函数调用。如果我们把 print 误拼成 Print 会怎样？你会注意到它的首字母是大写。在这一例子中，Python 会抛出（Raise）一个语法错误。
+
+你会注意到一个 NameError 错误被抛出，同时 Python 还会打印出检测到的错误发生的位置。这就是一个错误错误处理器（Error Handler） 为这个错误所做的事情。
+
+### 异常
+
+我们将尝试（Try）去读取用户的输入内容。按下 [ctrl-d] 来看看会发生什么事情。
+
+```python
+>>> s = input('Enter something --> ')
+Enter something --> Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+EOFError
+```
+
+此处 Python 指出了一个称作 EOFError 的错误，代表着它发现了一个文件结尾（End of File）符号（由 ctrl-d 实现）在不该出现的时候出现了。
+
+### 处理异常
+
+我们可以通过使用 try..except 来处理异常状况。一般来说我们会把通常的语句放在 try 代码块中，将我们的错误处理器代码放置在 except 代码块中。
+
+```python
+try:
+    text = input('Enter something --> ')
+except EOFError:
+    print('Why did you do an EOF on me?')
+except KeyboardInterrupt:
+    print('You cancelled the operation.')
+else:
+    print('You entered {}'.format(text))
+
+#输出：
+# Press ctrl + d
+$ python exceptions_handle.py
+Enter something --> Why did you do an EOF on me?
+# Press ctrl + c
+$ python exceptions_handle.py
+Enter something --> ^CYou cancelled the operation.
+$ python exceptions_handle.py
+Enter something --> No exceptions
+You entered No exceptions
+```
+
+我们将所有可能引发异常或错误的语句放在 try 代码块中，并将相应的错误或异常的处理器（Handler）放在 except 子句或代码块中。except 子句可以处理某种特定的错误或异常，或者是一个在括号中列出的错误或异常。如果没有提供错误或异常的名称，它将处理所有错误与异常。
+
+你还可以拥有一个 else 子句与 try..except 代码块相关联。else 子句将在没有发生异常的时候执行。
+
+### 抛出异常
+
+你可以通过 raise 语句来引发一次异常，具体方法是提供错误名或异常名以及要抛出（Thrown）异常的对象。
+你能够引发的错误或异常必须是直接或间接从属于 Exception（异常） 类的派生类。
+
+```python
+# encoding=UTF-8
+class ShortInputException(Exception):
+    '''一个由用户定义的异常类'''
+    def __init__(self, length, atleast):
+        Exception.__init__(self)
+        self.length = length
+        self.atleast = atleast
+try:
+    text = input('Enter something --> ')
+    if len(text) < 3:
+        #使用raise触发异常
+        raise ShortInputException(len(text), 3)
+    # 其他工作能在此处继续正常运行
+except EOFError:
+    print('Why did you do an EOF on me?')
+except ShortInputException as ex:
+    print(('ShortInputException: The input was ' +
+           '{0} long, expected at least {1}')
+          .format(ex.length, ex.atleast))
+else:
+    print('No exception was raised.')
+
+#输出:
+$ python exceptions_raise.py
+Enter something --> a
+ShortInputException: The input was 1 long, expected at least 3
+$ python exceptions_raise.py
+Enter something --> abc
+No exception was raised.
+```
+
+### Try ... Finally
+
+假设你正在你的读取中读取一份文件。你应该如何确保文件对象被正确关闭，无论是否会发生异常？这可以通过 finally 块来完成。
+
+```python
+import sys
+import time
+f = None
+try:
+    f = open("poem.txt")
+    # 我们常用的文件阅读风格
+    while True:
+        line = f.readline()
+        if len(line) == 0:
+            break
+        print(line, end='')
+        sys.stdout.flush()
+        print("Press ctrl+c now")
+        # 为了确保它能运行一段时间
+        time.sleep(2)
+except IOError:
+    print("Could not find file poem.txt")
+except KeyboardInterrupt:
+    print("!! You cancelled the reading from the file.")
+finally:
+    if f:
+        f.close()
+    print("(Cleaning up: Closed the file)")
+
+#输出:
+$ python exceptions_finally.py
+Programming is fun
+Press ctrl+c now
+^C!! You cancelled the reading from the file.
+(Cleaning up: Closed the file)
+```
+
+我们按照通常文件读取进行操作，但是我们同时通过使用 time.sleep 函数任意在每打印一行后插入两秒休眠，使得程序运行变得缓慢（在通常情况下 Python 运行得非常快速）。当程序在处在运行过过程中时，按下 ctrl + c 来中断或取消程序。
+你会注意到 KeyboardInterrupt 异常被抛出，尔后程序退出。不过，在程序退出之前，finally 子句得到执行，文件对象总会被关闭。
+另外要注意到我们在 print 之后使用了 sys.stout.flush()，以便它能被立即打印到屏幕上。
+
+### with 语句
+
+在 try 块中获取资源，然后在 finally 块中释放资源是一种常见的模式。因此，还有一个 with 语句使得这一过程可以以一种干净的姿态得以完成。
+
+```python
+with open("poem.txt") as f:
+    for line in f:
+        print(line, end='')
+```
+
+程序输出的内容应与上一个案例所呈现的相同。本例的不同之处在于我们使用的是 open 函数与 with 语句——我们将关闭文件的操作交由 with open 来自动完成。
+在幕后发生的事情是有一项 with 语句所使用的协议（Protocol）。它会获取由 open 语句返回的对象，在本案例中就是“thefile”。
+它总会在代码块开始之前调用 thefile.__enter__ 函数，并且总会在代码块执行完毕之后调用 thefile.__exit__。
+因此，我们在 finally 代码块中编写的代码应该格外留心 __exit__ 方法的自动操作。这能够帮助我们避免重复显式使用 try..finally 语句。
+
+## 进阶：面向对象编程
+
+类与对象是面向对象编程的两个主要方面。一个类（Class）能够创建一种新的类型（Type），其中对象（Object）就是类的实例（Instance）。可以这样来类比：你可以拥有类型 int 的变量，也就是说存储整数的变量是 int 类的实例（对象）。
+
+对象可以使用属于它的普通变量来存储数据。这种从属于对象或类的变量叫作字段（Field）。对象还可以使用属于类的函数来实现某些功能，这种函数叫作类的方法（Method）。这两个术语很重要，它有助于我们区分函数与变量，哪些是独立的，哪些又是属于类或对象的。总之，字段与方法通称类的属性（Attribute）。
+字段有两种类型——它们属于某一类的各个实例或对象，或是从属于某一类本身。它们被分别称作实例变量（Instance Variables）与类变量（Class Variables）。
+通过 class 关键字可以创建一个类。这个类的字段与方法可以在缩进代码块中予以列出。
+
+### self
+
+类方法与普通函数只有一种特定的区别——前者必须多加一个参数在参数列表开头，这个名字必须添加到参数列表的开头，但是你不用在你调用这个功能时为这个参数赋值，Python 会为它提供。这种特定的变量引用的是对象本身，按照惯例，它被赋予 self 这一名称。
+尽管你可以为这一参数赋予任何名称，但是强烈推荐你使用 self 这一名称——其它的任何一种名称绝对会引人皱眉。使用一个标准名称能带来诸多好处——任何一位你的程序的读者能够立即认出它，甚至是专门的 IDE（Integrated Development Environments，集成开发环境）也可以为你提供帮助，只要你使用了 self 这一名称。
+针对 C++/Java/C# 程序员的提示Python 中的 self 相当于 C++ 中的 this 指针以及 Java 与 C# 中的 this 引用。
+
+### 类
+
+```python
+class Person:
+    pass  # 一个空的代码块
+p = Person()
+print(p)
+
+#输出:
+$ python oop_simplestclass.py
+&lt;__main__.Person instance at 0x10171f518&gt;
+```
+
+我们通过使用 class 语句与这个类的名称来创建一个新类。在它之后是一个缩进的语句块，代表这个类的主体。在本案例中，我们创建的是一个空代码块，使用 pass 语句予以标明。
+然后，我们通过采用类的名称后跟一对括号的方法，给这个类创建一个对象（或是实例，我们将在后面的章节中了解有关实例的更多内容）。为了验证我们的操作是否成功，我们通过直接将它们打印出来来确认变量的类型。结果告诉我们我们在 Person 类的 __main__ 模块中拥有了一个实例。
+要注意到在本例中还会打印出计算机内存中存储你的对象的地址。案例中给出的地址会与你在你的电脑上所能看见的地址不相同，因为 Python 会在它找到的任何空间来存储对象。
+
+### 方法
+
+我们已经在前面讨论过类与对象一如函数那般都可以带有方法（Method），唯一的不同在于我们还拥有一个额外的 self 变量。
+
+```python
+class Person:
+    def say_hi(self):
+        print('Hello, how are you?')
+p = Person()
+p.say_hi()
+# 前面两行同样可以写作
+# Person().say_hi()
+
+#输出:
+$ python oop_method.py
+Hello, how are you?
+```
+
+这里我们就能看见 self 是如何行动的了。要注意到 say_hi 这一方法不需要参数，但是依旧在函数定义中拥有 self 变量。
+
+### __init__ 方法
+
+在 Python 的类中，有不少方法的名称具有着特殊的意义。现在我们要了解的就是 __init__ 方法的意义。
+__init__ 方法会在类的对象被实例化（Instantiated）时立即运行。这一方法可以对任何你想进行操作的目标对象进行初始化（Initialization）操作。这里你要注意在 init 前后加上的双下划线。
+
+```python
+class Person:
+    def __init__(self, name):
+        self.name = name
+    def say_hi(self):
+        print('Hello, my name is', self.name)
+p = Person('Swaroop')
+p.say_hi()
+# 前面两行同时也能写作
+# Person('Swaroop').say_hi()
+
+#输出:
+$ python oop_init.py
+Hello, my name is Swaroop
+```
+
+在本例中，我们定义一个接受 name 参数（当然还有 self 参数）的 __init__ 方法。在这里，我们创建了一个字段，同样称为 name。要注意到尽管它们的名字都是“name”，但这是两个不相同的变量。虽说如此，但这并不会造成任何问题，因为 self.name 中的点号意味着这个叫作“name”的东西是某个叫作“self”的对象的一部分，而另一个 name 则是一个局部变量。由于我们已经如上这般明确指出了我们所指的是哪一个名字，所以它不会引发混乱。
+当我们在 Person 类下创建新的实例 p 时，我们采用的方法是先写下类的名称，后跟括在括号中的参数，形如：p = Person('Swaroop')。
+我们不会显式地调用 __init__ 方法。 这正是这个方法的特殊之处所在。
+现在，我们可以使用我们方法中的 self.name 字段了，使用的方法在 say_hi 方法中已经作过说明。
+
+### 类变量与对象变量
+
+字段（Field）有两种类型——类变量与对象变量，它们根据究竟是类还是对象拥有这些变量来进行分类。
+类变量（Class Variable）是共享的（Shared）——它们可以被属于该类的所有实例访问。该类变量只拥有一个副本，当任何一个对象对类变量作出改变时，发生的变动将在其它所有实例中都会得到体现。
+对象变量（Object variable）由类的每一个独立的对象或实例所拥有。在这种情况下，每个对象都拥有属于它自己的字段的副本，也就是说，它们不会被共享，也不会以任何方式与其它不同实例中的相同名称的字段产生关联。
+
+```python
+# coding=UTF-8
+class Robot:
+    """表示有一个带有名字的机器人。"""
+    # 一个类变量，用来计数机器人的数量
+    population = 0
+    def __init__(self, name):
+        """初始化数据"""
+        self.name = name
+        print("(Initializing {})".format(self.name))
+        # 当有人被创建时，机器人
+        # 将会增加人口数量
+        Robot.population += 1
+    def die(self):
+        """我挂了。"""
+        print("{} is being destroyed!".format(self.name))
+        Robot.population -= 1
+        if Robot.population == 0:
+            print("{} was the last one.".format(self.name))
+        else:
+            print("There are still {:d} robots working.".format(
+                Robot.population))
+    def say_hi(self):
+        """来自机器人的诚挚问候
+        没问题，你做得到。"""
+        print("Greetings, my masters call me {}.".format(self.name))
+    @classmethod
+    def how_many(cls):
+        """打印出当前的人口数量"""
+        print("We have {:d} robots.".format(cls.population))
+droid1 = Robot("R2-D2")
+droid1.say_hi()
+Robot.how_many()
+droid2 = Robot("C-3PO")
+droid2.say_hi()
+Robot.how_many()
+print("\nRobots can do some work here.\n")
+print("Robots have finished their work. So let's destroy them.")
+droid1.die()
+droid2.die()
+Robot.how_many()
+
+#输出:
+
+$ python oop_objvar.py
+(Initializing R2-D2)
+Greetings, my masters call me R2-D2.
+We have 1 robots.
+(Initializing C-3PO)
+Greetings, my masters call me C-3PO.
+We have 2 robots.
+Robots can do some work here.
+Robots have finished their work. So let's destroy them.
+R2-D2 is being destroyed!
+There are still 1 robots working.
+C-3PO is being destroyed!
+C-3PO was the last one.
+We have 0 robots.
+```
+
+这是一个比较长的案例，但是它有助于展现类与对象变量的本质。在本例中，population 属于 Robot 类，因此它是一个类变量。name 变量属于一个对象（通过使用 self 分配），因此它是一个对象变量。
+因此，我们通过 Robot.population 而非 self.population 引用 population 类变量。我们对于 name 对象变量采用 self.name 标记法加以称呼，这是这个对象中所具有的方法。要记住这个类变量与对象变量之间的简单区别。同时你还要注意当一个对象变量与一个类变量名称相同时，类变量将会被隐藏。
+除了 Robot.popluation，我们还可以使用 self.__class__.population，因为每个对象都通过 self.__class__ 属性来引用它的类。
+how_many 实际上是一个属于类而非属于对象的方法。这就意味着我们可以将它定义为一个 classmethod（类方法） 或是一个 staticmethod（静态方法），这取决于我们是否需要知道这一方法属于哪个类。由于我们已经引用了一个类变量，因此我们使用 classmethod（类方法）。
+我们使用装饰器（Decorator）将 how_many 方法标记为类方法。
+你可以将装饰器想象为调用一个包装器（Wrapper）函数的快捷方式，因此启用 @classmethod 装饰器等价于调用：
+
+```python
+how_many = classmethod(how_many)
+```
+
+会观察到 __init__ 方法会使用一个名字以初始化 Robot 实例。在这一方法中，我们将 population 按 1 往上增长，因为我们多增加了一台机器人。你还会观察到 self.name 的值是指定给每个对象的，这体现了对象变量的本质。
+你需要记住你只能使用 self 来引用同一对象的变量与方法。这被称作属性引用（Attribute Reference）。
+在本程序中，我们还会看见针对类和方法的 文档字符串（DocStrings） 的使用方式。我们可以在运行时通过 Robot.__doc__ 访问类的 文档字符串，对于方法的文档字符串，则可以使用 Robot.say_hi.__doc__。
+在 die 方法中，我们简单地将 Robot.population 的计数按 1 向下减少。
+所有的类成员都是公开的。但有一个例外：如果你使用数据成员并在其名字中使用双下划线作为前缀，形成诸如 __privatevar 这样的形式，Python 会使用名称调整（Name-mangling）来使其有效地成为一个私有变量。
+因此，你需要遵循这样的约定：任何在类或对象之中使用的变量其命名应以下划线开头，其它所有非此格式的名称都将是公开的，并可以为其它任何类或对象所使用。请记得这只是一个约定，Python 并不强制如此（除了双下划线前缀这点）。
+
+### 继承
+
+面向对象编程的一大优点是对代码的重用（Reuse），重用的一种实现方法就是通过继承（Inheritance）机制。继承最好是想象成在类之间实现类型与子类型（Type and Subtype）关系的工具。
+现在假设你希望编写一款程序来追踪一所大学里的老师和学生。有一些特征是他们都具有的，例如姓名、年龄和地址。另外一些特征是他们独有的，一如教师的薪水、课程与假期，学生的成绩和学费。
+你可以为每一种类型创建两个独立的类，并对它们进行处理。但增添一条共有特征就意味着将其添加进两个独立的类。这很快就会使程序变得笨重。
+一个更好的方法是创建一个公共类叫作 SchoolMember，然后让教师和学生从这个类中继承（Inherit），也就是说他们将成为这一类型（类）的子类型，而我们就可以向这些子类型中添加某些该类独有的特征。
+这种方法有诸多优点。如果我们增加或修改了 SchoolMember 的任何功能，它将自动反映在子类型中。举个例子，你可以通过简单地向 SchoolMember 类进行操作，来为所有老师与学生添加一条新的 ID 卡字段。不过，对某一子类型作出的改动并不会影响到其它子类型。另一大优点是你可以将某一老师或学生对象看作 SchoolMember 的对象并加以引用，这在某些情况下会大为有用，例如清点学校中的成员数量。这被称作多态性（Polymorphism），在任何情况下，如果父类型希望，子类型都可以被替换，也就是说，该对象可以被看作父类的实例。
+同时还需要注意的是我们重用父类的代码，但我们不需要再在其它类中重复它们，当我们使用独立类型时才会必要地重复这些代码。
+在上文设想的情况中，SchoolMember 类会被称作基类（Base Class）或是超类（Superclass）。Teacher 和 Student 类会被称作派生类（Derived Classes）或是子类（Subclass）。
+
+```python
+# coding=UTF-8
+class SchoolMember:
+    '''代表任何学校里的成员。'''
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+        print('(Initialized SchoolMember: {})'.format(self.name))
+    def tell(self):
+        '''告诉我有关我的细节。'''
+        print('Name:"{}" Age:"{}"'.format(self.name, self.age), end=" ")
+class Teacher(SchoolMember):
+    '''代表一位老师。'''
+    def __init__(self, name, age, salary):
+        SchoolMember.__init__(self, name, age)
+        self.salary = salary
+        print('(Initialized Teacher: {})'.format(self.name))
+    def tell(self):
+        SchoolMember.tell(self)
+        print('Salary: "{:d}"'.format(self.salary))
+class Student(SchoolMember):
+    '''代表一位学生。'''
+    def __init__(self, name, age, marks):
+        SchoolMember.__init__(self, name, age)
+        self.marks = marks
+        print('(Initialized Student: {})'.format(self.name))
+    def tell(self):
+        SchoolMember.tell(self)
+        print('Marks: "{:d}"'.format(self.marks))
+t = Teacher('Mrs. Shrividya', 40, 30000)
+s = Student('Swaroop', 25, 75)
+# 打印一行空白行
+print()
+members = [t, s]
+for member in members:
+    # 对全体师生工作
+    member.tell()
+
+#输出:
+
+$ python oop_subclass.py
+(Initialized SchoolMember: Mrs. Shrividya)
+(Initialized Teacher: Mrs. Shrividya)
+(Initialized SchoolMember: Swaroop)
+(Initialized Student: Swaroop)
+Name:"Mrs. Shrividya" Age:"40" Salary: "30000"
+Name:"Swaroop" Age:"25" Marks: "75"
+```
