@@ -703,3 +703,469 @@ seq[start:stop:step]进 行 求 值 的 时 候，Python 会调用 seq.__getitem
  $28.00 Panavise Jr. - PV-201
  $34.95 PiTFT Mini Kit 320x240
 ```
+
+#### 2.4.4　给切片赋值
+
+```python
+>>> l = list(range(10))
+>>> l
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+>>> l[2:5] = [20, 30]
+>>> l
+[0, 1, 20, 30, 5, 6, 7, 8, 9]
+>>> del l[5:7]
+>>> l
+[0, 1, 20, 30, 5, 8, 9]
+>>> l[3::2] = [11, 22]
+>>> l
+[0, 1, 20, 11, 5, 22, 9]
+>>> l[2:5] = 100 ➊
+Traceback (most recent call last):
+ File "<stdin>", line 1, in <module>
+TypeError: can only assign an iterable
+>>> l[2:5] = [100]
+>>> l
+[0, 1, 100, 22, 9]
+ ➊如果赋值的对象是一个切片，那么赋值语句的右侧必须是个可迭代对象。即便只有单独
+一个值，也要把它转换成可迭代的序列。
+```
+
+### 2.5　对序列使用+和*
+
+Python 程序员会默认序列是支持 + 和 * 操作的
+
+```python
+>>> l = [1, 2, 3]
+>>> l * 5
+[1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3]
+>>> 5 * 'abcd'
+'abcdabcdabcdabcdabcd'
+```
+
++ 和 * 都遵循这个规律，不修改原有的操作对象，而是构建一个全新的序列。
+
+```python
+#建立由列表组成的列表
+#示例 2-12 一个包含 3 个列表的列表，嵌套的 3 个列表各自有 3 个元素来代表井字游戏的一行方块
+
+>>> board = [['_'] * 3 for i in range(3)] ➊
+>>> board
+[['_', '_', '_'], ['_', '_', '_'], ['_', '_', '_']]
+>>> board[1][2] = 'X' ➋
+>>> board
+[['_', '_', '_'], ['_', '_', 'X'], ['_', '_', '_']]
+➊ 建立一个包含 3 个列表的列表，被包含的 3 个列表各自有 3 个元素。打印出这个嵌套列表。
+➋ 把第 1 行第 2 列的元素标记为 X，再打印出这个列表。
+```
+
+```python
+#示例 2-13 含有 3 个指向同一对象的引用的列表是毫无用处的
+>>> weird_board = [['_'] * 3] * 3 ➊
+>>> weird_board
+[['_', '_', '_'], ['_', '_', '_'], ['_', '_', '_']]
+>>> weird_board[1][2] = 'O' ➋
+>>> weird_board
+[['_', '_', 'O'], ['_', '_', 'O'], ['_', '_', 'O']]
+➊ 外面的列表其实包含 3 个指向同一个列表的引用。当我们不做修改的时候，看起来都
+还好。
+➋ 一旦我们试图标记第 1 行第 2 列的元素，就立马暴露了列表内的 3 个引用指向同一个对
+象的事实。
+```
+
+```python
+#示例 2-13 犯的错误本质上跟下面的代码犯的错误一样：
+row=['_'] * 3
+board = []
+for i in range(3):
+    board.append(row) ➊
+➊ 追加同一个行对象（row）3 次到游戏板（board）。
+#相反，示例 2-12 中的方法等同于这样做：
+>>> board = []
+>>> for i in range(3):
+... row=['_'] * 3 # ➊
+... board.append(row)
+...
+>>> board
+[['_', '_', '_'], ['_', '_', '_'], ['_', '_', '_']]
+>>> board[2][0] = 'X'
+>>> board # ➋
+[['_', '_', '_'], ['_', '_', '_'], ['X', '_', '_']]
+➊ 每次迭代中都新建了一个列表，作为新的一行（row）追加到游戏板（board）。
+➋ 正如我们所期待的，只有第 2 行的元素被修改。
+```
+
+### 2.6　序列的增量赋值
+
++= 背后的特殊方法是 __iadd__（用于“就地加法”）。但是如果一个类没有实现这个方法的话，Python 会退一步调用 __add__。
+
+`>>> a += b`
+
+如 果 a 实现了 __iadd__ 方 法， 就 会 调 用 这 个 方 法， 同 时 对 可 变 序 列（ 例 如 list、
+bytearray 和 array.array）来说a 会就地改动，就像调用了 a.extend(b) 一样。但是如
+果 a 没有实现 __iadd__ 的话，a += b 这个表达式的效果就变得跟 a = a + b 一样了：首先
+计算 a + b，得到一个新的对象，然后赋值给 a
+
+```python
+*= 在可变和不可变序列上的作用：
+>>> l = [1, 2, 3]
+>>> id(l)
+4311953800 ➊
+>>> l *= 2
+>>> l
+[1, 2, 3, 1, 2, 3]
+>>> id(l)
+4311953800 ➋
+>>> t = (1, 2, 3)
+>>> id(t)
+4312681568 ➌
+>>> t *= 2
+>>> id(t)
+4301348296 ➍
+➊ 刚开始时列表的 ID。
+➋ 运用增量乘法后，列表的 ID 没变，新元素追加到列表上。
+➌ 元组最开始的 ID。
+➍ 运用增量乘法后，新的元组被创建。
+```
+
+```python
+#一个关于+=的谜题
+示例 2-14 一个谜题
+>>> t = (1, 2, [30, 40])
+>>> t[2] += [50, 60]
+到底会发生下面 4 种情况中的哪一种？
+a. t 变成 (1, 2, [30, 40, 50, 60])。
+b. 因为 tuple 不支持对它的元素赋值，所以会抛出 TypeError 异常。
+c. 以上两个都不是。
+d. a 和 b 都是对的。
+
+但其实答案是 d，也就是说 a 和 b 都是对的！
+```
+
+```python
+#示例 2-15 没人料到的结果：t[2] 被改动了，但是也有异常抛出
+>>> t = (1, 2, [30, 40])
+>>> t[2] += [50, 60]
+Traceback (most recent call last):
+ File "<stdin>", line 1, in <module>
+TypeError: 'tuple' object does not support item assignment
+>>> t
+(1, 2, [30, 40, 50, 60])
+```
+
+如果写成 t[2].extend([50, 60]) 就能避免这个异常
+
+```python
+#示例 2-16 s[a] = b 背后的字节码
+>>> dis.dis('s[a] += b')
+ 1 0 LOAD_NAME 0(s)
+ 3 LOAD_NAME 1(a)
+ 6 DUP_TOP_TWO
+ 7 BINARY_SUBSCR ➊
+ 8 LOAD_NAME 2(b)
+ 11 INPLACE_ADD ➋
+ 12 ROT_THREE
+ 13 STORE_SUBSCR ➌
+ 14 LOAD_CONST 0(None)
+ 17 RETURN_VALUE
+
+➊ 将 s[a] 的值存入 TOS（Top Of Stack，栈的顶端）。
+➋ 计算 TOS += b。这一步能够完成，是因为 TOS 指向的是一个可变对象（也就是示例 2-15
+里的列表）。
+➌ s[a] = TOS 赋值。这一步失败，是因为 s 是不可变的元组（示例 2-15 中的元组 t）。
+```
+
+### 2.7 list.sort方法和内置函数sorted
+
+list.sort 方法会就地排序列表，也就是说不会把原列表复制一份,Python 的一个惯例：如果一个函数或者方法对对象进行的是就地改动，那它就应该返回
+None，好让调用者知道传入的参数发生了变动，而且并未产生新的对象。
+
+与 list.sort 相反的是内置函数 sorted，它会新建一个列表作为返回值。这个方法可以接
+受任何形式的可迭代对象作为参数，甚至包括不可变序列或生成器而不管sorted 接受的是怎样的参数，它最后都会返回一个列表。
+
+list.sort 方法 sorted 函数，都有两个可选的关键字参数。
+reverse
+如果被设定为 True，被排序的序列里的元素会以降序输出,这个参数的默认值是 False。
+key
+在对一些字符串排序时，可以用 key=str.lower 来实现忽略大小写的排序,
+或者用 key=len 进行基于字符串长度的排序
+
+```python
+>>> fruits = ['grape', 'raspberry', 'apple', 'banana']
+>>> sorted(fruits)
+['apple', 'banana', 'grape', 'raspberry'] ➊
+>>> fruits
+['grape', 'raspberry', 'apple', 'banana'] ➋
+>>> sorted(fruits, reverse=True)
+['raspberry', 'grape', 'banana', 'apple'] ➌
+>>> sorted(fruits, key=len)
+['grape', 'apple', 'banana', 'raspberry'] ➍
+>>> sorted(fruits, key=len, reverse=True)
+['raspberry', 'banana', 'grape', 'apple'] ➎
+>>> fruits
+['grape', 'raspberry', 'apple', 'banana'] ➏
+>>> fruits.sort() ➐
+>>> fruits
+['apple', 'banana', 'grape', 'raspberry'] ➑
+➊ 新建了一个按照字母排序的字符串列表。
+➋ 原列表并没有变化。
+➌ 按照字母降序排序。
+➍ 新建一个按照长度排序的字符串列表。因为这个排序算法是稳定的，grape 和 apple 的
+长度都是 5，它们的相对位置跟在原来的列表里是一样的。
+➎ 按照长度降序排序的结果。结果并不是上面那个结果的完全翻转，因为用到的排序算法
+是稳定的，也就是说在长度一样时，grape 和 apple 的相对位置不会改变。
+➏ 直到这一步，原列表 fruits 都没有任何变化。
+➐ 对原列表就地排序，返回值 None 会被控制台忽略。
+➑ 此时 fruits 本身被排序。
+```
+
+### 2.8　用bisect来管理已排序的序列
+
+bisect 模块包含两个主要函数，bisect 和 insort，两个函数都利用二分查找算法来在有序
+序列中查找或插入元素。
+
+#### 2.8.1　用bisect来搜索
+
+bisect(haystack, needle) 在 haystack（干草垛）里搜索 needle（针）的位置，该位置满
+足的条件是，把 needle 插入这个位置之后，haystack 还能保持升序。也就是在说这个函
+数返回的位置前面的值，都小于或等于 needle 的值
+
+```python
+#示例 2-17 在有序序列中用 bisect 查找某个元素的插入位置
+import bisect
+import sys
+HAYSTACK = [1, 4, 5, 6, 8, 12, 15, 20, 21, 23, 23, 26, 29, 30]
+NEEDLES = [0, 1, 2, 5, 8, 10, 22, 23, 29, 30, 31]
+ROW_FMT = '{0:2d} @ {1:2d} {2}{0:<2d}'
+def demo(bisect_fn):
+ for needle in reversed(NEEDLES):
+ position = bisect_fn(HAYSTACK, needle) ➊
+ offset = position * ' |' ➋
+ print(ROW_FMT.format(needle, position, offset)) ➌
+if __name__ == '__main__':
+ if sys.argv[-1] == 'left': ➍
+ bisect_fn = bisect.bisect_left
+ else:
+ bisect_fn = bisect.bisect
+ print('DEMO:', bisect_fn.__name__) ➎
+ print('haystack ->', ' '.join('%2d' % n for n in HAYSTACK))
+ demo(bisect_fn)
+➊ 用特定的 bisect 函数来计算元素应该出现的位置。
+➋ 利用该位置来算出需要几个分隔符号。
+➌ 把元素和其应该出现的位置打印出来。
+➍ 根据命令上最后一个参数来选用 bisect 函数。
+➎ 把选定的函数在抬头打印出来。
+```
+
+bisect 的表现可以从两个方面来调教。
+首先可以用它的两个可选参数——lo 和 hi——来缩小搜寻的范围。lo 的默认值是 0，hi
+的默认值是序列的长度，即 len() 作用于该序列的返回值。
+
+bisect 函数其实是 bisect_right 函数的别名，后者还有个姊妹函数叫 bisect_left。
+
+bisect_left 返回的插入位置是原序列中跟被插入元素相等的元素的位置，也就是新元素会被放置于它相等的元素的前面，而 bisect_right 返回的则是跟它相等的元素之后的位置。这个细微的差别可能对于整数序列来讲没什么用，但是对于那些值相等但是形式不同的数据类型来讲，结果就不一样了。比如说虽然 1 == 1.0 的返回值是 True，1 和 1.0其实是两个不同的元素。
+
+bisect 可以用来建立一个用数字作为索引的查询表格，比如说把分数和成绩 8 对应起来
+
+```python
+#示例 2-18 根据一个分数，找到它所对应的成绩
+>>> def grade(score, breakpoints=[60, 70, 80, 90], grades='FDCBA'):
+... i = bisect.bisect(breakpoints, score)
+... return grades[i]
+...
+>>> [grade(score) for score in [33, 99, 77, 70, 89, 90, 100]]
+['F', 'A', 'C', 'C', 'B', 'A', 'A']
+```
+
+#### 2.8.2　用bisect.insort插入新元素
+
+排序很耗时，因此在得到一个有序序列之后，我们最好能够保持它的有序。bisect.insort就是为了这个而存在的。
+
+insort(seq, item) 把变量 item 插入到序列 seq 中，并能保持 seq 的升序顺序。
+
+```python
+示例 2-19 insort 可以保持有序序列的顺序
+import bisect
+import random
+SIZE=7
+random.seed(1729)
+my_list = []
+for i in range(SIZE):
+ new_item = random.randrange(SIZE*2)
+ bisect.insort(my_list, new_item)
+ print('%2d ->' % new_item, my_list)
+```
+
+insort 跟 bisect 一样，有 lo 和 hi 两个可选参数用来控制查找的范围。它也有个变体叫insort_left，这个变体在背后用的是 bisect_left。
+
+### 2.9　当列表不是首选时
+
+#### 2.9.1　数组
+
+如果我们需要一个只包含数字的列表，那么 array.array 比 list 更高效。数组支持所有跟
+可变序列有关的操作，包括 .pop、.insert 和 .extend。
+数组还提供从文件读取和存入文件的更快的方法，如 .frombytes 和 .tofile
+
+```python
+#示例 2-20 一个浮点型数组的创建、存入文件和从文件读取的过程
+>>> from array import array ➊
+>>> from random import random
+>>> floats = array('d', (random() for i in range(10**7))) ➋
+>>> floats[-1] ➌
+0.07802343889111107
+>>> fp = open('floats.bin', 'wb')
+>>> floats.tofile(fp) ➍
+>>> fp.close()
+>>> floats2 = array('d') ➎
+>>> fp = open('floats.bin', 'rb')
+>>> floats2.fromfile(fp, 10**7) ➏
+>>> fp.close()
+>>> floats2[-1] ➐
+0.07802343889111107
+>>> floats2 == floats ➑
+True
+➊ 引入 array 类型。
+➋ 利用一个可迭代对象来建立一个双精度浮点数组（类型码是 'd'），这里我们用的可迭
+代对象是一个生成器表达式。
+➌ 查看数组的最后一个元素。
+➍ 把数组存入一个二进制文件里。
+➎ 新建一个双精度浮点空数组。
+➏ 把 1000 万个浮点数从二进制文件里读取出来。
+➐ 查看新数组的最后一个元素。
+➑ 检查两个数组的内容是不是完全一样。
+```
+
+#### 2.9.2　内存视图
+
+memoryview 是一个内置类，它能让用户在不复制内容的情况下操作同一个数组的不同切片
+
+```python
+示例 2-21 通过改变数组中的一个字节来更新数组里某个元素的值
+>>> numbers = array.array('h', [-2, -1, 0, 1, 2])
+>>> memv = memoryview(numbers) ➊
+>>> len(memv)
+5
+>>> memv[0] ➋
+-2
+>>> memv_oct = memv.cast('B') ➌
+>>> memv_oct.tolist() ➍
+[254, 255, 255, 255, 0, 0, 1, 0, 2, 0]
+>>> memv_oct[5] = 4 ➎
+>>> numbers
+array('h', [-2, -1, 1024, 1, 2]) ➏
+➊ 利用含有 5 个短整型有符号整数的数组（类型码是 'h'）创建一个 memoryview。
+➋ memv 里的 5 个元素跟数组里的没有区别。
+➌ 创建一个 memv_oct，这一次是把 memv 里的内容转换成 'B' 类型，也就是无符号字符。
+➍ 以列表的形式查看 memv_oct 的内容。
+➎ 把位于位置 5 的字节赋值成 4。
+➏ 因为我们把占 2 个字节的整数的高位字节改成了 4，所以这个有符号整数的值就变成
+了 1024。
+```
+
+#### 2.9.3 NumPy和SciPy
+
+```python
+示例 2-22 对 numpy.ndarray 的行和列进行基本操作
+>>> import numpy ➊
+>>> a = numpy.arange(12) ➋
+>>> a
+array([ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+>>> type(a)
+<class 'numpy.ndarray'>
+>>> a.shape ➌
+(12,)
+>>> a.shape = 3, 4 ➍
+>>> a
+array([[ 0, 1, 2, 3],
+ [ 4, 5, 6, 7],
+ [ 8, 9, 10, 11]])
+>>> a[2] ➎
+array([ 8, 9, 10, 11])
+>>> a[2, 1] ➏
+9
+>>> a[:, 1] ➐
+array([1, 5, 9])
+>>> a.transpose() ➑
+array([[ 0, 4, 8],
+ [ 1, 5, 9],
+ [ 2, 6, 10],
+ [ 3, 7, 11]])
+➊ 安装 NumPy 之后，导入它（NumPy 并不是 Python 标准库的一部分）。
+➋ 新建一个 0~11 的整数的 numpy.ndarry，然后把它打印出来。
+➌ 看看数组的维度，它是一个一维的、有 12 个元素的数组。
+➍ 把数组变成二维的，然后把它打印出来看看。
+➎ 打印出第 2 行。
+➏ 打印第 2 行第 1 列的元素。
+➐ 把第 1 列打印出来。
+➑ 把行和列交换，就得到了一个新数组。
+```
+
+```python
+#NumPy 也可以对 numpy.ndarray 中的元素进行抽象的读取、保存和其他操作：
+>>> import numpy
+>>> floats = numpy.loadtxt('floats-10M-lines.txt') ➊
+>>> floats[-3:] ➋
+array([ 3016362.69195522, 535281.10514262, 4566560.44373946])
+>>> floats *= .5 ➌
+>>> floats[-3:]
+array([ 1508181.34597761, 267640.55257131, 2283280.22186973])
+>>> from time import perf_counter as pc ➍
+>>> t0 = pc(); floats /= 3; pc() - t0 ➎
+0.03690556302899495
+>>> numpy.save('floats-10M', floats) ➏
+>>> floats2 = numpy.load('floats-10M.npy', 'r+') ➐
+>>> floats2 *= 6
+>>> floats2[-3:] ➑
+memmap([3016362.69195522, 535281.10514262, 4566560.44373946])
+➊ 从文本文件里读取 1000 万个浮点数。
+➋ 利用序列切片来读取其中的最后 3 个数。
+➌ 把数组里的每个数都乘以 0.5，然后再看看最后 3 个数。
+➍ 导入精度和性能都比较高的计时器（Python 3.3 及更新的版本中都有这个库）。
+➎ 把每个元素都除以 3，可以看到处理 1000 万个浮点数所需的时间还不足 40 毫秒。
+➏ 把数组存入后缀为 .npy 的二进制文件。
+➐ 将上面的数据导入到另外一个数组里，这次 load 方法利用了一种叫作内存映射的机制，
+它让我们在内存不足的情况下仍然可以对数组做切片。
+➑ 把数组里每个数乘以 6 之后，再检视一下数组的最后 3 个数。
+```
+
+#### 2.9.4　双向队列和其他形式的队列
+
+利用 .append 和 .pop 方法，我们可以把列表当作栈或者队列来用（比如，把 .append
+和 .pop(0) 合起来用，就能模拟栈的“先进先出”的特点）
+
+collections.deque 类（双向队列）是一个线程安全、可以快速从两端添加或者删除元素的数据类型。而且如果想要有一种数据类型来存放“最近用到的几个元素”，deque 也是一个很好的选择。这是因为在新建一个双向队列的时候，你可以指定这个队列的大小，如果这个队列满员了，还可以从反向端删除过期的元素，然后在尾端添加新的元素
+
+```python
+#示例 2-23 使用双向队列
+>>> from collections import deque
+>>> dq = deque(range(10), maxlen=10) ➊
+>>> dq
+deque([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], maxlen=10)
+>>> dq.rotate(3) ➋
+>>> dq
+deque([7, 8, 9, 0, 1, 2, 3, 4, 5, 6], maxlen=10)
+>>> dq.rotate(-4)
+>>> dq
+deque([1, 2, 3, 4, 5, 6, 7, 8, 9, 0], maxlen=10)
+>>> dq.appendleft(-1) ➌
+>>> dq
+deque([-1, 1, 2, 3, 4, 5, 6, 7, 8, 9], maxlen=10)
+>>> dq.extend([11, 22, 33]) ➍
+>>> dq
+deque([3, 4, 5, 6, 7, 8, 9, 11, 22, 33], maxlen=10)
+>>> dq.extendleft([10, 20, 30, 40]) ➎
+>>> dq
+deque([40, 30, 20, 10, 3, 4, 5, 6, 7, 8], maxlen=10)
+➊ maxlen 是一个可选参数，代表这个队列可以容纳的元素的数量，而且一旦设定，这个
+属性就不能修改了。
+➋ 队列的旋转操作接受一个参数 n，当 n > 0 时，队列的最右边的 n 个元素会被移动到队
+列的左边。当 n < 0 时，最左边的 n 个元素会被移动到右边。
+➌ 当试图对一个已满（len(d) == d.maxlen）的队列做尾部添加操作的时候，它头部的元
+素会被删除掉。注意在下一行里，元素 0 被删除了。
+➍ 在尾部添加 3 个元素的操作会挤掉 -1、1 和 2。
+➎ extendleft(iter) 方法会把迭代器里的元素逐个添加到双向队列的左边，因此迭代器里
+的元素会逆序出现在队列里。
+```
+
+## 第 3 章字典和集合
+
+### 3.1　泛映射类型
