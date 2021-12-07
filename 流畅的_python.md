@@ -1169,3 +1169,253 @@ deque([40, 30, 20, 10, 3, 4, 5, 6, 7, 8], maxlen=10)
 ## 第 3 章字典和集合
 
 ### 3.1　泛映射类型
+
+```python
+#isinstance 一起被用来判定某个数据是不是广义上的映射类型
+>>> my_dict = {}
+>>> isinstance(my_dict, abc.Mapping)
+True
+```
+
+这里用 isinstance 而不是 type 来检查某个参数是否为 dict 类型，因为这个参数有可能不
+是 dict，而是一个比较另类的映射类型。
+
+```python
+>>> tt = (1, 2, (30, 40))
+>>> hash(tt)
+8027212646858338501
+>>> tl = (1, 2, [30, 40])
+>>> hash(tl)
+Traceback (most recent call last):
+ File "<stdin>", line 1, in <module>
+TypeError: unhashable type: 'list'
+>>> tf = (1, 2, frozenset([30, 40]))
+>>> hash(tf)
+-4118419923444501110
+```
+
+元组本身是不可变序列，它里面的元素可能是其他可变类型的引用
+
+```python
+#创建字典的不同方式
+>>> a = dict(one=1, two=2, three=3)
+>>> b = {'one': 1, 'two': 2, 'three': 3}
+>>> c = dict(zip(['one', 'two', 'three'], [1, 2, 3]))
+>>> d = dict([('two', 2), ('one', 1), ('three', 3)])
+>>> e = dict({'three': 3, 'one': 1, 'two': 2})
+>>> a == b == c == d == e
+True
+```
+
+### 3.2　字典推导
+
+字典推导（dictcomp）可以从任何以键值对作为元素的可迭代对象中构建出字典。
+
+```python
+#示例 3-1　字典推导的应用
+>>> DIAL_CODES = [ ➊
+... (86, 'China'),
+... (91, 'India'),
+... (1, 'United States'),
+... (62, 'Indonesia'),
+... (55, 'Brazil'),
+... (92, 'Pakistan'),
+... (880, 'Bangladesh'),
+... (234, 'Nigeria'),
+... (7, 'Russia'),
+... (81, 'Japan'),
+... ]
+>>> country_code = {country: code for code, country in DIAL_CODES} ➋
+>>> country_code
+{'China': 86, 'India': 91, 'Bangladesh': 880, 'United States': 1,
+'Pakistan': 92, 'Japan': 81, 'Russia': 7, 'Brazil': 55, 'Nigeria':
+234, 'Indonesia': 62}
+>>> {code: country.upper() for country, code in country_code.items() ➌
+... if code < 66}
+{1: 'UNITED STATES', 55: 'BRAZIL', 62: 'INDONESIA', 7: 'RUSSIA'}
+➊ 一个承载成对数据的列表，它可以直接用在字典的构造方法中。
+➋ 这里把配好对的数据左右换了下，国家名是键，区域码是值。
+➌ 跟上面相反，用区域码作为键，国家名称转换为大写，并且过滤掉区域码大于或等于
+66 的地区。
+```
+
+### 3.3　常见的映射方法
+
+用setdefault处理找不到的键
+
+当字典 d[k] 不能找到正确的键的时候，Python 会抛出异常，这个行为符合 Python 所信奉的“快速失败”哲学。也许每个 Python 程序员都知道可以用 d.get(k, default) 来代替 d[k]，给找不到的键一个默认的返回值（这比处理 KeyError 要方便不少）。
+
+```python
+#示例 3-2 index0.py 这段程序从索引中获取单词出现的频率信息，并把它们写进对应的列表里（更好的解决方案在示例 3-4 中）
+"""创建一个从单词到其出现情况的映射"""
+import sys
+import re
+WORD_RE = re.compile(r'\w+')
+index = {}
+with open(sys.argv[1], encoding='utf-8') as fp:
+ for line_no, line in enumerate(fp, 1):
+ for match in WORD_RE.finditer(line):
+ word = match.group()
+ column_no = match.start()+1
+ location = (line_no, column_no)
+ # 这其实是一种很不好的实现，这样写只是为了证明论点
+ occurrences = index.get(word, []) ➊
+ occurrences.append(location) ➋
+ index[word] = occurrences ➌
+# 以字母顺序打印出结果
+for word in sorted(index, key=str.upper): ➍
+ print(word, index[word])
+➊ 提取 word 出现的情况，如果还没有它的记录，返回 []。
+➋ 把单词新出现的位置添加到列表的后面。
+➌ 把新的列表放回字典中，这又牵扯到一次查询操作。
+➍ sorted 函数的 key= 参数没有调用 str.uppper，而是把这个方法的引用传递给 sorted 函
+数，这样在排序的时候，单词会被规范成统一格式。2
+```
+
+```python
+#示例 3-3 这里是示例 3-2 的不完全输出，每一行的列表都代表一个单词的出现情况，列表中的元素是一对值，第一个值表示出现的行，第二个表示出现的列
+$ python3 index0.py ../../data/zen.txt
+a [(19, 48), (20, 53)]
+Although [(11, 1), (16, 1), (18, 1)]
+ambiguity [(14, 16)]
+and [(15, 23)]
+are [(21, 12)]
+aren [(10, 15)]
+at [(16, 38)]
+bad [(19, 50)]
+be [(15, 14), (16, 27), (20, 50)]
+beats [(11, 23)]
+Beautiful [(3, 1)]
+better [(3, 14), (4, 13), (5, 11), (6, 12), (7, 9), (8, 11),
+(17, 8), (18, 25)]
+...
+```
+
+```python
+#示例 3-4 index.py 用一行就解决了获取和更新单词的出现情况列表，当然跟示例 3-2 不一样的是，这里用到了 dict.setdefault
+"""创建从一个单词到其出现情况的映射"""
+import sys
+import re
+WORD_RE = re.compile(r'\w+')
+index = {}
+with open(sys.argv[1], encoding='utf-8') as fp:
+ for line_no, line in enumerate(fp, 1):
+ for match in WORD_RE.finditer(line):
+ word = match.group()
+ column_no = match.start()+1
+ location = (line_no, column_no)
+ index.setdefault(word, []).append(location) ➊
+# 以字母顺序打印出结果
+for word in sorted(index, key=str.upper):
+ print(word, index[word])
+➊ 获取单词的出现情况列表，如果单词不存在，把单词和一个空列表放进映射，然后返回
+这个空列表，这样就能在不进行第二次查找的情况下更新列表了。
+```
+
+```python
+也就是说，这样写：
+my_dict.setdefault(key, []).append(new_value)
+跟这样写：
+if key not in my_dict:
+ my_dict[key] = []
+my_dict[key].append(new_value)
+二者的效果是一样的，只不过后者至少要进行两次键查询——如果键不存在的话，就是三次，用 setdefault 只需要一次就可以完成整个操作。
+```
+
+### 3.4　映射的弹性键查询
+
+#### 3.4.1 defaultdict：处理找不到的键的一个选择
+
+比如，我们新建了这样一个字典：dd = defaultdict(list)，如果键 'new-key' 在 dd 中还
+不存在的话，表达式 dd['new-key'] 会按照以下的步骤来行事。
+(1) 调用 list() 来建立一个新列表。
+(2) 把这个新列表作为值，'new-key' 作为它的键，放到 dd 中。
+(3) 返回这个列表的引用。
+
+```python
+示例 3-5 index_default.py：利用 defaultdict 实例而不是 setdefault 方法
+"""创建一个从单词到其出现情况的映射"""
+import sys
+import re
+import collections
+WORD_RE = re.compile(r'\w+')
+index = collections.defaultdict(list) ➊
+with open(sys.argv[1], encoding='utf-8') as fp:
+ for line_no, line in enumerate(fp, 1):
+ for match in WORD_RE.finditer(line):
+ word = match.group()
+ column_no = match.start()+1
+ location = (line_no, column_no)
+ index[word].append(location) ➋
+# 以字母顺序打印出结果
+for word in sorted(index, key=str.upper):
+ print(word, index[word])
+➊ 把 list 构造方法作为 default_factory 来创建一个 defaultdict。
+➋ 如果 index 并没有 word 的记录，那么 default_factory 会被调用，为查询不到的键创造
+一个值。这个值在这里是一个空的列表，然后这个空列表被赋值给 index[word]，继而
+被当作返回值返回，因此 .append(location) 操作总能成功。
+```
+
+如果在创建 defaultdict 的时候没有指定 default_factory，查询不存在的键会触发KeyError。
+
+所有这一切背后的功臣其实是特殊方法 __missing__。它会在 defaultdict 遇到找不到的键的时候调用 default_factory，而实际上这个特性是所有映射类型都可以选择去支持的。
+
+#### 3.4.2　特殊方法__missing__
+
+__missing__ 方法只会被 __getitem__ 调用（比如在表达式 d[k] 中）。提供
+__missing__ 方法对 get 或者 __contains__（in 运算符会用到这个方法）
+
+```python
+示例 3-6 当有非字符串的键被查找的时候，StrKeyDict0 是如何在该键不存在的情况下，
+把它转换为字符串的
+Tests for item retrieval using `d[key]` notation::
+ >>> d = StrKeyDict0([('2', 'two'), ('4', 'four')])
+ >>> d['2']
+ 'two'
+ >>> d[4]
+ 'four'
+ >>> d[1]
+ Traceback (most recent call last):
+ ...
+ KeyError: '1'
+Tests for item retrieval using `d.get(key)` notation::
+ >>> d.get('2')
+ 'two'
+ >>> d.get(4)
+ 'four'
+ >>> d.get(1, 'N/A')
+ 'N/A'
+Tests for the `in` operator::
+ >>> 2 in d
+ True
+ >>> 1 in d
+ False
+```
+
+```python
+示例 3-7 StrKeyDict0 在查询的时候把非字符串的键转换为字符串
+class StrKeyDict0(dict): ➊
+ def __missing__(self, key):
+ if isinstance(key, str): ➋
+ raise KeyError(key)
+ return self[str(key)] ➌
+ def get(self, key, default=None):
+ try:
+ return self[key] ➍
+ except KeyError:
+ return default ➎
+ def __contains__(self, key):
+ return key in self.keys() or str(key) in self.keys() ➏
+➊ StrKeyDict0 继承了 dict。
+➋ 如果找不到的键本身就是字符串，那就抛出 KeyError 异常。
+➌ 如果找不到的键不是字符串，那么把它转换成字符串再进行查找。
+➍ get 方法把查找工作用 self[key] 的形式委托给 __getitem__，这样在宣布查找失败之
+前，还能通过 __missing__ 再给某个键一个机会。
+➎ 如果抛出 KeyError，那么说明 __missing__ 也失败了，于是返回 default。
+➏ 先按照传入键的原本的值来查找（我们的映射类型中可能含有非字符串的键），如果没
+找到，再用 str() 方法把键转换成字符串再查找一次。
+```
+
+### 3.5　字典的变种
+
+collections.OrderedDict :这个类型在添加键的时候会保持顺序，因此键的迭代次序总是一致的。OrderedDict的 popitem 方法默认删除并返回的是字典里的最后一个元素，但是如果像 my_odict.popitem(last=False) 这样调用它，那么它删除并返回第一个被添加进去的元素。
