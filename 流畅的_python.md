@@ -1419,3 +1419,404 @@ class StrKeyDict0(dict): ➊
 ### 3.5　字典的变种
 
 collections.OrderedDict :这个类型在添加键的时候会保持顺序，因此键的迭代次序总是一致的。OrderedDict的 popitem 方法默认删除并返回的是字典里的最后一个元素，但是如果像 my_odict.popitem(last=False) 这样调用它，那么它删除并返回第一个被添加进去的元素。
+
+collections.ChainMap
+该类型可以容纳数个不同的映射对象，然后在进行键查找操作的时候，这些对象会被当作一个整体被逐个查找，直到键被找到为止。这个功能在给有嵌套作用域的语言做解释器的时候很有用，可以用一个映射对象来代表一个作用域的上下文。
+
+collections.Counter
+这个映射类型会给键准备一个整数计数器。每次更新一个键的时候都会增加这个计数器。所以这个类型可以用来给可散列表对象计数，或者是当成多重集来用——多重集合就是集合里的元素可以出现不止一次。Counter 实现了 + 和 - 运算符用来合并记录，还有像 most_common([n]) 这类很有用的方法。most_common([n]) 会按照次序返回映射里最常见的 n 个键和它们的计数
+
+```python
+>>> ct = collections.Counter('abracadabra')
+>>> ct
+Counter({'a': 5, 'b': 2, 'r': 2, 'c': 1, 'd': 1})
+>>> ct.update('aaaaazzz')
+>>> ct
+Counter({'a': 10, 'z': 3, 'b': 2, 'r': 2, 'c': 1, 'd': 1})
+>>> ct.most_common(2)
+[('a', 10), ('z', 3)]
+```
+
+### 3.6　子类化UserDict
+
+UserDict 并不是 dict 的子类，但是 UserDict 有一个叫作
+data 的属性，是 dict 的实例，这个属性实际上是 UserDict 最终存储数据的地方
+
+```python
+#示例 3-8　无论是添加、更新还是查询操作，StrKeyDict 都会把非字符串的键转换为字符串
+import collections
+class StrKeyDict(collections.UserDict): ➊
+ def __missing__(self, key): ➋
+ if isinstance(key, str):
+ raise KeyError(key)
+ return self[str(key)]
+ def __contains__(self, key):
+ return str(key) in self.data ➌
+ def __setitem__(self, key, item):
+ self.data[str(key)] = item ➍
+➊ StrKeyDict 是对 UserDict 的扩展。
+➋ __missing__ 跟示例 3-7 里的一模一样。
+➌ __contains__ 则更简洁些。这里可以放心假设所有已经存储的键都是字符串。因此，只
+要在 self.data 上查询就好了，并不需要像 StrKeyDict0 那样去麻烦 self.keys()。
+➍ __setitem__ 会把所有的键都转换成字符串。由于把具体的实现委托给了 self.data 属
+性，这个方法写起来也不难
+```
+
+MutableMapping.update
+这个方法不但可以为我们所直接利用，它还用在 __init__ 里，让构造方法可以利用传入的各种参数（其他映射类型、元素是 (key, value) 对的可迭代对象和键值参数）来新建实例。因为这个方法在背后是用 self[key] = value 来添加新值的，所以它其实是在使用我们的 __setitem__ 方法。
+
+Mapping.get
+在 StrKeyDict0（示例 3-7） 中， 我 们 不 得 不 改 写 get 方 法， 好 让 它 的 表 现 跟__getitem__ 一致。而在示例 3-8 中就没这个必要了，因为它继承了 Mapping.get 方法
+
+### 3.7　不可变映射类型
+
+```python
+#示例 3-9　用 MappingProxyType 来获取字典的只读实例 mappingproxy
+>>> from types import MappingProxyType
+>>> d = {1:'A'}
+>>> d_proxy = MappingProxyType(d)
+>>> d_proxy
+mappingproxy({1: 'A'})
+>>> d_proxy[1] ➊
+```
+
+### 3.8　集合论
+
+本书中“集”或者“集合”既指 set，也指 frozenset。当“集”仅指代 set类时，我会用等宽字体表示 7
+
+```python
+#集合的本质是许多唯一对象的聚集。因此，集合可以用于去重：
+>>> l = ['spam', 'spam', 'eggs', 'spam']
+>>> set(l)
+{'eggs', 'spam'}
+>>> list(set(l))
+['eggs', 'spam']
+```
+
+集合还实现了很多基础的中缀运算符 。给定两个集合 a 和 b，a | b 返回的是它们的合集，a & b 得到的是交集，而 a - b 得到的是差集。
+
+```python
+#示例 3-10 needles 的元素在 haystack 里出现的次数，两个变量都是 set 类型
+found = len(needles & haystack)
+```
+
+```python
+#示例 3-11 needles 的元素在 haystack 里出现的次数（作用和示例 3-10 中的相同）
+found = 0
+for n in needles:
+ if n in haystack:
+ found += 1
+```
+
+```python
+示例 3-12 needles 的元素在 haystack 里出现的次数，这次的代码可以用在任何可迭代对
+象上
+found = len(set(needles) & set(haystack))
+# 另一种写法：
+found = len(set(needles).intersection(haystack))
+```
+
+#### 3.8.1　集合字面量
+
+```python
+>>> s = {1}
+>>> type(s)
+<class 'set'>
+>>> s
+{1}
+>>> s.pop()
+1
+>>> s
+set()
+```
+
+```python
+用 dis.dis（反汇编函数）来看看两个方法的字节码的不同：
+>>> from dis import dis
+>>> dis('{1}') ➊
+ 1 0 LOAD_CONST 0 (1)
+ 3 BUILD_SET 1 ➋
+ 6 RETURN_VALUE
+>>> dis('set([1])') ➌
+ 1 0 LOAD_NAME 0 (set) ➍
+ 3 LOAD_CONST 0 (1)
+ 6 BUILD_LIST 1
+ 9 CALL_FUNCTION 1 (1 positional, 0 keyword pair)
+ 12 RETURN_VALUE
+➊ 检查 {1} 字面量背后的字节码。
+➋ 特殊的字节码 BUILD_SET 几乎完成了所有的工作。
+➌ set([1]) 的字节码。
+➍ 3 种不同的操作代替了上面的 BUILD_SET：LOAD_NAME、BUILD_LIST 和 CALL_FUNCTION。
+```
+
+```python
+>>> frozenset(range(10))
+frozenset({0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
+```
+
+#### 3.8.2　集合推导
+
+```python
+示例 3-13 新建一个 Latin-1 字符集合，该集合里的每个字符的 Unicode 名字里都有
+“SIGN”这个单词
+>>> from unicodedata import name ➊
+>>> {chr(i) for i in range(32, 256) if 'SIGN' in name(chr(i),'')} ➋
+{'§', '=', '¢', '#', '¤', '<', '¥', 'μ', '×', '$', '¶', '£', '©',
+'°', '+', '÷', '±', '>', '¬', '®', '%'}
+➊ 从 unicodedata 模块里导入 name 函数，用以获取字符的名字。
+➋ 把编码在 32~255 之间的字符的名字里有“SIGN”单词的挑出来，放到一个集合里。
+```
+
+#### 3.9 dict和set的背后
+
+#### 3.9.1　一个关于效率的实验
+
+```python
+#示例 3-14 在 haystack 里查找 needles 的元素，并计算找到的元素的个数
+found = 0
+for n in needles:
+ if n in haystack:
+ found += 1
+```
+
+然后这段基准测试重复了 4 次，每次都把 haystack 的大小变成了上一次的 10 倍，直到里面有 1000 万个元素。
+
+#### 3.9.2　字典中的散列表
+
+散列表其实是一个稀疏数组（总是有空白元素的数组称为稀疏数组）。在一般的数据结构教材中，散列表里的单元通常叫作表元（bucket）。在 dict 的散列表当中，每个键值对都占用一个表元，每个表元都有两个部分，一个是对键的引用，另一个是对值的引用。因为所有表元的大小一致，所以可以通过偏移量来读取某个表元。
+
+#### 3.9.3 dict的实现及其导致的结果
+
+1. 键必须是可散列的
+
+一个可散列的对象必须满足以下要求。
+(1) 支持 hash() 函数，并且通过 __hash__() 方法所得到的散列值是不变的。
+(2) 支持通过 __eq__() 方法来检测相等性。
+(3) 若 a == b 为真，则 hash(a) == hash(b) 也为真。
+
+所有由用户自定义的对象默认都是可散列的，因为它们的散列值由 id() 来获取，而且它们都是不相等的。
+
+如果你实现了一个类的 __eq__ 方法，并且希望它是可散列的，那么它一定要有个恰当的 __hash__ 方法，保证在 a == b 为真的情况下 hash(a) == hash(b)也必定为真。否则就会破坏恒定的散列表算法，导致由这些对象所组成的字典和集合完全失去可靠性，这个后果是非常可怕的。另一方面，如果一个
+含有自定义的 __eq__ 依赖的类处于可变的状态，那就不要在这个类中实现__hash__ 方法，因为它的实例是不可散列的。
+
+```python
+示例 3-17 dialcodes.py 将同样的数据以不同的顺序添加到 3 个字典里
+# 世界人口数量前10位国家的电话区号
+DIAL_CODES = [
+ (86, 'China'),
+ (91, 'India'),
+ (1, 'United States'),
+ (62, 'Indonesia'),
+ (55, 'Brazil'),
+ (92, 'Pakistan'),
+ (880, 'Bangladesh'),
+ (234, 'Nigeria'),
+ (7, 'Russia'),
+ (81, 'Japan'),
+ ]
+d1 = dict(DIAL_CODES) ➊
+print('d1:', d1.keys())
+d2 = dict(sorted(DIAL_CODES)) ➋
+print('d2:', d2.keys())
+d3 = dict(sorted(DIAL_CODES, key=lambda x:x[1])) ➌
+print('d3:', d3.keys())
+assert d1 == d2 and d2 == d3 ➍
+➊ 创建 d1 的时候，数据元组的顺序是按照国家的人口排名来决定的。
+➋ 创建 d2 的时候，数据元组的顺序是按照国家的电话区号来决定的。
+➌ 创建 d3 的时候，数据元组的顺序是按照国家名字的英文拼写来决定的。
+➍ 这些字典是相等的，因为它们所包含的数据是一样的。
+```
+
+```python
+#示例 3-18 里是上面例子的输出。
+#示例 3-18 dialcodes.py 的输出中，3 个字典的键的顺序是不一样的
+d1: dict_keys([880, 1, 86, 55, 7, 234, 91, 92, 62, 81])
+d2: dict_keys([880, 1, 91, 86, 81, 55, 234, 7, 92, 62])
+d3: dict_keys([880, 81, 1, 86, 55, 7, 234, 91, 92, 62])
+```
+
+## 第 4 章 文本和字节序列
+
+### 4.1　字符问题
+
+```python
+示例 4-1　编码和解码
+>>> s = 'café'
+>>> len(s) # ➊
+4
+>>> b = s.encode('utf8') # ➋
+>>> b
+b'caf\xc3\xa9' # ➌
+>>> len(b) # ➍
+5
+>>> b.decode('utf8') # ➎
+'café'
+➊ 'café' 字符串有 4 个 Unicode 字符。
+➋ 使用 UTF-8 把 str 对象编码成 bytes 对象。
+➌ bytes 字面量以 b 开头。
+➍ 字节序列 b 有 5 个字节（在 UTF-8 中，“é”的码位编码成两个字节）。
+➎ 使用 UTF-8 把 bytes 对象解码成 str 对象。
+```
+
+### 4.2　字节概要
+
+```python
+#示例 4-2　包含 5 个字节的 bytes 和 bytearray 对象
+>>> cafe = bytes('café', encoding='utf_8') ➊
+>>> cafe
+b'caf\xc3\xa9'
+>>> cafe[0] ➋
+99
+>>> cafe[:1] ➌
+b'c'
+>>> cafe_arr = bytearray(cafe)
+>>> cafe_arr ➍
+bytearray(b'caf\xc3\xa9')
+>>> cafe_arr[-1:] ➎
+bytearray(b'\xa9')
+➊ bytes 对象可以从 str 对象使用给定的编码构建。
+➋ 各个元素是 range(256) 内的整数。
+➌ bytes 对象的切片还是 bytes 对象，即使是只有一个字节的切片。
+➍ bytearray 对象没有字面量句法，而是以 bytearray() 和字节序列字面量参数的形式显示。
+➎ bytearray 对象的切片还是 bytearray 对象。
+```
+
+```python
+示例 4-3　使用数组中的原始数据初始化 bytes 对象
+>>> import array
+>>> numbers = array.array('h', [-2, -1, 0, 1, 2]) ➊
+>>> octets = bytes(numbers) ➋
+>>> octets
+b'\xfe\xff\xff\xff\x00\x00\x01\x00\x02\x00' ➌
+➊ 指定类型代码 h，创建一个短整数（16 位）数组。
+➋ octets 保存组成 numbers 的字节序列的副本。
+➌ 这些是表示那 5 个短整数的 10 个字节。
+```
+
+结构体和内存视图
+
+```python
+示例 4-4　使用 memoryview 和 struct 查看一个 GIF 图像的首部
+>>> import struct
+>>> fmt = '<3s3sHH' # ➊
+>>> with open('filter.gif', 'rb') as fp:
+... img = memoryview(fp.read()) # ➋
+...
+>>> header = img[:10] # ➌
+>>> bytes(header) # ➍
+b'GIF89a+\x02\xe6\x00'
+>>> struct.unpack(fmt, header) # ➎
+(b'GIF', b'89a', 555, 230)
+>>> del header # ➏
+>>> del img
+➊ 结构体的格式：< 是小字节序，3s3s 是两个 3 字节序列，HH 是两个 16 位二进制整数。
+➋ 使用内存中的文件内容创建一个 memoryview 对象……
+➌ ……然后使用它的切片再创建一个 memoryview 对象；这里不会复制字节序列。
+➍ 转换成字节序列，这只是为了显示；这里复制了 10 字节。
+➎ 拆包 memoryview 对象，得到一个元组，包含类型、版本、宽度和高度。
+➏ 删除引用，释放 memoryview 实例所占的内存。
+```
+
+### 4.3　基本的编解码器
+
+```python
+示例 4-5　使用 3 个编解码器编码字符串“El Niño”，得到的字节序列差异很大
+>>> for codec in ['latin_1', 'utf_8', 'utf_16']:
+... print(codec, 'El Niño'.encode(codec), sep='\t')
+...
+latin_1 b'El Ni\xf1o'
+utf_8 b'El Ni\xc3\xb1o'
+utf_16 b'\xff\xfeE\x00l\x00 \x00N\x00i\x00\xf1\x00o\x00'
+```
+
+latin1（即 iso8859_1）
+一种重要的编码，是其他编码的基础，例如 cp1252 和 Unicode（注意，latin1 与
+cp1252 的字节值是一样的，甚至连码位也相同）。
+
+utf-8
+目前 Web 中最常见的 8 位编码；3 与 ASCII 兼容（纯 ASCII 文本是有效的 UTF-8 文本）。
+
+utf-16le
+UTF-16 的 16 位编码方案的一种形式；所有 UTF-16 支持通过转义序列（称为“代理对”，surrogate pair）表示超过 U+FFFF 的码位。
+
+### 4.4　了解编解码问题
+
+#### 4.4.1　处理UnicodeEncodeError
+
+```python
+示例 4-6　编码成字节序列：成功和错误处理
+>>> city = 'São Paulo'
+>>> city.encode('utf_8') ➊
+b'S\xc3\xa3o Paulo'
+>>> city.encode('utf_16')
+b'\xff\xfeS\x00\xe3\x00o\x00 \x00P\x00a\x00u\x00l\x00o\x00'
+>>> city.encode('iso8859_1') ➋
+b'S\xe3o Paulo'
+>>> city.encode('cp437') ➌
+Traceback (most recent call last):
+ File "<stdin>", line 1, in <module>
+ File "/.../lib/python3.4/encodings/cp437.py", line 12, in encode
+ return codecs.charmap_encode(input,errors,encoding_map)
+UnicodeEncodeError: 'charmap' codec can't encode character '\xe3' in
+position 1: character maps to <undefined>
+>>> city.encode('cp437', errors='ignore') ➍
+b'So Paulo'
+>>> city.encode('cp437', errors='replace') ➎
+b'S?o Paulo'
+>>> city.encode('cp437', errors='xmlcharrefreplace') ➏
+b'S&#227;o Paulo'
+➊ 'utf_?' 编码能处理任何字符串。
+➋ 'iso8859_1' 编码也能处理字符串 'São Paulo'。
+➌ 'cp437' 无法编码 'ã'（带波形符的“a”）。默认的错误处理方式 'strict' 抛出 UnicodeEncodeError。
+➍ error='ignore' 处理方式悄无声息地跳过无法编码的字符；这样做通常很是不妥。
+➎ 编码时指定 error='replace'，把无法编码的字符替换成 '?'；数据损坏了，但是用户知
+道出了问题。
+➏ 'xmlcharrefreplace' 把无法编码的字符替换成 XML 实体。
+```
+
+#### 4.4.2　处理UnicodeDecodeError
+
+```python
+示例 4-7　把字节序列解码成字符串：成功和错误处理
+>>> octets = b'Montr\xe9al' ➊
+>>> octets.decode('cp1252') ➋
+'Montréal'
+>>> octets.decode('iso8859_7') ➌
+'Montrιal'
+>>> octets.decode('koi8_r') ➍
+'MontrИal'
+>>> octets.decode('utf_8') ➎
+Traceback (most recent call last):
+ File "<stdin>", line 1, in <module>
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xe9 in position 5:
+invalid continuation byte
+>>> octets.decode('utf_8', errors='replace') ➏
+'Montr�al'
+➊ 这些字节序列是使用 latin1 编码的“Montréal”；'\xe9' 字节对应“é”。
+➋ 可以使用 'cp1252'（Windows 1252）解码，因为它是 latin1 的有效超集。
+➌ ISO-8859-7 用于编码希腊文，因此无法正确解释 '\xe9' 字节，而且没有抛出错误。
+➍ KOI8-R 用于编码俄文；这里，'\xe9' 表示西里尔字母“И”。
+➎ 'utf_8' 编解码器检测到 octets 不是有效的 UTF-8 字符串，抛出 UnicodeDecodeError。
+➏ 使用 'replace' 错误处理方式，\xe9 替换成了“�”（码位是 U+FFFD），这是官方指定
+的 REPLACEMENT CHARACTER（替换字符），表示未知字符。
+```
+
+#### 4.4.3　使用预期之外的编码加载模块时抛出的SyntaxError
+
+```python
+示例 4-8 ola.py：“你好，世界！”的葡萄牙语版
+# coding: cp1252
+print('Olá, Mundo!')
+```
+
+#### 4.4.4　如何找出字节序列的编码
+
+#### 4.4.5 BOM：有用的鬼符
+
+```python
+>>> u16 = 'El Niño'.encode('utf_16')
+>>> u16
+b'\xff\xfeE\x00l\x00 \x00N\x00i\x00\xf1\x00o\x00'
+```
+
+我指的是 b'\xff\xfe'。这是 BOM，即字节序标记（byte-order mark），指明编码时使用Intel CPU 的小字节序。
