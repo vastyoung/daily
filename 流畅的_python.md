@@ -1819,4 +1819,4 @@ print('Olá, Mundo!')
 b'\xff\xfeE\x00l\x00 \x00N\x00i\x00\xf1\x00o\x00'
 ```
 
-我指的是 b'\xff\xfe'。这是 BOM，即字节序标记（byte-order mark），指明编码时使用Intel CPU 的小字节序。
+我指的是 b'\xff\xfe'。这是 BOM，即字节序标记（byte-order mark），指明编码时使用Intel CPU 的小字节序
