@@ -1820,3 +1820,270 @@ b'\xff\xfeE\x00l\x00 \x00N\x00i\x00\xf1\x00o\x00'
 ```
 
 我指的是 b'\xff\xfe'。这是 BOM，即字节序标记（byte-order mark），指明编码时使用Intel CPU 的小字节序
+
+UTF-16 有两个变种：UTF-16LE，显式指明使用小字节序； UTF-16BE，显式指明使用大字节序。
+
+如果使用这两个变种，不会生成 BOM：
+
+```python
+>>> u16le = 'El Niño'.encode('utf_16le')
+>>> list(u16le)
+[69, 0, 108, 0, 32, 0, 78, 0, 105, 0, 241, 0, 111, 0]
+>>> u16be = 'El Niño'.encode('utf_16be')
+>>> list(u16be)
+[0, 69, 0, 108, 0, 32, 0, 78, 0, 105, 0, 241, 0, 111]
+```
+
+UTF-8 的一大优势是，不管设备使用哪种字节序，生成的字节序列始终一致，因此不需要 BOM
+
+### 4.5　处理文本文件
+
+```python
+#示例 4-9　一个平台上的编码问题（如果在你的机器上运行，它可能会发生，也可能不会）
+>>> open('cafe.txt', 'w', encoding='utf_8').write('café')
+4
+>>> open('cafe.txt').read()
+'cafÃ©'
+```
+
+问题是：写入文件时指定了 UTF-8 编码，但是读取文件时没有这么做，因此 Python 假定要使用系统默认的编码（Windows 1252），于是文件的最后一个字节解码成了字符 'Ã©'，而不是 'é'。
+
+```python
+示例 4-10 仔细分析在 Windows 中运行的示例 4-9，找出并修正问题
+>>> fp = open('cafe.txt', 'w', encoding='utf_8')
+>>> fp ➊
+<_io.TextIOWrapper name='cafe.txt' mode='w' encoding='utf_8'>
+>>> fp.write('café')
+4 ➋
+>>> fp.close()
+>>> import os
+>>> os.stat('cafe.txt').st_size
+5 ➌
+>>> fp2 = open('cafe.txt')
+>>> fp2 ➍
+<_io.TextIOWrapper name='cafe.txt' mode='r' encoding='cp1252'>
+>>> fp2.encoding ➎
+'cp1252'
+>>> fp2.read() 
+'cafÃ©' ➏
+>>> fp3 = open('cafe.txt', encoding='utf_8') ➐
+>>> fp3
+<_io.TextIOWrapper name='cafe.txt' mode='r' encoding='utf_8'>
+>>> fp3.read()
+'café' ➑
+>>> fp4 = open('cafe.txt', 'rb') ➒
+>>> fp4
+<_io.BufferedReader name='cafe.txt'> ➓
+>>> fp4.read()  # 读取返回的字节序列，结果与预期相符。
+b'caf\xc3\xa9'
+➊ 默认情况下，open 函数采用文本模式，返回一个 TextIOWrapper 对象。
+➋ 在 TextIOWrapper 对象上调用 write 方法返回写入的 Unicode 字符数。
+➌ os.stat 报告文件中有 5 个字节；UTF-8 编码的 'é' 占两个字节，0xc3 和 0xa9。
+➍ 打开文本文件时没有显式指定编码，返回一个 TextIOWrapper 对象，编码是区域设置中
+的默认值。
+➎ TextIOWrapper 对象有个 encoding 属性；查看它，发现这里的编码是 cp1252。
+➏ 在 Windows cp1252 编码中，0xc3 字节是“Ã”（带波形符的 A），0xa9 字节是版权符号。
+➐ 使用正确的编码打开那个文件。
+➑ 结果符合预期：得到的是四个 Unicode 字符 'café'。
+➒ 'rb' 标志指明在二进制模式中读取文件。
+➓ 返回的是 BufferedReader 对象，而不是 TextIOWrapper 对象。
+```
+
+```python
+示例 4-11 探索编码默认值
+import sys, locale
+expressions = """
+ locale.getpreferredencoding()
+ type(my_file)
+ my_file.encoding
+ sys.stdout.isatty()
+ sys.stdout.encoding
+ sys.stdin.isatty() 
+ sys.stdin.encoding
+ sys.stderr.isatty()
+ sys.stderr.encoding
+ sys.getdefaultencoding()
+ sys.getfilesystemencoding()
+ """
+my_file = open('dummy', 'w')
+for expression in expressions.split():
+ value = eval(expression)
+ print(expression.rjust(30), '->', repr(value))
+```
+
+```python
+$ python3 default_encodings.py
+ locale.getpreferredencoding() -> 'UTF-8'
+ type(my_file) -> <class '_io.TextIOWrapper'>
+ my_file.encoding -> 'UTF-8'
+ sys.stdout.isatty() -> True
+ sys.stdout.encoding -> 'UTF-8'
+ sys.stdin.isatty() -> True
+ sys.stdin.encoding -> 'UTF-8'
+ sys.stderr.isatty() -> True
+ sys.stderr.encoding -> 'UTF-8'
+ sys.getdefaultencoding() -> 'utf-8'
+ sys.getfilesystemencoding() -> 'utf-8'
+```
+
+```python
+示例 4-12 在 Windows 7（SP1）巴西版中的 cmd.exe 中输出的默认编码；PowerShell 输
+出的结果相同
+Z:\>chcp ➊
+Página de código ativa: 850
+Z:\>python default_encodings.py ➋
+ locale.getpreferredencoding() -> 'cp1252' ➌
+ type(my_file) -> <class '_io.TextIOWrapper'>
+ my_file.encoding -> 'cp1252' ➍
+ sys.stdout.isatty() -> True ➎
+ sys.stdout.encoding -> 'cp850' ➏
+ sys.stdin.isatty() -> True
+ sys.stdin.encoding -> 'cp850'
+ sys.stderr.isatty() -> True
+ sys.stderr.encoding -> 'cp850'
+ sys.getdefaultencoding() -> 'utf-8'
+ sys.getfilesystemencoding() -> 'mbcs'
+➊ chcp 输出当前控制台激活的代码页：850。
+➋ 运行 default_encodings.py，把结果输出到控制台。
+➌ locale.getpreferredencoding() 是最重要的设置。
+➍ 文本文件默认使用 locale.getpreferredencoding()。
+```
+
+### 4.6　为了正确比较而规范化Unicode字符串
+
+```python
+“café”这个词可以使用两种方式构成，分别有 4 个和 5 个码位，但是结果完全一样：
+>>> s1 = 'café'
+>>> s2 = 'cafe\u0301'
+>>> s1, s2
+('café', 'café')
+>>> len(s1), len(s2)
+(4, 5)
+>>> s1 == s2
+False
+```
+
+U+0301 是 COMBINING ACUTE ACCENT，加在“e”后面得到“é”'é' 和'e\u0301' 这样的序列叫“标准等价物”（canonical equivalent），应用程序应该把它们视作相同的字符。但是，Python 看到的是不同的码位序列，因此判定二者不相等
+
+这个问题的解决方案是使用 unicodedata.normalize 函数提供的 Unicode 规范化
+
+```python
+#NFC（Normalization Form C）使用最少的码位构成等价的字符串，而 NFD 把组合字符分解成基字符和单独的组合字符
+>>> from unicodedata import normalize
+>>> s1 = 'café' # 把"e"和重音符组合在一起
+>>> s2 = 'cafe\u0301' # 分解成"e"和重音符
+>>> len(s1), len(s2)
+(4, 5)
+>>> len(normalize('NFC', s1)), len(normalize('NFC', s2))
+(4, 4)
+>>> len(normalize('NFD', s1)), len(normalize('NFD', s2))
+(5, 5) 
+>>> from unicodedata import normalize
+>>> s1 = 'café' # 把"e"和重音符组合在一起
+>>> s2 = 'cafe\u0301' # 分解成"e"和重音符
+>>> len(s1), len(s2)
+(4, 5)
+>>> len(normalize('NFC', s1)), len(normalize('NFC', s2))
+(4, 4)
+>>> len(normalize('NFD', s1)), len(normalize('NFD', s2))
+(5, 5) 
+>>> normalize('NFC', s1) == normalize('NFC', s2)
+True
+>>> normalize('NFD', s1) == normalize('NFD', s2)
+True
+```
+
+西方键盘通常能输出组合字符，因此用户输入的文本默认是 NFC 形式。不过，安全起见，保存文本之前，最好使用 normalize('NFC', user_text) 清洗字符串。
+
+```python
+>>> from unicodedata import normalize, name
+>>> ohm = '\u2126'
+>>> name(ohm)
+'OHM SIGN'
+>>> ohm_c = normalize('NFC', ohm)
+>>> name(ohm_c)
+'GREEK CAPITAL LETTER OMEGA'
+>>> ohm == ohm_c
+False
+>>> normalize('NFC', ohm) == normalize('NFC', ohm_c)
+True
+```
+
+```python
+>>> from unicodedata import normalize, name
+>>> half = '½'
+>>> normalize('NFKC', half)
+'1⁄2'
+>>> four_squared = '4²'
+>>> normalize('NFKC', four_squared)
+'42'
+>>> micro = 'µ'
+>>> micro_kc = normalize('NFKC', micro)
+>>> micro, micro_kc
+('µ', 'μ')
+>>> ord(micro), ord(micro_kc)
+(181, 956)
+>>> name(micro), name(micro_kc)
+('MICRO SIGN', 'GREEK SMALL LETTER MU')
+
+```
+
+#### 4.6.1　大小写折叠
+
+大小写折叠其实就是把所有文本变成小写，再做些其他转换。这个功能由 str.casefold()方法（Python 3.3 新增）支持
+
+```python
+>>> micro = 'µ'
+>>> name(micro)
+'MICRO SIGN'
+>>> micro_cf = micro.casefold()
+>>> name(micro_cf)
+'GREEK SMALL LETTER MU'
+>>> micro, micro_cf
+('µ', 'μ')
+>>> eszett = 'ß'
+>>> name(eszett)
+'LATIN SMALL LETTER SHARP S'
+>>> eszett_cf = eszett.casefold()
+>>> eszett, eszett_cf
+('ß', 'ss')
+```
+
+#### 4.6.2　规范化文本匹配实用函数
+
+```python
+示例 4-13 normeq.py：比较规范化 Unicode 字符串
+"""
+Utility functions for normalized Unicode string comparison.
+Using Normal Form C, case sensitive:
+ >>> s1 = 'café'
+ >>> s2 = 'cafe\u0301'
+ >>> s1 == s2
+ False
+ >>> nfc_equal(s1, s2)
+ True
+ >>> nfc_equal('A', 'a')
+ False
+Using Normal Form C with case folding:
+ >>> s3 = 'Straße'
+ >>> s4 = 'strasse'
+ >>> s3 == s4
+ False
+ >>> nfc_equal(s3, s4)
+ False
+ >>> fold_equal(s3, s4)
+ True
+ >>> fold_equal(s1, s2)
+ True
+ >>> fold_equal('A', 'a')
+ True
+"""
+from unicodedata import normalize
+def nfc_equal(str1, str2):
+ return normalize('NFC', str1) == normalize('NFC', str2)
+def fold_equal(str1, str2):
+ return (normalize('NFC', str1).casefold() ==
+ normalize('NFC', str2).casefold())
+```
+
+## 第 5 章 一等函数
