@@ -2087,3 +2087,233 @@ def fold_equal(str1, str2):
 ```
 
 ## 第 5 章 一等函数
+
+### 5.1 把函数视作对象
+
+```python
+#示例 5-1　创建并测试一个函数，然后读取它的 __doc__ 属性，再检查它的类型
+>>> def factorial(n): ➊
+... '''returns n!'''
+... return 1 if n < 2 else n * factorial(n-1)
+...
+>>> factorial(42)
+1405006117752879898543142606244511569936384000000000
+>>> factorial.__doc__ ➋
+'returns n!'
+>>> type(factorial) ➌
+<class 'function'>
+➊ 这是一个控制台会话，因此我们是在“运行时”创建一个函数。
+➋ __doc__ 是函数对象众多属性中的一个。
+➌ factorial 是 function 类的实例。
+```
+
+### 示例 5-2　通过别的名称使用函数，再把函数作为参数传递
+
+```python
+>>> fact = factorial
+>>> fact
+<function factorial at 0x...>
+>>> fact(5) #5的阶乘等于5乘4乘3乘2乘1=120
+120
+>>> map(factorial, range(11))
+<map object at 0x...>
+>>> list(map(fact, range(11)))
+[1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800]
+```
+
+### 5.2　高阶函数
+
+```python
+#函数 sorted ：可选的 key 参数用于提供一个函数，它会应用到各个元素上进行排序
+#示例 5-3　根据单词长度给一个列表排序
+>>> fruits = ['strawberry', 'fig', 'apple', 'cherry', 'raspberry', 'banana']
+>>> sorted(fruits, key=len)
+['fig', 'apple', 'cherry', 'banana', 'raspberry', 'strawberry']
+>>>
+```
+
+```python
+#示例 5-4　根据反向拼写给一个单词列表排序
+>>> def reverse(word):
+... return word[::-1]
+>>> reverse('testing')
+'gnitset'
+>>> sorted(fruits, key=reverse)
+['banana', 'apple', 'fig', 'raspberry', 'strawberry', 'cherry']
+>>>
+```
+
+```python
+示例 5-5　计算阶乘列表：map 和 filter 与列表推导比较
+>>> list(map(fact, range(6))) ➊
+[1, 1, 2, 6, 24, 120]
+>>> [fact(n) for n in range(6)] ➋
+[1, 1, 2, 6, 24, 120]
+>>> list(map(factorial, filter(lambda n: n % 2, range(6)))) ➌
+[1, 6, 120]
+>>> [factorial(n) for n in range(6) if n % 2] ➍
+[1, 6, 120]
+>>>
+➊ 构建 0! 到 5! 的一个阶乘列表。
+➋ 使用列表推导执行相同的操作。
+➌ 使用 map 和 filter 计算直到 5! 的奇数阶乘列表。
+➍ 使用列表推导做相同的工作，换掉 map 和 filter，并避免了使用 lambda 表达式。
+```
+
+```python
+#示例 5-6　使用 reduce 和 sum 计算 0~99 之和
+>>> from functools import reduce ➊
+>>> from operator import add ➋
+>>> reduce(add, range(100)) ➌
+4950
+>>> sum(range(100)) ➍
+4950
+>>>
+➊ 从 Python 3.0 起，reduce 不再是内置函数了。
+➋ 导入 add，以免创建一个专求两数之和的函数。
+➌ 计算 0~99 之和。
+➍ 使用 sum 做相同的求和；无需导入或创建求和函数。
+```
+
+### 5.3　匿名函数
+
+lambda 关键字在 Python 表达式内创建匿名函数。
+
+```python
+#示例 5-7　使用 lambda 表达式反转拼写，然后依此给单词列表排序
+>>> fruits = ['strawberry', 'fig', 'apple', 'cherry', 'raspberry', 'banana']
+>>> sorted(fruits, key=lambda word: word[::-1])
+['banana', 'apple', 'fig', 'raspberry', 'strawberry', 'cherry']
+>>>
+```
+
+### 5.4　可调用对象
+
+用户定义的函数:使用 def 语句或 lambda 表达式创建。
+
+内置函数:使用 C 语言（CPython）实现的函数，如 len 或 time.strftime。
+
+内置方法:使用 C 语言实现的方法，如 dict.get。
+
+方法:在类的定义体中定义的函数。
+
+### 5.5　用户定义的可调用类型
+
+```python
+#示例 5-8 bingocall.py：调用 BingoCage 实例，从打乱的列表中取出一个元素
+import random
+class BingoCage:
+    def __init__(self, items):
+ self._items = list(items) ➊
+ random.shuffle(self._items) ➋
+ def pick(self): ➌
+ try:
+ return self._items.pop()
+ except IndexError:
+ raise LookupError('pick from empty BingoCage') ➍
+ def __call__(self): ➎
+ return self.pick()
+➊ __init__ 接受任何可迭代对象；在本地构建一个副本，防止列表参数的意外副作用。
+➋ shuffle 定能完成工作，因为 self._items 是列表。
+➌ 起主要作用的方法。
+➍ 如果 self._items 为空，抛出异常，并设定错误消息。
+➎ bingo.pick() 的快捷方式是 bingo()。
+```
+
+```python
+#下面是示例 5-8 中定义的类的简单演示。注意，bingo 实例可以作为函数调用，而且内置的 callable(...) 函数判定它是可调用的对象：
+>>> bingo = BingoCage(range(3))
+>>> bingo.pick()
+1
+>>> bingo()
+0
+>>> callable(bingo)
+True
+```
+
+### 5.6　函数内省
+
+```python
+#使用 dir 函数可以探知 factorial 具有下述属性
+>>> dir(factorial)
+['__annotations__', '__call__', '__class__', '__closure__', '__code__',
+'__defaults__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__',
+'__format__', '__ge__', '__get__', '__getattribute__', '__globals__',
+'__gt__', '__hash__', '__init__', '__kwdefaults__', '__le__', '__lt__',
+'__module__', '__name__', '__ne__', '__new__', '__qualname__', '__reduce__',
+'__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', 
+'__subclasshook__']
+>>>
+```
+
+```python
+示例 5-9　列出常规对象没有而函数有的属性
+>>> class C: pass # ➊
+>>> obj = C() # ➋
+>>> def func(): pass # ➌
+>>> sorted(set(dir(func)) - set(dir(obj))) # ➍
+['__annotations__', '__call__', '__closure__', '__code__', '__defaults__',
+'__get__', '__globals__', '__kwdefaults__', '__name__', '__qualname__']
+>>>
+➊ 创建一个空的用户定义的类。
+➋ 创建一个实例。
+➌ 创建一个空函数。
+➍ 计算差集，然后排序，得到类的实例没有而函数有的属性列表。
+```
+
+### 5.7　从定位参数到仅限关键字参数
+
+```python
+示例 5-10 tag 函数用于生成 HTML 标签；使用名为 cls 的关键字参数传入“class”属
+性，这是一种变通方法，因为“class”是 Python 的关键字
+def tag(name, *content, cls=None, **attrs):
+ """生成一个或多个HTML标签"""
+ if cls is not None:
+ attrs['class'] = cls
+ if attrs:
+ attr_str = ''.join(' %s="%s"' % (attr, value)
+ for attr, value
+ in sorted(attrs.items()))
+ else:
+ attr_str = ''
+ if content:
+ return '\n'.join('<%s%s>%s</%s>' %
+ (name, attr_str, c, name) for c in content)
+ else:
+ return '<%s%s />' % (name, attr_str)
+```
+
+### 5.8　获取关于参数的信息
+
+```python
+示例 5-12 Bobo 知道 hello 需要 person 参数，并且从 HTTP 请求中获取它
+import bobo
+@bobo.query('/')
+def hello(person):
+ return 'Hello %s!' % person
+```
+
+```python
+#示例 5-13 如果请求中缺少函数的参数，Bobo 返回 403 forbidden 响应；curl -i 的作用是把首部转储到标准输出
+$ curl -i http://localhost:8080/
+HTTP/1.0 403 Forbidden
+Date: Thu, 21 Aug 2014 21:39:44 GMT
+Server: WSGIServer/0.2 CPython/3.4.1
+Content-Type: text/html; charset=UTF-8
+Content-Length: 103
+<html>
+<head><title>Missing parameter</title></head>
+<body>Missing form variable person</body>
+</html>
+```
+
+```python
+#示例 5-14 传入所需的 person 参数才能得到 OK 响应
+$ curl -i http://localhost:8080/?person=Jim
+HTTP/1.0 200 OK
+Date: Thu, 21 Aug 2014 21:42:32 GMT
+Server: WSGIServer/0.2 CPython/3.4.1
+Content-Type: text/html; charset=UTF-8
+Content-Length: 10
+Hello Jim!
+```
