@@ -1235,8 +1235,7 @@ True
 {1: 'UNITED STATES', 55: 'BRAZIL', 62: 'INDONESIA', 7: 'RUSSIA'}
 ➊ 一个承载成对数据的列表，它可以直接用在字典的构造方法中。
 ➋ 这里把配好对的数据左右换了下，国家名是键，区域码是值。
-➌ 跟上面相反，用区域码作为键，国家名称转换为大写，并且过滤掉区域码大于或等于
-66 的地区。
+➌ 跟上面相反，用区域码作为键，国家名称转换为大写，并且过滤掉区域码大于或等于66 的地区。
 ```
 
 ### 3.3　常见的映射方法
@@ -2264,8 +2263,7 @@ True
 ### 5.7　从定位参数到仅限关键字参数
 
 ```python
-示例 5-10 tag 函数用于生成 HTML 标签；使用名为 cls 的关键字参数传入“class”属
-性，这是一种变通方法，因为“class”是 Python 的关键字
+#示例 5-10 tag 函数用于生成 HTML 标签；使用名为 cls 的关键字参数传入“class”属性，这是一种变通方法，因为“class”是 Python 的关键字
 def tag(name, *content, cls=None, **attrs):
  """生成一个或多个HTML标签"""
  if cls is not None:
@@ -2317,3 +2315,304 @@ Content-Type: text/html; charset=UTF-8
 Content-Length: 10
 Hello Jim!
 ```
+
+```python
+#示例 5-15 在指定长度附近截断字符串的函数
+def clip(text, max_len=80):
+ """在max_len前面或后面的第一个空格处截断文本
+ """
+ end = None
+ if len(text) > max_len:
+ space_before = text.rfind(' ', 0, max_len)
+ if space_before >= 0:
+ end = space_before
+ else: 
+     space_after = text.rfind(' ', max_len)
+ if space_after >= 0:
+ end = space_after
+ if end is None: # 没找到空格
+ end = len(text)
+ return text[:end].rstrip()
+```
+
+```python
+#示例 5-16 提取关于函数参数的信息
+>>> from clip import clip
+>>> clip.__defaults__
+(80,)
+>>> clip.__code__ # doctest: +ELLIPSIS
+<code object clip at 0x...>
+>>> clip.__code__.co_varnames
+('text', 'max_len', 'end', 'space_before', 'space_after')
+>>> clip.__code__.co_argcount
+2
+```
+
+```python
+#示例 5-17 提取函数的签名 2
+>>> from clip import clip
+>>> from inspect import signature
+>>> sig = signature(clip)
+>>> sig # doctest: +ELLIPSIS
+<inspect.Signature object at 0x...>
+>>> str(sig)
+'(text, max_len=80)'
+>>> for name, param in sig.parameters.items():
+... print(param.kind, ':', name, '=', param.default)
+...
+POSITIONAL_OR_KEYWORD : text = <class 'inspect._empty'>
+POSITIONAL_OR_KEYWORD : max_len = 80
+```
+
+```python
+kind 属性的值是 _ParameterKind 类中的 5 个值之一，列举如下。
+POSITIONAL_OR_KEYWORD
+可以通过定位参数和关键字参数传入的形参（多数 Python 函数的参数属于此类）。
+VAR_POSITIONAL
+定位参数元组。
+VAR_KEYWORD
+关键字参数字典。
+KEYWORD_ONLY
+仅限关键字参数（Python 3 新增）。
+POSITIONAL_ONLY
+仅限定位参数；目前，Python 声明函数的句法不支持，但是有些使用 C 语言实现且不接受关键字参数的函数（如 divmod）支持。
+```
+
+```python
+#示例 5-18 把 tag 函数（见示例 5-10）的签名绑定到一个参数字典上 3
+>>> import inspect
+>>> sig = inspect.signature(tag) ➊
+>>> my_tag = {'name': 'img', 'title': 'Sunset Boulevard',
+... 'src': 'sunset.jpg', 'cls': 'framed'}
+>>> bound_args = sig.bind(**my_tag) ➋
+>>> bound_args
+<inspect.BoundArguments object at 0x...> ➌
+>>> for name, value in bound_args.arguments.items(): ➍
+... print(name, '=', value)
+...
+name = img
+cls = framed
+attrs = {'title': 'Sunset Boulevard', 'src': 'sunset.jpg'}
+>>> del my_tag['name'] ➎
+>>> bound_args = sig.bind(**my_tag) ➏
+Traceback (most recent call last):
+ ...
+TypeError: 'name' parameter lacking default value
+➊ 获取 tag 函数（见示例 5-10）的签名。
+➋ 把一个字典参数传给 .bind() 方法。
+➌ 得到一个 inspect.BoundArguments 对象。
+➍ 迭代 bound_args.arguments（一个 OrderedDict 对象）中的元素，显示参数的名称和值。
+➎ 把必须指定的参数 name 从 my_tag 中删除。
+➏ 调用 sig.bind(**my_tag)，抛出 TypeError，抱怨缺少 name 参数。
+```
+
+### 5.9　函数注解
+
+```python
+#示例 5-19 有注解的 clip 函数
+def clip(text:str, max_len:'int > 0'=80) -> str: ➊
+ """在max_len前面或后面的第一个空格处截断文本
+ """
+ end = None
+ if len(text) > max_len:
+ space_before = text.rfind(' ', 0, max_len)
+ if space_before >= 0:
+ end = space_before
+ else:
+ space_after = text.rfind(' ', max_len)
+ if space_after >= 0:
+ end = space_after
+ if end is None: # 没找到空格
+ end = len(text)
+ return text[:end].rstrip()
+➊ 有注解的函数声明。
+```
+
+```python
+#示例 5-20 从函数签名中提取注解
+>>> from clip_annot import clip
+>>> from inspect import signature
+>>> sig = signature(clip)
+>>> sig.return_annotation
+<class 'str'>
+>>> for param in sig.parameters.values():
+... note = repr(param.annotation).ljust(13)
+... print(note, ':', param.name, '=', param.default)
+<class 'str'> : text = <class 'inspect._empty'>
+'int > 0' : max_len = 80
+```
+
+### 5.10　支持函数式编程的包
+
+#### 5.10.1 operator模块
+
+```python
+#示例 5-21 使用 reduce 函数和一个匿名函数计算阶乘
+from functools import reduce
+def fact(n):
+ return reduce(lambda a, b: a*b, range(1, n+1))
+```
+
+```python
+#示例 5-22 使用 reduce 和 operator.mul 函数计算阶乘
+from functools import reduce
+from operator import mul
+def fact(n):
+ return reduce(mul, range(1, n+1))
+```
+
+```python
+#示例 5-23 演示使用 itemgetter 排序一个元组列表（数据来自示例 2-8）
+>>> metro_data = [
+... ('Tokyo', 'JP', 36.933, (35.689722, 139.691667)),
+... ('Delhi NCR', 'IN', 21.935, (28.613889, 77.208889)),
+... ('Mexico City', 'MX', 20.142, (19.433333, -99.133333)),
+... ('New York-Newark', 'US', 20.104, (40.808611, -74.020386)),
+... ('Sao Paulo', 'BR', 19.649, (-23.547778, -46.635833)),
+... ]
+>>>
+>>> from operator import itemgetter
+>>> for city in sorted(metro_data, key=itemgetter(1)):
+... print(city)
+...
+('Sao Paulo', 'BR', 19.649, (-23.547778, -46.635833))
+('Delhi NCR', 'IN', 21.935, (28.613889, 77.208889))
+('Tokyo', 'JP', 36.933, (35.689722, 139.691667))
+('Mexico City', 'MX', 20.142, (19.433333, -99.133333))
+('New York-Newark', 'US', 20.104, (40.808611, -74.020386))
+```
+
+```python
+如果把多个参数传给 itemgetter，它构建的函数会返回提取的值构成的元组：
+>>> cc_name = itemgetter(1, 0)
+>>> for city in metro_data:
+... print(cc_name(city))
+...
+('JP', 'Tokyo')
+('IN', 'Delhi NCR')
+('MX', 'Mexico City')
+('US', 'New York-Newark')
+('BR', 'Sao Paulo')
+>>>
+```
+
+```python
+#示例 5-24 定义一个 namedtuple，名为 metro_data（与示例 5-23 中的列表相同），演示使用 attrgetter 处理它
+>>> from collections import namedtuple
+>>> LatLong = namedtuple('LatLong', 'lat long') # ➊
+>>> Metropolis = namedtuple('Metropolis', 'name cc pop coord') # ➋
+>>> metro_areas = [Metropolis(name, cc, pop, LatLong(lat, long)) # ➌
+... for name, cc, pop, (lat, long) in metro_data]
+>>> metro_areas[0]
+Metropolis(name='Tokyo', cc='JP', pop=36.933, coord=LatLong(lat=35.689722,
+long=139.691667))
+>>> metro_areas[0].coord.lat # ➍
+35.689722
+>>> from operator import attrgetter
+>>> name_lat = attrgetter('name', 'coord.lat') # ➎
+>>>
+>>> for city in sorted(metro_areas, key=attrgetter('coord.lat')): # ➏
+... print(name_lat(city)) # ➐
+...
+('Sao Paulo', -23.547778)
+('Mexico City', 19.433333)
+('Delhi NCR', 28.613889)
+('Tokyo', 35.689722)
+('New York-Newark', 40.808611)
+➊ 使用 namedtuple 定义 LatLong。
+➋ 再定义 Metropolis。
+➌ 使用 Metropolis 实例构建 metro_areas 列表；注意，我们使用嵌套的元组拆包提取
+(lat, long)，然后使用它们构建 LatLong，作为 Metropolis 的 coord 属性。
+➍ 深入 metro_areas[0]，获取它的纬度。
+➎ 定义一个 attrgetter，获取 name 属性和嵌套的 coord.lat 属性。
+➏ 再次使用 attrgetter，按照纬度排序城市列表。
+➐ 使用标号➎中定义的 attrgetter，只显示城市名和纬度。
+```
+
+```python
+#下面是 operator 模块中定义的部分函数（省略了以 _ 开头的名称，因为它们基本上是实现细节）：4
+>>> [name for name in dir(operator) if not name.startswith('_')]
+['abs', 'add', 'and_', 'attrgetter', 'concat', 'contains',
+'countOf', 'delitem', 'eq', 'floordiv', 'ge', 'getitem', 'gt',
+'iadd', 'iand', 'iconcat', 'ifloordiv', 'ilshift', 'imod', 'imul',
+'index', 'indexOf', 'inv', 'invert', 'ior', 'ipow', 'irshift',
+'is_', 'is_not', 'isub', 'itemgetter', 'itruediv', 'ixor', 'le',
+'length_hint', 'lshift', 'lt', 'methodcaller', 'mod', 'mul', 'ne',
+'neg', 'not_', 'or_', 'pos', 'pow', 'rshift', 'setitem', 'sub',
+'truediv', 'truth', 'xor']
+```
+
+```python
+#示例 5-25 methodcaller 使用示例：第二个测试展示绑定额外参数的方式
+>>> from operator import methodcaller
+>>> s = 'The time has come'
+>>> upcase = methodcaller('upper')
+>>> upcase(s)
+'THE TIME HAS COME'
+>>> hiphenate = methodcaller('replace', ' ', '-')
+>>> hiphenate(s)
+'The-time-has-come'
+```
+
+```python
+#如果想把 str.upper 作为函数使用，只需在 str 类上调用，并传入一个字符串参数，如下所示：
+>>> str.upper(s)
+'THE TIME HAS COME'
+```
+
+#### 5.10.2　使用functools.partial冻结参数
+
+```python
+#示例 5-26 使用 partial 把一个两参数函数改编成需要单参数的可调用对象
+>>> from operator import mul
+>>> from functools import partial
+>>> triple = partial(mul, 3) ➊
+>>> triple(7) ➋
+21
+>>> list(map(triple, range(1, 10))) ➌
+[3, 6, 9, 12, 15, 18, 21, 24, 27]
+➊ 使用 mul 创建 triple 函数，把第一个定位参数定为 3。
+➋ 测试 triple 函数。
+➌ 在 map 中使用 triple；在这个示例中不能使用 mul。
+```
+
+```python
+#示例 5-27 使用 partial 构建一个便利的 Unicode 规范化函数
+>>> import unicodedata, functools
+>>> nfc = functools.partial(unicodedata.normalize, 'NFC')
+>>> s1 = 'café'
+>>> s2 = 'cafe\u0301'
+>>> s1, s2
+('café', 'café')
+>>> s1 == s2
+False
+>>> nfc(s1) == nfc(s2)
+True
+```
+
+```python
+#示例 5-28 把 partial 应用到示例 5-10 中定义的 tag 函数上
+>>> from tagger import tag
+>>> tag
+<function tag at 0x10206d1e0> ➊
+>>> from functools import partial
+>>> picture = partial(tag, 'img', cls='pic-frame') ➋
+>>> picture(src='wumpus.jpeg')
+'<img class="pic-frame" src="wumpus.jpeg" />' ➌
+>>> picture
+functools.partial(<function tag at 0x10206d1e0>, 'img', cls='pic-frame') ➍
+>>> picture.func ➎
+<function tag at 0x10206d1e0>
+>>> picture.args
+('img',)
+>>> picture.keywords
+{'cls': 'pic-frame'}
+➊ 从示例 5-10 中导入 tag 函数，查看它的 ID。
+➋ 使用 tag 创建 picture 函数，把第一个定位参数固定为 'img'，把 cls 关键字参数固定
+为 'pic-frame'。
+➌ picture 的行为符合预期。
+➍ partial() 返回一个 functools.partial 对象。5
+➎ functools.partial 对象提供了访问原函数和固定参数的属性。
+```
+
+## 第 6 章 使用一等函数实现设计模式
