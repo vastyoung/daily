@@ -10,6 +10,12 @@
 
 `help('len')` :显示出有关 len 函数的帮助
 
+## 创建独立的 python 虚拟环境
+
+```bash
+python3 -m venv ~/Pyvenv/venv3/
+```
+
 ## 基础：基本概念
 
 ### 注释
