@@ -2616,3 +2616,319 @@ functools.partial(<function tag at 0x10206d1e0>, 'img', cls='pic-frame') ➍
 ```
 
 ## 第 6 章 使用一等函数实现设计模式
+
+### 6.1　案例分析：重构“策略”模式
+
+#### 6.1.1　经典的“策略”模式
+
+```python
+#示例 6-1　实现 Order 类，支持插入式折扣策略
+from abc import ABC, abstractmethod
+from collections import namedtuple
+Customer = namedtuple('Customer', 'name fidelity')
+class LineItem:
+ def __init__(self, product, quantity, price):
+ self.product = product
+ self.quantity = quantity
+ self.price = price
+ def total(self):
+ return self.price * self.quantity
+class Order: # 上下文
+ def __init__(self, customer, cart, promotion=None):
+ self.customer = customer
+ self.cart = list(cart)
+ self.promotion = promotion
+ def total(self):
+ if not hasattr(self, '__total'): 
+     self.__total = sum(item.total() for item in self.cart)
+ return self.__total
+ def due(self):
+ if self.promotion is None:
+ discount = 0
+ else:
+ discount = self.promotion.discount(self)
+ return self.total() - discount
+ def __repr__(self):
+ fmt = '<Order total: {:.2f} due: {:.2f}>'
+ return fmt.format(self.total(), self.due())
+class Promotion(ABC): # 策略：抽象基类
+ @abstractmethod
+ def discount(self, order):
+ """返回折扣金额（正值）"""
+class FidelityPromo(Promotion): # 第一个具体策略
+ """为积分为1000或以上的顾客提供5%折扣"""
+ def discount(self, order):
+ return order.total() * .05 if order.customer.fidelity >= 1000 else 0
+class BulkItemPromo(Promotion): # 第二个具体策略
+ """单个商品为20个或以上时提供10%折扣"""
+ def discount(self, order):
+ discount = 0
+ for item in order.cart:
+ if item.quantity >= 20:
+ discount += item.total() * .1
+ return discount
+class LargeOrderPromo(Promotion): # 第三个具体策略
+ """订单中的不同商品达到10个或以上时提供7%折扣"""
+ def discount(self, order):
+ distinct_items = {item.product for item in order.cart}
+ if len(distinct_items) >= 10:
+ return order.total() * .07
+ return 0
+```
+
+```python
+示例 6-2　使用不同促销折扣的 Order 类示例
+ >>> joe = Customer('John Doe', 0) ➊
+ >>> ann = Customer('Ann Smith', 1100)
+ >>> cart = [LineItem('banana', 4, .5), ➋
+ ... LineItem('apple', 10, 1.5),
+ ... LineItem('watermellon', 5, 5.0)]
+ >>> Order(joe, cart, FidelityPromo()) ➌
+ <Order total: 42.00 due: 42.00>
+ >>> Order(ann, cart, FidelityPromo()) ➍
+ <Order total: 42.00 due: 39.90>
+ >>> banana_cart = [LineItem('banana', 30, .5), ➎
+ ... LineItem('apple', 10, 1.5)]
+ >>> Order(joe, banana_cart, BulkItemPromo()) ➏
+ <Order total: 30.00 due: 28.50>
+ >>> long_order = [LineItem(str(item_code), 1, 1.0) ➐
+ ... for item_code in range(10)]
+ >>> Order(joe, long_order, LargeOrderPromo()) ➑
+ <Order total: 10.00 due: 9.30>
+ >>> Order(joe, cart, LargeOrderPromo())
+ <Order total: 42.00 due: 42.00>
+➊ 两个顾客：joe 的积分是 0，ann 的积分是 1100。
+➋ 有三个商品的购物车。
+➌ fidelityPromo 没给 joe 提供折扣。
+➍ ann 得到了 5% 折扣，因为她的积分超过 1000。
+➎ banana_cart 中有 30 把香蕉和 10 个苹果。
+➏ BulkItemPromo 为 joe 购买的香蕉优惠了 1.50 美元。
+➐ long_order 中有 10 个不同的商品，每个商品的价格为 1.00 美元。
+➑ LargerOrderPromo 为 joe 的整个订单提供了 7% 折扣。
+```
+
+#### 6.1.2　使用函数实现“策略”模式
+
+```python
+#示例 6-3 Order 类和使用函数实现的折扣策略
+from collections import namedtuple
+Customer = namedtuple('Customer', 'name fidelity')
+class LineItem:
+ def __init__(self, product, quantity, price):
+ self.product = product
+ self.quantity = quantity
+ self.price = price
+ def total(self):
+ return self.price * self.quantity
+class Order: # 上下文
+ def __init__(self, customer, cart, promotion=None):
+ self.customer = customer
+ self.cart = list(cart)
+ self.promotion = promotion
+ def total(self):
+ if not hasattr(self, '__total'):
+ self.__total = sum(item.total() for item in self.cart)
+ return self.__total
+ def due(self):
+ if self.promotion is None:
+ discount = 0
+ else:
+ discount = self.promotion(self) ➊
+ return self.total() - discount
+ def __repr__(self):
+ fmt = '<Order total: {:.2f} due: {:.2f}>'
+ return fmt.format(self.total(), self.due())
+➋
+def fidelity_promo(order): ➌
+ """为积分为1000或以上的顾客提供5%折扣"""
+ return order.total() * .05 if order.customer.fidelity >= 1000 else 0
+def bulk_item_promo(order):
+ """单个商品为20个或以上时提供10%折扣"""
+ discount = 0
+ for item in order.cart:
+ if item.quantity >= 20:
+ discount += item.total() * .1
+ return discount
+ def large_order_promo(order):
+ """订单中的不同商品达到10个或以上时提供7%折扣"""
+ distinct_items = {item.product for item in order.cart}
+ if len(distinct_items) >= 10:
+ return order.total() * .07
+ return 0
+➊ 计算折扣只需调用 self.promotion() 函数。
+➋ 没有抽象类。
+➌ 各个策略都是函数。
+```
+
+```python
+#示例 6-4　使用函数实现的促销折扣的 Order 类示例
+ >>> joe = Customer('John Doe', 0) ➊
+ >>> ann = Customer('Ann Smith', 1100)
+ >>> cart = [LineItem('banana', 4, .5),
+ ... LineItem('apple', 10, 1.5),
+ ... LineItem('watermellon', 5, 5.0)]
+ >>> Order(joe, cart, fidelity_promo) ➋
+ <Order total: 42.00 due: 42.00>
+ >>> Order(ann, cart, fidelity_promo)
+ <Order total: 42.00 due: 39.90>
+ >>> banana_cart = [LineItem('banana', 30, .5),
+ ... LineItem('apple', 10, 1.5)]
+ >>> Order(joe, banana_cart, bulk_item_promo) ➌
+ <Order total: 30.00 due: 28.50>
+ >>> long_order = [LineItem(str(item_code), 1, 1.0)
+ ... for item_code in range(10)]
+ >>> Order(joe, long_order, large_order_promo)
+ <Order total: 10.00 due: 9.30>
+ >>> Order(joe, cart, large_order_promo)
+ <Order total: 42.00 due: 42.00>
+➊ 与示例 6-1 一样的测试固件。
+➋ 为了把折扣策略应用到 Order 实例上，只需把促销函数作为参数传入。
+➌ 这个测试和下一个测试使用不同的促销函数。
+```
+
+#### 6.1.3　选择最佳策略：简单的方式
+
+```python
+#示例 6-5 best_promo 函数计算所有折扣，并返回额度最大的
+ >>> Order(joe, long_order, best_promo) ➊
+ <Order total: 10.00 due: 9.30>
+ >>> Order(joe, banana_cart, best_promo) ➋
+ <Order total: 30.00 due: 28.50>
+ >>> Order(ann, cart, best_promo) ➌
+ <Order total: 42.00 due: 39.90>
+➊ best_promo 为顾客 joe 选择 larger_order_promo。
+➋ 订购大量香蕉时，joe 使用 bulk_item_promo 提供的折扣。
+➌ 在一个简单的购物车中，best_promo 为忠实顾客 ann 提供 fidelity_promo 优惠的折扣
+```
+
+```python
+#示例 6-6 best_promo 迭代一个函数列表，并找出折扣额度最大的
+promos = [fidelity_promo, bulk_item_promo, large_order_promo] ➊
+def best_promo(order): ➋
+ """选择可用的最佳折扣
+ """
+ return max(promo(order) for promo in promos) ➌
+➊ promos 列出以函数实现的各个策略。
+➋ 与其他几个 *_promo 函数一样，best_promo 函数的参数是一个 Order 实例。
+➌ 使用生成器表达式把 order 传给 promos 列表中的各个函数，返回折扣额度最大的那个函数。
+```
+
+#### 6.1.4　找出模块中的全部策略
+
+`globals()` :返回一个字典，表示当前的全局符号表。
+
+```python
+#示例 6-7　内省模块的全局命名空间，构建 promos 列表
+promos = [globals()[name] for name in globals() ➊
+ if name.endswith('_promo') ➋
+ and name != 'best_promo'] ➌
+def best_promo(order):
+ """选择可用的最佳折扣
+ """
+ return max(promo(order) for promo in promos) ➍
+➊ 迭代 globals() 返回字典中的各个 name。
+➋ 只选择以 _promo 结尾的名称。
+➌ 过滤掉 best_promo 自身，防止无限递归。
+➍ best_promo 内部的代码没有变化。
+```
+
+```python
+#示例 6-8　内省单独的 promotions 模块，构建 promos 列表
+promos = [func for name, func in
+ inspect.getmembers(promotions, inspect.isfunction)]
+def best_promo(order):
+ """选择可用的最佳折扣
+ """
+ return max(promo(order) for promo in promos)
+```
+
+inspect.getmembers 函数用于获取对象（这里是 promotions 模块）的属性，第二个参数是可选的判断条件（一个布尔值函数）。我们使用的是 inspect.isfunction，只获取模块中的函数。
+
+### 6.2 “命令”模式
+
+```python
+#示例 6-9 MacroCommand 的各个实例都在内部存储着命令列表
+class MacroCommand:
+ """一个执行一组命令的命令"""
+ def __init__(self, commands):
+ self.commands = list(commands) # ➊
+ def __call__(self):
+ for command in self.commands: # ➋
+ command()
+➊ 使用 commands 参数构建一个列表，这样能确保参数是可迭代对象，还能在各个
+MacroCommand 实例中保存各个命令引用的副本。
+➋ 调用 MacroCommand 实例时，self.commands 中的各个命令依序执行。
+```
+
+## 第 7 章 函数装饰器和闭包
+
+### 7.1　装饰器基础知识
+
+```python
+#假如有个名为 decorate 的装饰器：
+@decorate
+def target():
+ print('running target()')
+
+#上述代码的效果与下述写法一样：
+def target():
+ print('running target()')
+target = decorate(target)
+```
+
+```python
+#示例 7-1　装饰器通常把函数替换成另一个函数
+>>> def deco(func):
+... def inner():
+... print('running inner()')
+... return inner ➊
+...
+>>> @deco
+... def target(): ➋
+... print('running target()')
+...
+>>> target() ➌
+running inner()
+>>> target ➍
+<function deco.<locals>.inner at 0x10063b598>
+➊ deco 返回 inner 函数对象。
+➋ 使用 deco 装饰 target。
+➌ 调用被装饰的 target 其实会运行 inner。
+➍ 审查对象，发现 target 现在是 inner 的引用。
+```
+
+### 7.2 Python何时执行装饰器
+
+```python
+#示例 7-2 registration.py 模块
+registry = [] ➊
+def register(func): ➋
+ print('running register(%s)' % func) ➌
+ registry.append(func) ➍
+ return func ➎
+@register ➏
+def f1():
+ print('running f1()')
+@register
+def f2():
+ print('running f2()')
+def f3(): ➐
+ print('running f3()')
+def main(): ➑
+ print('running main()')
+ print('registry ->', registry)
+ f1()
+ f2()
+ f3()
+if __name__=='__main__':
+ main() ➒
+➊ registry 保存被 @register 装饰的函数引用。
+➋ register 的参数是一个函数。
+➌ 为了演示，显示被装饰的函数。
+➍ 把 func 存入 registry。
+➎ 返回 func：必须返回函数；这里返回的函数与通过参数传入的一样。
+➏ f1 和 f2 被 @register 装饰。
+➐ f3 没有装饰。
+➑ main 显示 registry，然后调用 f1()、f2() 和 f3()。
+➒ 只有把 registration.py 当作脚本运行时才调用 main()。
+```
