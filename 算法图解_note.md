@@ -93,3 +93,67 @@ O(n)时间意味着查看列表中的每个元素一次。
 ## 第3章 递归
 
 ### 3.1 递归
+
+```python
+def look_for_key(main_box):
+    pile = main_box.make_a_pile_to_look_through()
+    while pile is not empty:
+        box = pile.grab_a_box()
+        for item in box:
+            if item.is_a_box():
+                pile.append(item)
+            elif item.is_a_key():
+                print "found the key!"
+```
+
+```python
+#第二种方法使用递归——函数调用自己，这种方法的伪代码如下。
+def look_for_key(box):
+    for item in box:
+        if item.is_a_box():
+            #递归
+            look_for_key(item)
+        elif item.is_a_key():
+            print "found the key!" 
+```
+
+### 3.2 基线条件和递归条件
+
+每个递归函数都有两部分：基线条件（base case）和递归条件（recursive case）。递归条件指的是函数调用自己，而基线条件则指的是函数不再调用自己，从而避免形成无限循环。
+
+```python
+def countdown(i):
+    print i
+    if i <= 0:  #基线条件
+        return
+    else:       #递归条件
+        countdown(i-1) 
+```
+
+### 3.3 栈
+
+调用另一个函数时，当前函数暂停并处于未完成状态。该函数的所有变量的值都还在内存中。执行完函数greet2后，你回到函数greet，并从离开的地方开始接着往下执行：首先打印getting ready to say bye…，再调用函数bye.
+
+#### 3.3.2 递归调用栈
+
+```python
+#阶乘的递归函数
+def fact(x):
+ if x == 1:
+    return 1
+ else:
+    return x * fact(x-1)
+```
+
+## 第4章 快速排序
+
+### 4.1 分而治之
+
+```python
+def sum(arr):
+ total = 0
+ for x in arr:
+    total += x
+ return total
+print sum([1, 2, 3, 4])
+```

@@ -2267,13 +2267,13 @@ True
 def tag(name, *content, cls=None, **attrs):
  """生成一个或多个HTML标签"""
  if cls is not None:
- attrs['class'] = cls
+    attrs['class'] = cls
  if attrs:
- attr_str = ''.join(' %s="%s"' % (attr, value)
+    attr_str = ''.join(' %s="%s"' % (attr, value)
  for attr, value
- in sorted(attrs.items()))
+    in sorted(attrs.items()))
  else:
- attr_str = ''
+    attr_str = ''
  if content:
  return '\n'.join('<%s%s>%s</%s>' %
  (name, attr_str, c, name) for c in content)
@@ -2286,6 +2286,7 @@ def tag(name, *content, cls=None, **attrs):
 ```python
 示例 5-12 Bobo 知道 hello 需要 person 参数，并且从 HTTP 请求中获取它
 import bobo
+
 @bobo.query('/')
 def hello(person):
  return 'Hello %s!' % person
@@ -2323,15 +2324,15 @@ def clip(text, max_len=80):
  """
  end = None
  if len(text) > max_len:
- space_before = text.rfind(' ', 0, max_len)
+    space_before = text.rfind(' ', 0, max_len)
  if space_before >= 0:
- end = space_before
+    end = space_before
  else: 
      space_after = text.rfind(' ', max_len)
  if space_after >= 0:
- end = space_after
+    end = space_after
  if end is None: # 没找到空格
- end = len(text)
+    end = len(text)
  return text[:end].rstrip()
 ```
 
@@ -2413,18 +2414,18 @@ TypeError: 'name' parameter lacking default value
 def clip(text:str, max_len:'int > 0'=80) -> str: ➊
  """在max_len前面或后面的第一个空格处截断文本
  """
- end = None
- if len(text) > max_len:
- space_before = text.rfind(' ', 0, max_len)
- if space_before >= 0:
- end = space_before
- else:
- space_after = text.rfind(' ', max_len)
- if space_after >= 0:
- end = space_after
- if end is None: # 没找到空格
- end = len(text)
- return text[:end].rstrip()
+end = None
+if len(text) > max_len:
+    space_before = text.rfind(' ', 0, max_len)
+    if space_before >= 0:
+        end = space_before
+    else:
+        space_after = text.rfind(' ', max_len)
+        if space_after >= 0:
+            end = space_after
+if end is None: # 没找到空格
+    end = len(text)
+return text[:end].rstrip()
 ➊ 有注解的函数声明。
 ```
 
@@ -2625,55 +2626,69 @@ functools.partial(<function tag at 0x10206d1e0>, 'img', cls='pic-frame') ➍
 #示例 6-1　实现 Order 类，支持插入式折扣策略
 from abc import ABC, abstractmethod
 from collections import namedtuple
+
 Customer = namedtuple('Customer', 'name fidelity')
+
 class LineItem:
- def __init__(self, product, quantity, price):
- self.product = product
- self.quantity = quantity
- self.price = price
- def total(self):
- return self.price * self.quantity
+    def __init__(self, product, quantity, price):
+        self.product = product
+        self.quantity = quantity
+        self.price = price
+    def total(self):
+        return self.price * self.quantity
+
 class Order: # 上下文
- def __init__(self, customer, cart, promotion=None):
- self.customer = customer
- self.cart = list(cart)
- self.promotion = promotion
+    def __init__(self, customer, cart, promotion=None):
+        self.customer = customer
+        self.cart = list(cart)
+        self.promotion = promotion
+
  def total(self):
- if not hasattr(self, '__total'): 
-     self.__total = sum(item.total() for item in self.cart)
+    if not hasattr(self, '__total'): 
+        self.__total = sum(item.total() for item in self.cart)
  return self.__total
+
  def due(self):
- if self.promotion is None:
- discount = 0
- else:
- discount = self.promotion.discount(self)
- return self.total() - discount
+    if self.promotion is None:
+        discount = 0
+    else:
+        discount = self.promotion.discount(self)
+    return self.total() - discount
+
  def __repr__(self):
- fmt = '<Order total: {:.2f} due: {:.2f}>'
- return fmt.format(self.total(), self.due())
+    fmt = '<Order total: {:.2f} due: {:.2f}>'
+    return fmt.format(self.total(), self.due())
+
 class Promotion(ABC): # 策略：抽象基类
+
  @abstractmethod
  def discount(self, order):
  """返回折扣金额（正值）"""
+
 class FidelityPromo(Promotion): # 第一个具体策略
  """为积分为1000或以上的顾客提供5%折扣"""
+
  def discount(self, order):
- return order.total() * .05 if order.customer.fidelity >= 1000 else 0
+    return order.total() * .05 if order.customer.fidelity >= 1000 else 0
+
 class BulkItemPromo(Promotion): # 第二个具体策略
  """单个商品为20个或以上时提供10%折扣"""
+
  def discount(self, order):
- discount = 0
- for item in order.cart:
- if item.quantity >= 20:
- discount += item.total() * .1
- return discount
+    discount = 0
+    for item in order.cart:
+        if item.quantity >= 20:
+            discount += item.total() * .1
+    return discount
+
 class LargeOrderPromo(Promotion): # 第三个具体策略
  """订单中的不同商品达到10个或以上时提供7%折扣"""
+
  def discount(self, order):
- distinct_items = {item.product for item in order.cart}
- if len(distinct_items) >= 10:
- return order.total() * .07
- return 0
+    distinct_items = {item.product for item in order.cart}
+    if len(distinct_items) >= 10:
+        return order.total() * .07
+    return 0
 ```
 
 ```python
@@ -2712,48 +2727,59 @@ class LargeOrderPromo(Promotion): # 第三个具体策略
 ```python
 #示例 6-3 Order 类和使用函数实现的折扣策略
 from collections import namedtuple
+
 Customer = namedtuple('Customer', 'name fidelity')
+
 class LineItem:
+
  def __init__(self, product, quantity, price):
- self.product = product
- self.quantity = quantity
- self.price = price
+    self.product = product
+    self.quantity = quantity
+    self.price = price
+
  def total(self):
- return self.price * self.quantity
+    return self.price * self.quantity
+
 class Order: # 上下文
+
  def __init__(self, customer, cart, promotion=None):
- self.customer = customer
- self.cart = list(cart)
- self.promotion = promotion
+    self.customer = customer
+    self.cart = list(cart)
+    self.promotion = promotion
+
  def total(self):
- if not hasattr(self, '__total'):
- self.__total = sum(item.total() for item in self.cart)
- return self.__total
+    if not hasattr(self, '__total'):
+        self.__total = sum(item.total() for item in self.cart)
+    return self.__total
+
  def due(self):
- if self.promotion is None:
- discount = 0
- else:
- discount = self.promotion(self) ➊
- return self.total() - discount
+    if self.promotion is None:
+        discount = 0
+    else:
+        discount = self.promotion(self) ➊
+    return self.total() - discount
+
  def __repr__(self):
- fmt = '<Order total: {:.2f} due: {:.2f}>'
- return fmt.format(self.total(), self.due())
+    fmt = '<Order total: {:.2f} due: {:.2f}>'
+    return fmt.format(self.total(), self.due())
 ➋
 def fidelity_promo(order): ➌
  """为积分为1000或以上的顾客提供5%折扣"""
- return order.total() * .05 if order.customer.fidelity >= 1000 else 0
+    return order.total() * .05 if order.customer.fidelity >= 1000 else 0
+
 def bulk_item_promo(order):
  """单个商品为20个或以上时提供10%折扣"""
  discount = 0
  for item in order.cart:
- if item.quantity >= 20:
- discount += item.total() * .1
- return discount
+    if item.quantity >= 20:
+        discount += item.total() * .1
+return discount
+
  def large_order_promo(order):
  """订单中的不同商品达到10个或以上时提供7%折扣"""
  distinct_items = {item.product for item in order.cart}
  if len(distinct_items) >= 10:
- return order.total() * .07
+    return order.total() * .07
  return 0
 ➊ 计算折扣只需调用 self.promotion() 函数。
 ➋ 没有抽象类。
@@ -2820,12 +2846,13 @@ def best_promo(order): ➋
 ```python
 #示例 6-7　内省模块的全局命名空间，构建 promos 列表
 promos = [globals()[name] for name in globals() ➊
- if name.endswith('_promo') ➋
- and name != 'best_promo'] ➌
+    if name.endswith('_promo') ➋
+    and name != 'best_promo'] ➌
+
 def best_promo(order):
  """选择可用的最佳折扣
  """
- return max(promo(order) for promo in promos) ➍
+    return max(promo(order) for promo in promos) ➍
 ➊ 迭代 globals() 返回字典中的各个 name。
 ➋ 只选择以 _promo 结尾的名称。
 ➌ 过滤掉 best_promo 自身，防止无限递归。
@@ -2851,10 +2878,10 @@ inspect.getmembers 函数用于获取对象（这里是 promotions 模块）的�
 class MacroCommand:
  """一个执行一组命令的命令"""
  def __init__(self, commands):
- self.commands = list(commands) # ➊
+    self.commands = list(commands) # ➊
  def __call__(self):
- for command in self.commands: # ➋
- command()
+    for command in self.commands: # ➋
+        command()
 ➊ 使用 commands 参数构建一个列表，这样能确保参数是可迭代对象，还能在各个
 MacroCommand 实例中保存各个命令引用的副本。
 ➋ 调用 MacroCommand 实例时，self.commands 中的各个命令依序执行。
@@ -2868,11 +2895,12 @@ MacroCommand 实例中保存各个命令引用的副本。
 #假如有个名为 decorate 的装饰器：
 @decorate
 def target():
- print('running target()')
+    print('running target()')
 
 #上述代码的效果与下述写法一样：
 def target():
- print('running target()')
+    print('running target()')
+
 target = decorate(target)
 ```
 
@@ -2903,25 +2931,30 @@ running inner()
 #示例 7-2 registration.py 模块
 registry = [] ➊
 def register(func): ➋
- print('running register(%s)' % func) ➌
- registry.append(func) ➍
- return func ➎
+    print('running register(%s)' % func) ➌
+    registry.append(func) ➍
+    return func ➎
+
 @register ➏
 def f1():
- print('running f1()')
+    print('running f1()')
+
 @register
 def f2():
- print('running f2()')
+    print('running f2()')
+
 def f3(): ➐
- print('running f3()')
+    print('running f3()')
+
 def main(): ➑
- print('running main()')
- print('registry ->', registry)
- f1()
- f2()
- f3()
+    print('running main()')
+    print('registry ->', registry)
+    f1()
+    f2()
+    f3()
+
 if __name__=='__main__':
- main() ➒
+    main() ➒
 ➊ registry 保存被 @register 装饰的函数引用。
 ➋ register 的参数是一个函数。
 ➌ 为了演示，显示被装饰的函数。
@@ -2932,3 +2965,304 @@ if __name__=='__main__':
 ➑ main 显示 registry，然后调用 f1()、f2() 和 f3()。
 ➒ 只有把 registration.py 当作脚本运行时才调用 main()。
 ```
+
+```python
+#输出:
+$ python3 registration.py
+running register(<function f1 at 0x100631bf8>)
+running register(<function f2 at 0x100631c80>)
+running main()
+registry -> [<function f1 at 0x100631bf8>, <function f2 at 0x100631c80>]
+running f1()
+running f2()
+running f3()
+```
+
+### 7.3　使用装饰器改进“策略”模式
+
+```python
+promos = [] ➊
+
+def promotion(promo_func): ➋
+    promos.append(promo_func)
+    return promo_func
+
+@promotion ➌
+def fidelity(order):
+ """为积分为1000或以上的顾客提供5%折扣"""
+    return order.total() * .05 if order.customer.fidelity >= 1000 else 0
+
+@promotion
+def bulk_item(order):
+ """单个商品为20个或以上时提供10%折扣"""
+    discount = 0
+    for item in order.cart:
+        if item.quantity >= 20:
+            discount += item.total() * .1
+    return discount
+
+@promotion
+def large_order(order):
+ """订单中的不同商品达到10个或以上时提供7%折扣"""
+    distinct_items = {item.product for item in order.cart}
+    if len(distinct_items) >= 10:
+         return order.total() * .07
+    return 0
+
+def best_promo(order): ➍
+ """选择可用的最佳折扣
+ """
+ return max(promo(order) for promo in promos)
+➊ promos 列表起初是空的。
+➋ promotion 把 promo_func 添加到 promos 列表中，然后原封不动地将其返回。
+➌ 被 @promotion 装饰的函数都会添加到 promos 列表中。
+➍ best_promos 无需修改，因为它依赖 promos 列表。
+```
+
+### 7.4　变量作用域规则
+
+```python
+#如果在函数中赋值时想让解释器把 b 当成全局变量，要使用 global 声明：
+>>> b = 6
+>>> def f3(a):
+... global b
+... print(a)
+... print(b)
+... b = 9
+...
+>>> f3(3)
+3
+6
+>>> b
+9
+>>> f3(3)
+3
+9
+>>> b = 30
+>>> b
+30
+>>>
+```
+
+### 7.5　闭包
+
+```python
+示例 7-9 average.py：计算移动平均值的高阶函数
+def make_averager():
+    series = []
+
+    def averager(new_value):
+        series.append(new_value)
+        total = sum(series)
+        return total/len(series)
+    return averager
+```
+
+### 7.6 nonlocal声明
+
+```python
+#示例 7-13 计算移动平均值的高阶函数，不保存所有历史值，但有缺陷
+def make_averager():
+    count = 0
+    total = 0
+
+    def averager(new_value):
+        count += 1
+        total += new_value
+        return total / count
+    return average
+```
+
+```python
+>>> avg = make_averager()
+>>> avg(10)
+Traceback (most recent call last):
+ ...
+UnboundLocalError: local variable 'count' referenced before assignment
+>>>
+```
+
+```python
+#示例 7-14 计算移动平均值，不保存所有历史（使用 nonlocal 修正）
+def make_averager():
+    count = 0
+    total = 0
+    def averager(new_value):
+        nonlocal count, total
+        count += 1
+        total += new_value
+        return total / count
+    return averager
+```
+
+### 7.7　实现一个简单的装饰器
+
+```python
+#示例 7-16 使用 clock 装饰器
+# clockdeco_demo.py
+import time
+from clockdeco import clock
+
+@clock
+def snooze(seconds):
+    time.sleep(seconds)
+
+@clock
+def factorial(n):
+    return 1 if n < 2 else n*factorial(n-1)
+
+if __name__=='__main__':
+    print('*' * 40, 'Calling snooze(.123)')
+    snooze(.123)
+    print('*' * 40, 'Calling factorial(6)')
+    print('6! =', factorial(6)
+```
+
+```python
+$ python3 clockdeco_demo.py
+**************************************** Calling snooze(123)
+[0.12405610s] snooze(.123) -> None
+**************************************** Calling factorial(6)
+[0.00000191s] factorial(1) -> 1
+[0.00004911s] factorial(2) -> 2
+[0.00008488s] factorial(3) -> 6
+[0.00013208s] factorial(4) -> 24
+[0.00019193s] factorial(5) -> 120
+[0.00026107s] factorial(6) -> 720
+6! = 720
+```
+
+### 7.8　标准库中的装饰器
+
+```python
+#示例 7-19 使用缓存实现，速度更快
+import functools
+from clockdeco import clock
+
+@functools.lru_cache() # ➊
+@clock # ➋
+def fibonacci(n):
+    if n < 2:
+        return n
+    return fibonacci(n-2) + fibonacci(n-1)
+
+if __name__=='__main__':
+    print(fibonacci(6))
+➊ 注意，必须像常规函数那样调用 lru_cache。这一行中有一对括号：@functools.lru_cache()。这么做的原因是，lru_cache 可以接受配置参数，稍后说明。
+➋ 这里叠放了装饰器：@lru_cache() 应用到 @clock 返回的函数上。
+```
+
+```python
+这样一来，执行时间减半了，而且 n 的每个值只调用一次函数：
+$ python3 fibo_demo_lru.py
+[0.00000119s] fibonacci(0) -> 0
+[0.00000119s] fibonacci(1) -> 1
+[0.00010800s] fibonacci(2) -> 1
+[0.00000787s] fibonacci(3) -> 2
+[0.00016093s] fibonacci(4) -> 3
+[0.00001216s] fibonacci(5) -> 5
+[0.00025296s] fibonacci(6) -> 8
+```
+
+### 7.9　叠放装饰器
+
+把 @d1 和 @d2 两个装饰器按顺序应用到 f 函数上，作用相当于 f = d1(d2(f))。
+
+```python
+@d1
+@d2
+def f():
+    print('f')
+
+等同于：
+def f():
+    print('f')
+
+f = d1(d2(f))
+```
+
+#### 7.10　参数化装饰器
+
+#### 7.10.1　一个参数化的注册装饰器
+
+```python
+#示例 7-23 为了接受参数，新的 register 装饰器必须作为函数调用
+registry = set() ➊
+
+def register(active=True): ➋
+    def decorate(func): ➌
+    print('running register(active=%s)->decorate(%s)'% (active, func))
+    if active: ➍
+        registry.add(func)
+    else:
+        registry.discard(func) ➎
+    return func ➏
+ return decorate ➐
+
+@register(active=False) ➑
+def f1():
+    print('running f1()')
+
+@register() ➒
+def f2():
+    print('running f2()')
+
+def f3():
+    print('running f3()')
+➊ registry 现在是一个 set 对象，这样添加和删除函数的速度更快。
+➋ register 接受一个可选的关键字参数。
+➌ decorate 这个内部函数是真正的装饰器；注意，它的参数是一个函数。
+➍ 只有 active 参数的值（从闭包中获取）是 True 时才注册 func。
+➎ 如果 active 不为真，而且 func 在 registry 中，那么把它删除。
+➏ decorate 是装饰器，必须返回一个函数。
+➐ register 是装饰器工厂函数，因此返回 decorate。
+➑ @register 工厂函数必须作为函数调用，并且传入所需的参数。
+➒ 即使不传入参数，register 也必须作为函数调用（@register()），即要返回真正的装饰器 decorate。
+```
+
+## 第 8 章 对象引用、可变性和垃圾回收
+
+### 8.1　变量不是盒子
+
+```python
+#示例 8-1　变量 a 和 b 引用同一个列表，而不是那个列表的副本
+>>> a = [1, 2, 3]
+>>> b = a
+>>> a.append(4)
+>>> b
+[1, 2, 3, 4]
+```
+
+### 8.2　标识、相等性和别名
+
+```python
+#示例 8-3 charles 和 lewis 指代同一个对象
+>>> charles = {'name': 'Charles L. Dodgson', 'born': 1832}
+>>> lewis = charles ➊
+>>> lewis is charles
+True
+>>> id(charles), id(lewis) ➋
+(4300473992, 4300473992)
+>>> lewis['balance'] = 950 ➌
+>>> charles
+{'name': 'Charles L. Dodgson', 'balance': 950, 'born': 1832}
+➊ lewis 是 charles 的别名。
+➋ is 运算符和 id 函数确认了这一点。
+➌ 向 lewis 中添加一个元素相当于向 charles 中添加一个元素。
+```
+
+```python
+#示例 8-4 alex 与 charles 比较的结果是相等，但 alex 不是 charles
+>>> alex = {'name': 'Charles L. Dodgson', 'born': 1832, 'balance': 950} ➊
+>>> alex == charles ➋
+True
+>>> alex is not charles ➌
+True
+➊ alex 指代的对象与赋值给 charles 的对象内容一样。
+➋ 比较两个对象，结果相等，这是因为 dict 类的 __eq__ 方法就是这样实现的。
+➌ 但它们是不同的对象。这是 Python 说明标识不同的方式：a is not b。
+```
+
+#### 8.2.1　在==和is之间选择
+
+== 运算符比较两个对象的值（对象中保存的数据），而 is 比较对象的标识.
