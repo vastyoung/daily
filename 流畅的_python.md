@@ -3266,3 +3266,60 @@ True
 #### 8.2.1　在==和is之间选择
 
 == 运算符比较两个对象的值（对象中保存的数据），而 is 比较对象的标识.
+
+检查变量绑定的值是不是 None: `x is None`
+否定的正确写法:`x is not None`
+
+#### 8.2.2　元组的相对不可变性
+
+```python
+>>> t1 = (1, 2, [30, 40])   #t1 不可变，但是 t1[-1] 可变
+>>> t2 = (1, 2, [30, 40])
+>>> t1 == t2                #== 运算符比较两个对象的值（对象中保存的数据）
+True
+>>> id(t1[-1])              #查看 t1[-1] 列表的标识
+4302515784
+>>> t1[-1].append(99)       #修改 t1[-1] 列表
+>>> t1
+(1, 2, [30, 40, 99])
+>>> id(t1[-1]) 
+4302515784
+>>> t1 == t2
+False
+```
+
+### 8.3　默认做浅复制
+
+```python
+>>> l1 = [3, [55, 44], (7, 8, 9)]
+>>> l2 = list(l1)       #list(l1) 创建 l1 的副本
+>>> l2
+[3, [55, 44], (7, 8, 9)]
+>>> l2 == l1
+True
+>>> l2 is l1
+False                   #但是二者指代不同的对象。
+```
+
+```python
+#使用 copy 和 deepcopy 产生的影响
+>>> import copy
+>>> bus1 = Bus(['Alice', 'Bill', 'Claire', 'David'])
+>>> bus2 = copy.copy(bus1)
+>>> bus3 = copy.deepcopy(bus1)
+>>> id(bus1), id(bus2), id(bus3)
+(4301498296, 4301499416, 4301499752) ➊
+>>> bus1.drop('Bill')
+>>> bus2.passengers
+['Alice', 'Claire', 'David'] ➋
+>>> id(bus1.passengers), id(bus2.passengers), id(bus3.passengers)
+(4302658568, 4302658568, 4302657800) ➌
+>>> bus3.passengers
+['Alice', 'Bill', 'Claire', 'David'] ➍
+
+➊ 使用 copy 和 deepcopy，创建 3 个不同的 Bus 实例。
+➋ bus1 中的 'Bill' 下车后，bus2 中也没有他了。
+➌ 审查 passengers 属性后发现，bus1 和 bus2 共享同一个列表对象，因为 bus2 是 bus1 的
+浅复制副本。
+➍ bus3 是 bus1 的深复制副本，因此它的 passengers 属性指代另一个列表。
+```

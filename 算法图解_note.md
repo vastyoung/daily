@@ -157,3 +157,33 @@ def sum(arr):
  return total
 print sum([1, 2, 3, 4])
 ```
+
+从数组中选择一个元素，这个元素被称为基准值（pivot）。
+
+这被称为分区（partitioning）: 一个由所有小于基准值的数字组成的子数组； 基准值； 一个由所有大于基准值的数组组成的子数组。
+
+```python
+#要对这两个子数组进行快速排序，再合并结果，就能得到一个有序数组！
+quicksort([15, 10]) + [33] + quicksort([])
+> [10, 15, 33]
+```
+
+(1) 选择基准值。
+(2) 将数组分成两个子数组：小于基准值的元素和大于基准值的元素。
+(3) 对这两个子数组进行快速排序。
+
+```python
+下面是快速排序的代码。
+def quicksort(array):
+    if len(array) < 2:
+        return array        #基线条件：为空或只包含一个元素的数组是“有序”的
+    else:
+        pivot = array[0]    #递归条件
+        less = [i for i in array[1:] if i <= pivot]     #由所有小于基准值的元素组成的子数组
+        greater = [i for i in array[1:] if i > pivot]   #由所有大于基准值的元素组成的子数组
+        return quicksort(less) + [pivot] + quicksort(greater)
+
+print quicksort([10, 5, 2, 3])
+```
+
+## 第5章 散列表
