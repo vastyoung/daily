@@ -187,3 +187,85 @@ print quicksort([10, 5, 2, 3])
 ```
 
 ## 第5章 散列表
+
+### 5.1 散列函数
+
+散列函数是这样的函数，即无论你给它什么数据，它都还你一个数字。
+
+```python
+#使用函数dict来创建散列表
+>>> book = dict()
+
+>>> book["apple"] = 0.67
+>>> book["milk"] = 1.49
+>>> book["avocado"] = 1.49
+>>> print book
+{'avocado': 1.49, 'apple': 0.67, 'milk': 1.49}
+
+>>> print book["avocado"]   #查询鳄梨的价格
+1.49
+```
+
+散列表由键和值组成。在前面的散列表book中，键为商品名，值为商品价格。散列表将键映射到值.
+
+```python
+>>> phone_book = dict() #phone_book = ()与phone_book = dict()等效
+>>> phone_book["jenny"] = 8675309
+>>> phone_book["emergency"] = 911
+
+>>> print phone_book["jenny"]
+867530
+```
+
+#### 5.2.2 防止重复
+
+```python
+#如果名字在名单中，就说明这个人投过票了
+voted = {}
+def check_voter(name):
+    if voted.get(name):
+        print "kick them out!"
+    else:
+        voted[name] = True
+        print "let them vote!"
+
+>>> check_voter("tom")
+let them vote!
+>>> check_voter("mike")
+let them vote!
+>>> check_voter("mike")
+kick them out! 
+```
+
+#### 5.2.3 将散列表用作缓存
+
+```python
+cache = {}
+def get_page(url):
+    if cache.get(url):
+        return cache[url]       #返回缓存的数据
+    else:
+        data = get_data_from_server(url)
+        cache[url] = data       #先将数据保存到缓存中
+        return data 
+```
+
+### 5.3 冲突
+
+给两个键分配的位置相同 :冲突
+
+如果散列表存储的链表很长，散列表的速度将急剧下降
+
+### 5.4 性能
+
+#### 5.4.1 填装因子
+
+```python
+散列表的填装因子为2/5,即0.4 #5位置总数,2散列表包含的元素数
+```
+
+填装因子大于1意味着商品数量超过了数组的位置数。一旦填装因子开始增大，你就需要在散列表中添加位置，这被称为调整长度.
+
+你首先创建一个更长的新数组：通常将数组增长一倍.
+
+填装因子越低，发生冲突的可能性越小，散列表的性能越高.
