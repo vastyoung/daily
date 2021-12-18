@@ -3366,3 +3366,102 @@ True
 repr()  以便于开发者理解的方式返回对象的字符串表示形式。
 
 str()   以便于用户理解的方式返回对象的字符串表示形式。
+
+### 9.5　格式化显示
+
+```python
+>>> brl = 1/2.43 # BRL到USD的货币兑换比价
+>>> brl
+0.4115226337448559
+>>> format(brl, '0.4f')     # 用format()函数 把brl 以(f)浮点数 并保留小数点后4位
+'0.4115'
+>>> '1 BRL = {rate:0.2f} USD'.format(rate=brl)      #把brl传给代换字段
+'1 BRL = 0.41 USD'
+```
+
+```python
+#b 和 x 分别表示二进制和十六进制的 int 类型，f 表示小数形式的 float 类型，而 % 表示百分数形式
+>>> format(42, 'b')
+'101010'
+>>> format(2/3, '.1%')
+'66.7%'
+```
+
+```python
+>>> from datetime import datetime
+>>> now = datetime.now()
+>>> format(now, '%H:%M:%S')
+'18:49:05'
+>>> "It's now {:%I:%M %p}".format(now)
+"It's now 06:49 PM"
+```
+
+```python
+>>> v1 = Vector2d(3, 4)
+>>> format(v1)
+'(3.0, 4.0)'
+```
+
+### 9.6　可散列的Vector2d
+
+```python
+class Vector2d:
+    typecode = 'd'
+
+    def __init__(self, x, y):
+        self.__x = float(x)     #使用两个前导下划线,把属性标记为私有的
+        self.__y = float(y)
+
+ @property                      #@property 装饰器把读值方法标记为特性
+ def x(self):                   #读值方法与公开属性同名，都是 x
+    return self.__x 
+
+ @property 
+ def y(self):
+    return self.__y
+
+ def __iter__(self):
+    return (i for i in (self.x, self.y)) 
+```
+
+```python
+#示例 9-8 vector2d_v3.py：实现 __hash__ 方法
+# 在Vector2d类中定义
+def __hash__(self):
+    return hash(self.x) ^ hash(self.y)
+
+```
+
+```python
+#添加 __hash__ 方法之后，向量变成可散列的了：
+>>> v1 = Vector2d(3, 4)
+>>> v2 = Vector2d(3.1, 4.2)
+>>> hash(v1), hash(v2)
+(7, 384307168202284039)
+>>> set([v1, v2])
+{Vector2d(3.1, 4.2), Vector2d(3.0, 4.0)}
+```
+
+### 9.7 Python的私有属性和“受保护的”属性
+
+```python
+以 __mood 的形式（两个前导下划线，尾部没有或最多有一个下划线）命名实例属性Python 会把属性名存入实例的 __dict__ 属性中，而且会在前面加上一个下划线和类名.这个语言特性叫名称改写.(__mood 会变成 _Dog__mood)
+```
+
+```python
+#示例 9-10 私有属性的名称会被“改写”，在前面加上下划线和类名
+>>> v1 = Vector2d(3, 4)
+>>> v1.__dict__
+{'_Vector2d__y': 4.0, '_Vector2d__x': 3.0}
+>>> v1._Vector2d__x
+3.0
+```
+
+### 9.8　使用__slots__类属性节省空间
+
+```python
+#示例 9-11 vector2d_v3_slots.py：只在 Vector2d 类中添加了 __slots__ 属性
+class Vector2d:
+ __slots__ = ('__x', '__y') #在类中定义 __slots__ 属性的目的是告诉解释器：“这个类中的所有实例属性都在这儿,Python 会在各个实例中使用类似元组的结构存储实例变量，从而避免使用消耗内存的 __dict__ 属性
+ typecode = 'd'
+```
