@@ -283,3 +283,34 @@ def get_page(url):
 段数最少的路径不一定是最快的.
 
 在狄克斯特拉算法中,给每段都分配一个数字或权重,狄克斯特拉算法找出总权重最小的路径.
+
+## 第8章 贪婪算法
+
+```python
+#集合不能包含重复的元素
+>>> arr = [1, 2, 2, 3, 3, 3]
+set(arr)
+set([1, 2, 3])
+```
+
+并集意味着将集合合并。
+交集意味着找出两个集合中都有的元素。
+差集意味着将从一个集合中剔除出现在另一个集合中的元素。
+
+```python
+>>> fruits = set(["avocado", "tomato", "banana"])
+>>> vegetables = set(["beets", "carrots", "tomato"])
+#并集
+>>> fruits | vegetables
+set(["avocado", "beets", "carrots", "tomato", "banana"])
+#交集
+>>> fruits & vegetables
+set(["tomato"])
+#差集
+>>> fruits – vegetables
+set(["avocado", "banana"])
+
+>>> vegetables – fruits
+```
+
+## 第9章 动态规划
