@@ -3465,3 +3465,30 @@ class Vector2d:
  __slots__ = ('__x', '__y') #在类中定义 __slots__ 属性的目的是告诉解释器：“这个类中的所有实例属性都在这儿,Python 会在各个实例中使用类似元组的结构存储实例变量，从而避免使用消耗内存的 __dict__ 属性
  typecode = 'd'
 ```
+
+## 第 1 1 章 接口：从协议到抽象基类
+
+序列协议的重要性，如果没有 __iter__ 和 __contains__ 方法，Python 会调用__getitem__ 方法，设法让迭代和 in 运算符可用
+
+```python
+#random.shuffle 函数用法如下：
+>>> from random import shuffle
+>>> l = list(range(10))
+>>> shuffle(l)
+>>> l
+[5, 2, 9, 7, 8, 3, 1, 4, 0, 6]
+```
+
+可变的序列还必须提供 __setitem__ 方法
+
+```python
+#示例 11-6 为 FrenchDeck 打猴子补丁，把它变成可变的，让 random.shuffle 函数能处理（接续示例 11-5）
+>>> def set_card(deck, position, card): #定义一个函数，它的参数为 deck、position 和 card
+... deck._cards[position] = card
+...
+>>> FrenchDeck.__setitem__ = set_card #把那个函数赋值给 FrenchDeck 类的 __setitem__ 属性
+>>> shuffle(deck) #可以打乱了,因为 FrenchDeck 实现了可变序列协议所需的方法
+>>> deck[:5]
+[Card(rank='3', suit='hearts'), Card(rank='4', suit='diamonds'), Card(rank='4',
+suit='clubs'), Card(rank='7', suit='hearts'), Card(rank='9', suit='spades')]
+```
