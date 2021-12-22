@@ -3492,3 +3492,21 @@ class Vector2d:
 [Card(rank='3', suit='hearts'), Card(rank='4', suit='diamonds'), Card(rank='4',
 suit='clubs'), Card(rank='7', suit='hearts'), Card(rank='9', suit='spades')]
 ```
+
+### 11.6　标准库中的抽象基类
+
+#### 11.6.2 抽象基类的数字塔
+
+想检查一个数是不是整数，可以使用 isinstance(x, numbers.Integral)
+
+果一个值可能是浮点数类型，可以使用 isinstance(x, numbers.Real) 检查
+
+### 11.7　定义并使用一个抽象基类
+
+Tombola 抽象基类有四个方法，其中两个是抽象方法。
+.load(...)：把元素放入容器。
+.pick()：从容器中随机拿出一个元素，返回选中的元素。
+
+另外两个是具体方法。
+.loaded()：如果容器中至少有一个元素，返回 True。
+.inspect()：返回一个有序元组，由容器中的现有元素构成，不会修改容器的内容（内部的顺序不保留）。
