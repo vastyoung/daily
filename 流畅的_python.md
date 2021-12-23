@@ -3510,3 +3510,24 @@ Tombola 抽象基类有四个方法，其中两个是抽象方法。
 另外两个是具体方法。
 .loaded()：如果容器中至少有一个元素，返回 True。
 .inspect()：返回一个有序元组，由容器中的现有元素构成，不会修改容器的内容（内部的顺序不保留）。
+
+## 第 1 2 章 继承的优缺点
+
+### 12.1　子类化内置类型很麻烦
+
+```python
+#示例 12-1 内置类型 dict 的 __init__ 和 __update__ 方法会忽略我们覆盖的 __setitem__ 方法
+>>> class DoppelDict(dict):
+... def __setitem__(self, key, value):
+... super().__setitem__(key, [value] * 2) #DoppelDict.__setitem_方法会重复存入的值
+...
+>>> dd = DoppelDict(one=1) # 'one' 的值没有重复
+>>> dd
+{'one': 1}
+>>> dd['two'] = 2 #[] 运算符会调用我们覆盖的 __setitem__ 方法，按预期那样工作：'two' 对应的是两个重复的值，即 [2, 2]。
+>>> dd
+{'one': 1, 'two': [2, 2]}
+>>> dd.update(three=3) # 继承自 dict 的 update 方法也不使用我们覆盖的 __setitem__ 方法：'three' 的值没有重复
+>>> dd
+{'three': 3, 'one': 1, 'two': [2, 2]}
+```
