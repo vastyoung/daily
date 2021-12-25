@@ -349,3 +349,11 @@ set(["avocado", "banana"])
 >>> reduce(lambda x,y: x+y, arr1)
 15 
 ```
+
+## 2021-12-25
+
+数组 : 连续,大小固定
+链表 : 不连续,大小不固定.链表中每个元素都存储了下一个元素的地址.
+
+`and` : 都为true 才为true,返回最后一个为true的,返回第一个为false的
+`or` : 有一个为true,就为true
