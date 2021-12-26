@@ -3546,3 +3546,56 @@ Tombola 抽象基类有四个方法，其中两个是抽象方法。
 ~（__invert__）
 对整数按位取反，定义为 ~x == -(x+1)。如果 x 是 2，那么 ~x == -3.
 ```
+
+## 第 1 4 章 可迭代的对象、迭代器和生成器
+
+迭代器用于从集合中取出元素.
+
+`list(range(10))` :让 range() 函数返回列表
+
+```python
+序列可以迭代的原因：iter函数
+解释器需要迭代对象 x 时，会自动调用 iter(x).
+内置的 iter 函数有以下作用。
+(1) 检查对象是否实现了 __iter__ 方法，如果实现了就调用它，获取一个迭代器。
+(2) 如果没有实现 __iter__ 方法，但是实现了 __getitem__ 方法，Python 会创建一个迭代器，尝试按顺序（从索引 0 开始）获取元素。
+(3) 如果尝试失败，Python 抛出 TypeError 异常，通常会提示“C object is not iterable”（C对象不可迭代），其中 C 是目标对象所属的类。
+```
+
+检查对象x能否迭代,调用 iter(x) 函数.
+
+可迭代的对象:使用 iter 内置函数可以获取迭代器的对象。如果对象实现了能返回迭代器的 __iter__方法，那么对象就是可迭代的;序列都可以迭代;实现了 __getitem__ 方法，而且其参数是从零开始的索引，这种对象也可以迭代.
+
+可迭代的对象和迭代器之间的关系：Python 从可迭代的对象中获取迭代器.
+
+标准的迭代器接口有两个方法:
+__next__(返回下一个可以的元素,没有元素了抛出 StopIteration 异常)
+__iter__(返回 self，以便在应该使用可迭代对象的地方使用迭代器，例如在 for 循环中)
+
+`isinstance(x, abc.Iterator)` 检查对象 x 是否为迭代器
+
+```python
+>>> s3 = Sentence('Pig and Pepper') # 创建一个 Sentence 实例 s3
+>>> it = iter(s3)                   # 从 s3 中获取迭代器
+>>> it # doctest: +ELLIPSIS
+<iterator object at 0x...>
+>>> next(it)                        # 调用 next() 函数获取下一个单词
+'Pig'
+>>> next(it)
+'and'
+>>> next(it)
+'Pepper'
+>>> next(it)                        # 没有单词了,迭代器抛出 StopIteration 异常
+Traceback (most recent call last):
+ ...
+StopIteration
+>>> list(it)                        # 到头了,迭代器没用了
+[]
+>>> list(iter(s3))                  # 想再次迭代,要重新构建迭代器
+['Pig', 'and', 'Pepper']
+
+```
+
+### 14.4 生成器函数
+
+只要 Python 函数的定义体中有 yield 关键字，该函数就是生成器函数。调用生成器函数时，会返回一个生成器对象.
