@@ -3599,3 +3599,57 @@ StopIteration
 ### 14.4 生成器函数
 
 只要 Python 函数的定义体中有 yield 关键字，该函数就是生成器函数。调用生成器函数时，会返回一个生成器对象.
+
+### 14.6 Sentence类第5版：生成器表达式
+
+```python
+#示例 14-8 先在列表推导中使用 gen_AB 生成器函数，然后在生成器表达式中使用
+>>> def gen_AB(): 
+... print('start')
+... yield 'A'
+... print('continue')
+... yield 'B'
+... print('end.')
+...
+>>> res1 = [x*3 for x in gen_AB()] # 列表推导迫切地迭代 gen_AB() 函数生成的生成器对象产出的元素：'A' 和 'B'
+start
+continue
+end.
+>>> for i in res1: # 这个 for 循环迭代列表推导生成的 res1 列表
+... print('-->', i)
+...
+--> AAA
+--> BBB
+>>> res2 = (x*3 for x in gen_AB()) # 把生成器表达式返回的值赋值给 res2。只需调用 gen_AB() 函数
+>>> res2 # res2 是一个生成器对象
+<generator object <genexpr> at 0x10063c240>
+>>> for i in res2: # 只有 for 循环迭代 res2 时，gen_AB 函数的定义体才会真正执行
+... print('-->', i)
+...
+start
+--> AAA
+continue
+--> BBB
+end.
+```
+
+### 14.8　另一个示例：等差数列生成器
+
+```python
+#示例 14-10　演示 ArithmeticProgression 类的用法
+>>> ap = ArithmeticProgression(0, 1, 3)
+>>> list(ap)
+[0, 1, 2]
+>>> ap = ArithmeticProgression(1, .5, 3)
+>>> list(ap)
+[1.0, 1.5, 2.0, 2.5]
+>>> ap = ArithmeticProgression(0, 1/3, 1)
+>>> list(ap)
+[0.0, 0.3333333333333333, 0.6666666666666666]
+>>> from fractions import Fraction
+>>> ap = ArithmeticProgression(0, Fraction(1, 3), 1)
+>>> list(ap)
+[Fraction(0, 1), Fraction(1, 3), Fraction(2, 3)]
+>>> from decimal import Decimal
+>>> ap = ArithmeticProgression(0, Decimal('.1'), .3)
+```
