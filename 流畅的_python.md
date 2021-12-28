@@ -3652,4 +3652,33 @@ end.
 [Fraction(0, 1), Fraction(1, 3), Fraction(2, 3)]
 >>> from decimal import Decimal
 >>> ap = ArithmeticProgression(0, Decimal('.1'), .3)
+>>> list(ap)
+[Decimal('0.0'), Decimal('0.1'), Decimal('0.2')]
 ```
+
+使用itertools模块生成等差数列
+
+```python
+>>> import itertools
+>>> gen = itertools.count(1, .5)
+>>> next(gen)
+1
+>>> next(gen)
+1.5
+>>> next(gen)
+2.0
+>>> next(gen)
+2.5
+```
+
+```python
+>>> gen = itertools.takewhile(lambda n: n < 3, itertools.count(1, .5))
+>>> list(gen)
+[1, 1.5, 2.0, 2.5]
+```
+
+## 第 1 5 章 上下文管理器和else块
+
+### 15.2　上下文管理器和with块
+
+上下文管理器协议包含 __enter__ 和 __exit__ 两个方法。with 语句开始运行时，会在上下文管理器对象上调用 __enter__ 方法。with 语句运行结束后，会在上下文管理器对象上调用 __exit__ 方法
