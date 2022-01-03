@@ -2981,7 +2981,7 @@ running f3()
 ### 7.3　使用装饰器改进“策略”模式
 
 ```python
-promos = [] ➊
+promos = [] #一个空列表
 
 def promotion(promo_func): ➋
     promos.append(promo_func)
@@ -3022,7 +3022,7 @@ def best_promo(order): ➍
 ### 7.4　变量作用域规则
 
 ```python
-#如果在函数中赋值时想让解释器把 b 当成全局变量，要使用 global 声明：
+#使用 global 声明让解释器把 b 当成全局变量
 >>> b = 6
 >>> def f3(a):
 ... global b
@@ -3047,7 +3047,7 @@ def best_promo(order): ➍
 ### 7.5　闭包
 
 ```python
-示例 7-9 average.py：计算移动平均值的高阶函数
+#示例 7-9 average.py：计算移动平均值的高阶函数
 def make_averager():
     series = []
 
@@ -3238,17 +3238,16 @@ def f3():
 ```python
 #示例 8-3 charles 和 lewis 指代同一个对象
 >>> charles = {'name': 'Charles L. Dodgson', 'born': 1832}
->>> lewis = charles ➊
+>>> lewis = charles         
 >>> lewis is charles
 True
->>> id(charles), id(lewis) ➋
+>>> id(charles), id(lewis) 
 (4300473992, 4300473992)
->>> lewis['balance'] = 950 ➌
+>>> lewis['balance'] = 950 
 >>> charles
 {'name': 'Charles L. Dodgson', 'balance': 950, 'born': 1832}
-➊ lewis 是 charles 的别名。
-➋ is 运算符和 id 函数确认了这一点。
-➌ 向 lewis 中添加一个元素相当于向 charles 中添加一个元素。
+lewis 是 charles 的别名
+向 lewis 中添加一个元素相当于向 charles 中添加一个元素。
 ```
 
 ```python
