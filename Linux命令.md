@@ -1,6 +1,8 @@
 
 # `Linux命令行笔记:`
 
+`man -hier`
+
 `ssh itzou@192.168.200.128` :登录到itzou@192.168.200.130
 
 `ifconfig` :查看linux ip地址
