@@ -1,5 +1,19 @@
 # daliy report
 
+## 2022-01-07
+
+- 阅读[fastapi]
+
+- fastapi 的几个入门例子
+
+- 阅读 hugo
+
+## 2022-01-06
+
+- 阅读[fastapi]
+
+- fastapi 的几个入门例子
+
 ## 2022-01-05
 
 - 阅读[Flask]
