@@ -1,5 +1,9 @@
 # daliy report
 
+## 2022-01-08
+
+- 学习[Markdown](https://commonmark.org/help/)
+
 ## 2022-01-07
 
 - 阅读[fastapi]
