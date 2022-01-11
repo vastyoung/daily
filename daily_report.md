@@ -1,5 +1,9 @@
 # daliy report
 
+## 2022-01-11
+
+- 学习[Zola](https://www.getzola.org/documentation/content/multilingual/)
+
 ## 2022-01-10
 
 - 学习[Zola](https://www.getzola.org/documentation/content/multilingual/)
