@@ -1,6 +1,6 @@
 # `Hugo笔记:`
 
-`hugo server` :运行服务器
+`hugo server --buildDrafts` 启动服务器
 
 ## 禁用LiveReload
 
