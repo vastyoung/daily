@@ -1,5 +1,9 @@
 # daliy report
 
+## 2022-01-14
+
+- 写一篇关于如何在 windows 上使用 vmworkstation 安装 linux 虚拟机的文章
+
 ## 2022-01-11
 
 - 学习[Zola](https://www.getzola.org/documentation/content/multilingual/)
