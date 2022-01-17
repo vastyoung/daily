@@ -1,5 +1,14 @@
 # daliy report
 
+## 2022-01-17
+
+- 收集资料写文章
+- 写一篇关于如何在 windows 上使用 vmworkstation 安装 linux 虚拟机的文章
+
+## 2022-01-16
+
+- 写一篇关于如何在 windows 上使用 vmworkstation 安装 linux 虚拟机的文章
+
 ## 2022-01-14
 
 - 写一篇关于如何在 windows 上使用 vmworkstation 安装 linux 虚拟机的文章
