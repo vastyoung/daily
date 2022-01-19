@@ -66,6 +66,20 @@ linux 发行版的官方软件仓库是一个为用户而建的软件仓库，�
 
 ## 如何使用 vmworkstation 安装系统镜像?附带截图说明
 
+我们可以通过以下几步使用 vmworkstation 安装系统镜像:
+
+1. 打开 vmworkstation 点击主页，然后创建新的虚拟机;
+
+2. 选择我们使用什么类型的配置，一般典型就行了;
+
+3. 可以安装我们下载下来的光盘映像文件;
+
+4. 我们选择 linux 操作系统，选择想要的版本;
+
+5. 给我们的虚拟器取一个名字，安装的虚拟机的位置;
+
+6. 我们可以设置给虚拟机的磁盘容量；
+
 ## 软件仓库包管理器是什么概念?
 
 [软件仓库包管理器](https://wiki.archlinux.org/title/Pacman_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87))可以帮助我们简化对软件包的管理，让我们通过包管理器就能安装软件仓库中需要软件，也能通过包管理器对软件包进行更新和删除操作。
@@ -81,7 +95,7 @@ linux 发行版的官方软件仓库是一个为用户而建的软件仓库，�
     `cd /etc/`
 
 3. 使用文本编辑器打开 pacman.conf 配置文件
-    `vim pacman.conf`
+    `vi pacman.conf`
 
 4. 按 i 进入输入模式,然后我们可以将以下配置粘贴到文件的末尾:
 
@@ -93,3 +107,44 @@ Server = https://repo.archlinuxcn.org/$arch
 我们也可以看[Arch Linux CN Community repo mirrors list](https://github.com/archlinuxcn/mirrorlist-repo#arch-linux-cn-community-repo-mirrors-list)来选择我们喜欢的镜像源.
 
 ## 使用包管理器安装拼音输入法?
+
+我们无法在虚拟机里面输入中文，我们可以安装一个输入法，这样我们就可以在虚拟机中输入中文。
+
+安装拼音输入法的步骤如下：
+
+1. 我们可以现在[archlinux](https://archlinux.org/)官网搜索我们要安装的软件,选择我们要安装的版本，然后通过 [Fcitx5](https://wiki.archlinux.org/title/Fcitx5_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)#%E5%AE%89%E8%A3%85)安装文档，一步一步进行安装.
+
+2. 使用命令安装输入法:
+
+    `sodu pacman -Sy fcitx5-im` : 安装fcitx5-im 包组
+
+    `sudo pacman -Sy fcitx5-chinese-addons` : 安装中文输入引擎
+
+3. 配置环境变量:
+
+    ```test
+    vi ~/.pam_environment
+
+    GTK_IM_MODULE DEFAULT=fcitx
+    QT_IM_MODULE  DEFAULT=fcitx
+    XMODIFIERS    DEFAULT=\@im=fcitx
+    INPUT_METHOD  DEFAULT=fcitx
+    SDL_IM_MODULE DEFAULT=fcitx
+    GLFW_IM_MODULE DEFAULT=ibus
+    ```
+
+4. 设置开机启动执行以下命令就可以了：
+
+    `cp /usr/share/applications/org.fcitx.Fcitx5.desktop ~/.config/autostart/`
+
+## 使用包管理器安装图标和界面主题?
+
+## 如何开启linux 系统的 ssh 登录?
+
+ssh 是一个允许两台电脑之间通过安全的连接进行数据交换的网络协议。
+
+我们这样安装它：
+
+1. `pacman -Syu openssh`
+
+2. `systemctl enable sshd` #设置 ssh 服务开机自动启动。
