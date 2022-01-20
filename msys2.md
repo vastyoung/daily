@@ -72,7 +72,3 @@ Server = https://repo.archlinuxcn.org/$arch
 ```
 
 我们也可以看[Arch Linux CN Community repo mirrors list](https://github.com/archlinuxcn/mirrorlist-repo#arch-linux-cn-community-repo-mirrors-list)来选择我们喜欢的镜像源.
-
-## 打包
-
-### 构建包

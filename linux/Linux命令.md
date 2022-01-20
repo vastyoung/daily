@@ -1,6 +1,14 @@
 
 # `Linux命令行笔记:`
 
+`pstree` :查看进程树( systemd linux 中最大的父进程)
+
+`whoami` : 查看当前用户
+
+`hostnamectl`: 查看用户信息,计算机名
+
+`ip add`: 查看ip
+
 `man -hier`
 
 `ssh itzou@192.168.200.128` :登录到itzou@192.168.200.130

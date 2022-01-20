@@ -148,3 +148,20 @@ ssh 是一个允许两台电脑之间通过安全的连接进行数据交换的�
 1. `pacman -Syu openssh`
 
 2. `systemctl enable sshd` #设置 ssh 服务开机自动启动。
+
+3. `sudo vi /etc/ssh/sshd_config`#打开 sshd 的配置文件把下面这段前面的注释删掉
+
+    ```tets
+    #把光标移到井号这里按x
+    Port 22
+    AddressFamily any
+    ListenAddress 0.0.0.0
+    ListenAddress ::
+
+    PermitRootLogin prohibit-password       #不允许root登录
+    ```
+
+4. 我们按键盘左上角的 ESC 键，然后输入 ：wq 保持并退出。
+
+5. 启动 sshd 服务：
+    `sudo systemctl start sshd`
