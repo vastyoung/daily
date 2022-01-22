@@ -65,16 +65,22 @@ linux 发行版的官方软件仓库是一个为用户而建的软件仓库，�
 我们可以通过以下几步使用 vmworkstation 安装系统镜像:
 
 1. 打开 vmworkstation 点击主页，然后创建新的虚拟机;
+![Image](./static/linux_0.jpg)
 
-2. ![Image](./static/linux_01.jpg) 选择我们使用什么类型的配置，一般典型就行了;
+2. 选择我们使用什么类型的配置，一般典型就行了;
+![Image](./static/linux_01.jpg)
 
 3. 可以安装我们下载下来的光盘映像文件;
+![Image](./static/linux_02.jpg)
 
 4. 我们选择 linux 操作系统，选择想要的版本;
+![Image](./static/linux_03.jpg)
 
 5. 给我们的虚拟器取一个名字，安装的虚拟机的位置;
+![Image](./static/linux_04.jpg)
 
 6. 我们可以设置给虚拟机的磁盘容量；
+![Image](./static/linux_05.jpg)
 
 ## 软件仓库包管理器的概念
 
