@@ -67,7 +67,7 @@ linux 发行版的官方软件仓库是一个为用户而建的软件仓库，�
 1. 打开 vmworkstation 点击主页，然后创建新的虚拟机;
 
 2. 选择我们使用什么类型的配置，一般典型就行了;
-！[选择类型](/static/linux_01.jpg)
+！[选择类型](https://github.com/vastyoung/daily/blob/master/static/linux_01.jpg)
 
 3. 可以安装我们下载下来的光盘映像文件;
 
