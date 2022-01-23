@@ -66,27 +66,27 @@ linux 发行版的官方软件仓库是一个为用户而建的软件仓库，�
 
 1. 打开 vmworkstation 点击主页，然后创建新的虚拟机;
 
-    ![Image](./static/linux_0.jpg)
+    ![Image](/static/linux_0.jpg)
 
 2. 选择我们使用什么类型的配置，一般典型就行了;
 
-    ![Image](./static/linux_01.jpg)
+    ![Image](/static/linux_01.jpg)
 
 3. 可以安装我们下载下来的光盘映像文件;
 
-    ![Image](./static/linux_02.jpg)
+    ![Image](/static/linux_02.jpg)
 
 4. 我们选择 linux 操作系统，选择想要的版本;
 
-    ![Image](./static/linux_03.jpg)
+    ![Image](/static/linux_03.jpg)
 
 5. 给我们的虚拟器取一个名字，安装的虚拟机的位置;
 
-    ![Image](./static/linux_04.jpg)
+    ![Image](/static/linux_04.jpg)
 
 6. 我们可以设置给虚拟机的磁盘容量；
 
-    ![Image](./static/linux_05.jpg)
+    ![Image](/static/linux_05.jpg)
 
 ## 软件仓库包管理器的概念
 
@@ -96,23 +96,26 @@ linux 发行版的官方软件仓库是一个为用户而建的软件仓库，�
 
 我们可以通过这几步配置我们软件仓库使用的镜像站点：
 
+`sudo pacman-mirrors -c China -i`: 也可通过命令行配置中国镜像站点
+
 1. 我们先打开我们的终端模拟器；
 
 2. 我们进入到 etc 目录
 
     `cd /etc/`
 
-3. 使用文本编辑器打开 pacman.conf 配置文件
-    `vi pacman.conf`
+3. 使用文本编辑器打开 pacman.d/mirrorlist 配置文件
+    `vi pacman.d/mirrorlist`
 
 4. 按 i 进入输入模式,然后我们可以将以下配置粘贴到文件的末尾:
 
-```test
-[archlinuxcn]
-Server = https://repo.archlinuxcn.org/$arch
-```
+    ```test
+    Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch
+    ```
 
-我们也可以看[Arch Linux CN Community repo mirrors list](https://github.com/archlinuxcn/mirrorlist-repo#arch-linux-cn-community-repo-mirrors-list)来选择我们喜欢的镜像源.
+5. 我们需要更新软件包的缓存：
+
+    `sudo pacman -Syy`
 
 ## 使用包管理器安装拼音输入法
 
