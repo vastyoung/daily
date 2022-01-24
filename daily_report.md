@@ -1,5 +1,9 @@
 # daliy report
 
+## 2022-01-24
+
+- 学习mysql
+
 ## 2022-01-23
 
 - 安装mysql
