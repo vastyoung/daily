@@ -20,11 +20,26 @@
 
     `sudo mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql`
 
+## 启动mariadb
+
+```test
+systemctl start mariadb  #启动MariaDB
+systemctl stop mariadb  #停止MariaDB
+systemctl restart mariadb  #重启MariaDB
+systemctl enable mariadb  #设置开机启动
+```
+
+## 用命令行连接到mysql
+
+在启动mysql后我们可以直接在命令行输入 `mysql` 命令连接到 mysql。
+
+`mysql -u root -p` : 以root用户登录mysql
+
 ## 命令
 
 `SHOW DATABASES;` : 列出数据库列表
 
-`use RUNOOB;` ： use 命令接数据库名称(选择要操作的数据库)
+`use RUNOOB;` ： 选择要操作的数据库
 
 `SHOW TABLES;` : 查看该数据库下有哪些表
 
