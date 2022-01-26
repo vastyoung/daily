@@ -88,3 +88,18 @@ FROM table_name                 #可以查询多个表表之间用逗号分隔
 [WHERE Clause]                  #使用WHERE语句来设定查询条件
 [LIMIT N][ OFFSET M]            #使用 LIMIT 属性来设定返回的记录数
 ```
+
+## 设置mysql root用户的登录密码
+
+mysql 安装完成后,默认的root用户的密码是为空的，我们可以通过以下命令给 root 用户设置密码:
+
+`sudo mysqladmin -u root password "123456";`
+
+我们可以输入以下命令以 root 用户登入 mysql ：
+
+```test
+mysql -u root -p
+
+#会提示我们让我们输入密码,输入正确即可以 root 用户登录 mysql
+Enter password: 
+```
