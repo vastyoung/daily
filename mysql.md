@@ -103,3 +103,13 @@ mysql -u root -p
 #会提示我们让我们输入密码,输入正确即可以 root 用户登录 mysql
 Enter password: 
 ```
+
+## 创建用户
+
+```test
+GRANT ALL PRIVILEGES ON * . * TO 'newuser'@'%';
+
+GRANT ALL PRIVILEGES ON *.* TO 'young'@'%' IDENTIFIED BY "young123";
+
+FLUSH PRIVILEGES;
+```
