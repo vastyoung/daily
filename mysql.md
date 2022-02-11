@@ -113,3 +113,7 @@ GRANT ALL PRIVILEGES ON *.* TO 'young'@'%' IDENTIFIED BY "young123";
 
 FLUSH PRIVILEGES;
 ```
+
+## 修改 mysql 的监听端口 (不只限于 localhost)
+
+我们只用把 /etc/my.cnf.d/server.cnf 里面 bind-address=0.0.0.0 前面的注释删掉.
