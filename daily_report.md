@@ -1,5 +1,9 @@
 # daliy report
 
+## 2022-02-17
+
+- 阅读 JavaScript Dom
+
 ## 2022-02-14
 
 - 学习vue
