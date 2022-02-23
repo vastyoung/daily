@@ -1,5 +1,11 @@
 # daliy report
 
+## 2022-02-23
+
+- 阅读 JavaScript Dom
+
+- 阅读 JavaScript高级程序设计
+
 ## 2022-02-22
 
 - 阅读 JavaScript Dom
