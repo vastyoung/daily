@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping list</title>
+</head>
+<body>
+    <h1>What to buy</h1>
+    <p title="a gentle reminder">Dot't forget to buy this stuff</p>
+    <ul id="purchases">
+        <li>A tin of beans</li>
+        <li class="sale">Cheese</li>
+        <li class="sale important">Milk</li>
+    </ul>
+    <script>
+        //getElementById
+        //alert(typeof document.getElementById("purchases"));
+
+        //getElementsByTagName
+        /* var items = document.getElementsByTagName("li");
+        for (var i=0; i<items.length; i++) {
+            alert(typeof items[i]);
+        } */
+        
+        //getElementsByClassName
+        //alert(document.getElementsByClassName("sale important").length);
+        
+        //getAttribute和setAttribute
+        var paras = document.getElementsByTagName("p");
+        for (var i=0; i<paras.length; i++) {
+            var paras_title = paras[i].getAttribute("title");
+            if(paras_title != null) {
+                paras[i].setAttribute("title", "new title text")
+                alert(paras[i].getAttribute("title"));
+            }
+        }
+    </script>
+</body>
+</html>

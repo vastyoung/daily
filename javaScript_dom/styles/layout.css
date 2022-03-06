@@ -1,0 +1,38 @@
+body {
+    font-family: "Helvetica","Arial",serif;
+    color: #333;
+    background-color:aliceblue; /* 白色背景 */
+    /* background-image: url("../images/jojo_01.jpg"); */
+    margin: 1em 43%;
+    
+}
+h1 {
+    font-size: 40px;    /* 标题字体大小 */
+    color:blue;
+    text-align: center;
+    background-color: transparent;
+}
+a {
+    color: rgb(20, 0, 204);
+    background-color: transparent;
+    font-weight: bold;
+    text-decoration: none;
+    
+}
+ul {
+    padding: 0;
+}
+li {
+    float: left;
+    padding: 1em;
+    list-style: none;
+}
+img {
+    display: block;
+    clear: both;
+    margin: auto;
+}
+p {
+    color: blue;
+    text-align: center;
+}
