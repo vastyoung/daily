@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <link rel="stylesheet" href="styles\layout.css" media="screen"/>
+</head>
+<body>
+    <h1>jojo</h1>
+    <ul>
+        <li>
+            <a href="images/jojo_01.jpg"onclick="showPic(this);
+            return false;" title="jojo_01">Fireworks</a>
+        </li>
+
+        <li>
+            <a href="images/joj_02.jpg"onclick="showPic(this);
+            return false;"title="jojo_02">Coffee</a>
+        </li>
+    </ul>
+    <img id="placeholder" src="images/jojo_03.jpg" alt="my image gallery">
+    <script type="text/javascript" src="scripts\showPic.js"></script>
+    <p id="description">Choose an image.</p>
+</body>
+</html>

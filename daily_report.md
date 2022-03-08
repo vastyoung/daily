@@ -1,5 +1,21 @@
 # daliy report
 
+## 2022-03-08
+
+- 阅读 JavaScript Dom
+
+## 2022-03-07
+
+- 阅读 JavaScript Dom
+
+## 2022-03-06
+
+- 阅读 JavaScript Dom
+
+## 2022-03-05
+
+- 阅读 JavaScript Dom
+
 ## 2022-03-04
 
 - 阅读 JavaScript Dom
