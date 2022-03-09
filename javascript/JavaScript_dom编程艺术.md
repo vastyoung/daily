@@ -71,9 +71,9 @@ var shopping = document.getElementById("purchases")
 shopping.setAttribute("title","a list of goods")
 ```
 
-### 第四章 JavaScript图片库
+## 第四章 JavaScript图片库
 
-#### 4.1 事件处理函数
+### 4.1 事件处理函数
 
 1. onclick 鼠标点击事件;
 
@@ -89,9 +89,9 @@ onclick = "showPic(this);"
 onclick = "showPic(this); return false;"
 ```
 
-#### 4.2 对这个函数进行拓展
+### 4.2 对这个函数进行拓展
 
-##### 4.2.1 childNodes 属性
+#### 4.2.1 childNodes 属性
 
 childNodes 属性可以用来获取任意一个元素的所有的子元素.(它是一个包含该元素所有子元素的数组)
 
@@ -106,7 +106,7 @@ function countBodyChildren(){
 }
 ```
 
-##### 4.2.2 nodeValue 属性
+#### 4.2.2 nodeValue 属性
 
 nodeValue 属性用于得到和设置一个节点的值.
 
@@ -118,7 +118,7 @@ var description = document.getElementById("description");
 description.childNodes[0].nodeValue;
 ```
 
-##### 4.2.3 firstChild 和 lastChild 属性
+#### 4.2.3 firstChild 和 lastChild 属性
 
 1. firstChild : 数组的第一个元素;
 
@@ -129,9 +129,9 @@ description.childNodes[0].nodeValue;
 description.firstChild.nodeValue;
 ```
 
-### 第五章 最佳实践
+## 第五章 最佳实践
 
-#### 5.1 平稳退化
+### 5.1 平稳退化
 
 ```text
 平稳退化 : 让访问者他们的浏览器不支持 javaScript 的情况下仍能够顺利浏览我的网站.(虽然某些功能无法使用，但最基本的操作仍能完成)
@@ -180,4 +180,54 @@ function popUp(winURl){
 
 压缩脚本 : 把脚本文件中不必要的字节，如空格和注释，统统删除。
 
-### 第六章 图片库改进版
+## 第六章 图片库改进版
+
+### 6.1 检查点
+
+我们需要检查当前浏览器是否理解 getElementsByTagName 的 DOM 方法
+
+```javaScript
+//如果 getElementsByTagName 未定义 ,就离开
+if (!document.getElementsByTagName) return false; 
+```
+
+### 6.2 共享 onload 事件
+
+```javaScript
+function addloadEvent(func) {
+    //把现有的 window.onload 事件处理函数的值存入变量
+    var oldonload = window.onload;
+    if (typeof window.onload != 'function') {
+        //如果这个处理函数还没有绑定任何函数，就像平常那样添加新函数
+        window.onload = func；
+    } else {
+        //如果处理函数已经绑定了一些函数，就把新函数添加到末尾
+        window.onload = function() {
+        oldonload();
+        func();
+        }
+    }
+}
+```
+
+## 第七章 动态创建标记
+
+### 7.1 一些传统方法
+
+#### 7.1.1 document.write
+
+document 对象的 write() 方法可以方便把字符串插入到文档.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Test</title>
+</head>
+<body>
+    <script>
+        document.write("<p>This is inserted .</p>")
+    </script>
+</body>
+```
