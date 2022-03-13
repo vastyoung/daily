@@ -1,0 +1,60 @@
+body {
+    background-image: url(../images/tets.jpg); /*设置整体背景*/
+}
+
+.top{
+    width: 100%;
+    height: 50px;
+    background: black;
+    font-size: 30px;    /*字体大小*/
+    text-align: right;
+}
+
+.top a{
+    color: white;
+    margin-right: 250px; /*右边距*/
+}
+
+
+.link {
+    float: left;
+    width: 48%;
+    margin-left: 2%;
+    margin-top: 20px;
+    line-height: 24PX;
+    font-size: 25px;
+  }
+
+.sticky {
+    color: #7f8c8d;;
+    font-size: 30px;
+}
+
+.links {
+    margin: 0 -2%; /*设置上边距和下边距是 0,右边距和左边距是 -2%*/ /*(四个参数的话顺序是 :上、右、下、左。)*/
+    padding: 0;
+    list-style: none; /*去除字段前面的标记*/
+  }
+
+.bottom {
+    clear: both;    /*清除浮动*/
+    background: black;   /*背景色*/
+    text-align: center; /*文字水平居中对齐*/
+    line-height: 80px; 
+    height: 80px;
+    
+
+}
+
+.footer {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    
+}
+
+a {
+    text-decoration: none; /*去除下划线*/
+    color: #1abc9c;
+}
+
