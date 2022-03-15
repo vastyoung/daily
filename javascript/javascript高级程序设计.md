@@ -24,8 +24,82 @@ JavaScript 是通过<script>元素插入到 HTML 页面中的。这个元素可�
 
 #### 3.3.1 var 关键字
 
-使用 var 操作符定义的变量会成为包含它的函数的局部变量。
+```javaScript
+//使用 var 在一个函数内部定义一个变量,就意味该变量在函数退出是被销毁.
+function test() {
+    var message = "hi"; //局部变量
+}
+test();
+console.log(message); //出错
+```
 
-#### 3.3.2 let 声明
+```javaScript
+function test() {
+    message = "hi"; // 全局变量
+}
+test();
+console.log(message); // "hi"
+```
 
-#### 3.3.3 const 声明
+#### 3.3.2  var 声明提升
+
+使用 var 这个关键字声明的变量会自动提升到函数作用域顶部.
+
+```javaScript
+function foo(){
+    console.log(age);
+    var age = 26;
+}
+foo(); // undefined
+```
+
+```javaScript
+function foo() {
+    var age = 16;
+    var age = 26;
+    var age = 36;
+    console.log(age);
+}
+foo(); // 36 
+```
+
+#### 3.3.3 let 声明
+
+let 跟 var 的作用差不多，但有着非常重要的区别。最明显的区别是，let 声明的范围是块作用域，而 var 声明的范围是函数作用域。
+
+```javaScript
+if (true) {
+    var name = 'Matt';
+    console.log(name); // Matt
+}
+console.log(name); // Matt
+```
+
+```javaScript
+if (true) {
+    let age = 26;
+    console.log(age); // 26
+}
+console.log(age); // ReferenceError: age 没有定义
+```
+
+```javaScript
+//嵌套使用相同的标识符不会报错,因为同一个块中没有重复.
+var name = 'Nicholas';
+console.log(name); //'Nicholas'
+
+if(true)(
+    var name = 'Matt';
+    console.log(name); //'Matt'
+)
+
+let age = 30;
+console.log(age); // 30
+
+if (true) {
+    let age = 26;
+    console.log(age); // 26
+} 
+```
+
+#### 3.3.4 const 声明
