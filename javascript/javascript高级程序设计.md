@@ -103,3 +103,42 @@ if (true) {
 ```
 
 #### 3.3.4 const 声明
+
+const 的行为与 let 基本相同，唯一一个重要的区别是用它声明变量时必须同时初始化变量，且尝试修改 const 声明的变量会导致运行时错误。
+
+```javaScript
+const age = 26;
+age = 36; // TypeError: 给常量赋值
+
+// const 也不允许重复声明
+const name = 'Matt';
+const name = 'Nicholas'; // SyntaxError
+// const 声明的作用域也是块
+const name = 'Matt';
+if (true) {
+    const name = 'Nicholas';
+}
+console.log(name); // Matt 
+```
+
+### 3.4 数据类型
+
+ECMAScript 有 6 种简单数据类型（也称为原始类型）：Undefined、Null、Boolean、Number、String 和 Symbol。Symbol（符号）是 ECMAScript 6 新增的。还有一种复杂数据类型叫 Object（对象）。Object 是一种无序名值对的集合。
+
+```test
+"undefined" 表示值未定义；
+"boolean"   表示值为布尔值；
+"string"    表示值为字符串；
+"number"    表示值为数值；
+"object"    表示值为对象（而不是函数）或 null；
+"function"  表示值为函数；
+"symbol"    表示值为符号。
+```
+
+```javaScript
+//使用 typeof 操作符
+let message = "some string";
+console.log(typeof message); // "string"
+console.log(typeof(message)); // "string"
+console.log(typeof 95); // "number" 
+```
