@@ -142,3 +142,17 @@ console.log(typeof message); // "string"
 console.log(typeof(message)); // "string"
 console.log(typeof 95); // "number" 
 ```
+
+ECMAScript 提供了 isNaN() 函数.该函数接收一个参数，可以是任意数据类型，然后判断这个参数是否“不是数值”。把一个值传给 isNaN()后，该函数会尝试把它转换为数值。某些非数值的值可以直接转换成数值，如字符串"10"或布尔值。任何不能转换为数值的值都会导致这个函数返回true。
+
+```javaScript
+console.log(isNaN(NaN)); // true
+console.log(isNaN(10)); // false，10 是数值
+console.log(isNaN("10")); // false，可以转换为数值 10
+console.log(isNaN("blue")); // true，不可以转换为数值
+console.log(isNaN(true)); // false，可以转换为数值 1 
+```
+
+#### 3.4.1 数值转换
+
+有 3 个函数可以将非数值转换为数值：Number()、parseInt()和 parseFloat()。Number()是转型函数，可用于任何数据类型。后两个函数主要用于将字符串转换为数值。
