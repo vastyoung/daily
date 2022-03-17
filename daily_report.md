@@ -1,5 +1,9 @@
 # daliy report
 
+## 2022-03-17
+
+- 阅读 javaScript 高级程序设计
+
 ## 2022-03-16
 
 - 阅读 javaScript 高级程序设计
