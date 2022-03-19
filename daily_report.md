@@ -1,5 +1,15 @@
 # daliy report
 
+## 2022-03-19
+
+- 阅读 javaScript 高级程序设计
+
+- Python3开启http server服务
+
+## 2022-03-18
+
+- 阅读 javaScript 高级程序设计
+
 ## 2022-03-17
 
 - 阅读 javaScript 高级程序设计

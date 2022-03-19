@@ -156,3 +156,24 @@ console.log(isNaN(true)); // false，可以转换为数值 1
 #### 3.4.1 数值转换
 
 有 3 个函数可以将非数值转换为数值：Number()、parseInt()和 parseFloat()。Number()是转型函数，可用于任何数据类型。后两个函数主要用于将字符串转换为数值。
+
+## 第五章 基本引用类型
+
+### 5.1 date
+
+```javaScript
+//创建 Date 对象
+var d = new Date(year, month, day, hours, minutes, seconds, milliseconds);
+```
+
+```javaScript
+//Date.now() 函数 返回表示方法执行时日期和时间的毫秒数
+
+// 起始时间
+let start = Date.now();
+// 调用函数
+doSomething();
+// 结束时间
+let stop = Date.now(),
+result = stop - start;
+```
