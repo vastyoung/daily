@@ -177,3 +177,5 @@ doSomething();
 let stop = Date.now(),
 result = stop - start;
 ```
+
+### 5.2
