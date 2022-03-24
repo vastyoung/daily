@@ -178,4 +178,19 @@ let stop = Date.now(),
 result = stop - start;
 ```
 
-### 5.2
+## 第八章 对象、类与面向对象编程
+
+### 8.1 理解对象
+
+```javaScript
+let person = {
+    name: "Nicholas",
+    age: 29,
+    job: "Software Engineer",
+    sayName() {
+        console.log(this.name);
+    }
+}; 
+```
+
+#### 8.1.1 属性的类型
