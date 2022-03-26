@@ -194,3 +194,127 @@ let person = {
 ```
 
 #### 8.1.1 属性的类型
+
+ECMA-262 使用一些内部特性来描述属性的特征.这些特性是由 JavaScript 实现引擎的规范定义.因此开发者不能再 JavaScript 中直接访问这些特性。为了将某个特性标识为内部特性，规范会用两个中括号把特性包括起来。
+
+属性分两种: 数据属性和访问器属性。
+
+1. 数据属性 :数据属性包含一个保存数据值的位置.值会从这个位置读取,也会写入到这个位置。
+
+    ```text
+    [[Configurable]]：表示属性是否可以通过 delete 删除并重新定义,是否可以修改它的特性，以及是否可以把它改为访问器属性。默认情况下，所有直接定义在对象上的属性的这个特性都是 true。
+
+    [[Enumerable]]：表示属性是否可以通过 for-in 循环返回。默认情况下，所有直接定义在对象上的属性的这个特性都是 true。
+
+    [[Writable]]：表示属性的值是否可以被修改。默认情况下，所有直接定义在对象上的属性的这个特性都是 true
+
+    [[Value]]：包含属性实际的值。这就是前面提到的那个读取和写入属性值的位置。这个特性
+    的默认值为 undefined。
+    ```
+
+    要修改属性的默认特性，就必须使用 Object.defineProperty()方法。这个方法接受3个参数：要给其添加属性的对象、属性的名称和一个描述对象。描述对象上的属性可以包含：configurable、enumerable、writable 和 value。
+
+    ```javaScript
+    let person = {};
+    Object.defineProperty(person, "name", {
+        writable: false,
+        value: "Nicholas"
+    });
+    console.log(person.name); // "Nicholas"
+    person.name = "Greg";
+    console.log(person.name); // "Nicholas"
+    ```
+
+    在调用 Object.defineProperty()时，configurable、enumerable 和 writable 的值如果不指定，则都默认为 false。
+
+2. 访问器属性 ：访问器属性不包含数据值。它们包含一个获取（getter）函数和一个设（setter）函数。
+
+    ```text
+    [[Configurable]]：表示属性是否可以通过 delete 删除并重新定义,是否可以修改它的特性，以及是否可以把它改为数据属性。默认情况下，所有直接定义在对象上的属性的这个特性都是 true。
+
+    [[Enumerable]]：表示属性是否可以通过 for-in 循环返回。默认情况下，所有直接定义在对象上的属性的这个特性都是 true。
+
+    [[Get]]: 获取函数，在读取属性时调用。默认值为 undefined。
+
+    [[Set]]；设置函数，在写入属性时调用。默认值为 undefined。
+    ```
+
+#### 8.1.2 定义多个属性
+
+在一个对象上同时定义多个属性。ECMAScript 提供了 Object.defineProperties()方法。这个函数接受两个参数：要为之添加或修改属性的对象和另一个描述符对象，其属性与要添加或修改的属性一一对应。
+
+#### 8.1.3 读取属性的特性
+
+使用 Object.getOwnPropertyDescriptor()方法可以取得指定属性的属性描述符。这个方法接受两个参数：属性所在的对象和要取得其描述符的属性名。返回值是一个对象。
+
+ECMAScript 2017 新增了 Object.getOwnPropertyDescriptors()静态方法。这个方法实际上会在每个自有属性上调用 Object.getOwnPropertyDescriptor()并在一个新对象中返回它们。
+
+#### 8.1.4 合并对象
+
+ECMAScript 6 专门为合并对象提供了 Object.assign()方法。这个方法接收一个目标对象和一个
+或多个源对象作为参数。
+
+Object.assign()实际上对每个源对象执行的是浅复制。如果多个源对象都有相同的属性，则使
+用最后一个复制的值。
+
+#### 8.1.5 对象标识及相等判定
+
+ECMAScript 6 规范新增了 Object.is()，这个方法与===很像。
+
+### 8.2 创建对象
+
+#### 8.2.1 工厂模式
+
+```javaScript
+function createPerson(name, age, job) {
+    let o = new Object();
+    o.name = name;
+    o.age = age;
+    o.job = job;
+    o.sayName = function() {
+        console.log(this.name);
+    };
+    return o;
+}
+let person1 = createPerson("Nicholas", 29, "Software Engineer");
+let person2 = createPerson("Greg", 27, "Doctor");
+```
+
+#### 8.2.2 构造函数模式
+
+```javaScript
+function Person(name, age, job){
+    this.name = name;
+    this.age = age;
+    this.job = job;
+    this.sayName = function() {
+        console.log(this.name);
+    };
+}
+let person1 = new Person("Nicholas", 29, "Software Engineer");
+let person2 = new Person("Greg", 27, "Doctor");
+person1.sayName(); // Nicholas
+person2.sayName(); // Greg 
+```
+
+按照惯例，构造函数名称的首字母都是要大写的，非构造函数则以小写字母开头。
+
+```javaScript
+//构造函数不一定要写成函数声明的形式。赋值给变量的函数表达式也可以表示构造函数：
+let Person = function(name, age, job) {
+    this.name = name;
+    this.age = age;
+    this.job = job;
+    this.sayName = function() {
+        console.log(this.name);
+    };
+}
+let person1 = new Person("Nicholas", 29, "Software Engineer");
+let person2 = new Person("Greg", 27, "Doctor");
+person1.sayName(); // Nicholas
+person2.sayName(); // Greg
+console.log(person1 instanceof Object); // true
+console.log(person1 instanceof Person); // true
+console.log(person2 instanceof Object); // true
+console.log(person2 instanceof Person); // true 
+```
