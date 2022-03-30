@@ -318,3 +318,39 @@ console.log(person1 instanceof Person); // true
 console.log(person2 instanceof Object); // true
 console.log(person2 instanceof Person); // true 
 ```
+
+## 第九章  代理与反射
+
+代理是目标对象的抽象，Proxy会创建一个新对象供你与之交互，而不是与原始对象进行交互。
+
+在使用 Proxy 的情况下，原始对象（也称为 target）用作一种存储。你对其执行的任何操作都会直接影响代理，但不会触发其任何 trap。
+
+### 9.1 创建空代理
+
+代理是使用 Proxy 构造函数创建的。这个构造函数接收两个参数：目标对象和处理程序对象。缺
+少其中任何一个参数都会抛出 TypeError。
+
+```javaScript
+const target = {
+    id: 'target'
+};
+const handler = {};
+
+const proxy = new Proxy(target, handler);
+
+// id 属性会访问同一个值
+console.log(target.id); // target
+console.log(proxy.id); // target
+
+// 给目标属性赋值会反映在两个对象上
+// 因为两个对象访问的是同一个值
+target.id = 'foo';
+console.log(target.id); // foo
+console.log(proxy.id); // foo
+
+// 给代理属性赋值会反映在两个对象上
+// 因为这个赋值会转移到目标对象
+proxy.id = 'bar';
+console.log(target.id); // bar
+console.log(proxy.id); // bar 
+```
