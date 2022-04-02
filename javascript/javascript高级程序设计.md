@@ -354,3 +354,78 @@ proxy.id = 'bar';
 console.log(target.id); // bar
 console.log(proxy.id); // bar 
 ```
+
+## Symbol 和 Symbol 属性
+
+Symbol 是 ECMAScirpt 6 引入的第6种原始属性。
+
+### 创建Symbol 和 Symbol 共享体系
+
+```javaScript
+//创建Symbol
+let firstName = Symbol();
+let person = {};
+
+person[firstName] = 'xszi';
+console.log(person[firstName]);  //"xszi"
+```
+
+Symbol是原始值，调用new Symbol()会导致程序抛出错误。
+
+```javaScript
+//Symbol 函数
+
+let firstName = Symbol("first name");
+let person = {};
+
+person[firstName] = 'xszi';
+
+console.log("first name" in person);    //false
+console.log(person[firstName]);    //"xszi"
+console.log(firstName);    //"Symbol(first name)"
+```
+
+要创建一个共享的 Symbol 可以使用 Symbol.for() 方法。
+
+```javaScript
+let uid = Symbol.for("uid");
+let object = {};
+
+object[uid] = "123456";
+
+console.log(object[uid]);  //"123456"
+console.log(uid);  //"Symbol(uid)"
+```
+
+```javaScript
+let uid = Symbol.for("uid");
+let object = {
+    [uid]:"123456"
+};
+
+console.log(object[uid]);  //"123456"
+console.log(uid);  //"Symbol(uid)"
+
+let uid2 = Symbol.for("uid");
+
+console.log(uid === uid2); //true
+console.log(object[uid2]); //"123456"
+console.log(uid2);  //"Symbol(uid)"
+```
+
+### Symbol与类型强制转换，属性检索
+
+```javaScript
+//console.log()会调用Symbol的String()方法
+
+let uid = Symbol.for(""uid);
+desc = String(uid);
+
+desc = uid + ''; //报错，不能转为字符串类型
+
+desc = uid / 2; //报错，不能转为数字类型
+```
+
+1. Object.keys() 返回可枚举属性。
+2. Object.getOwnPropertyNames() 不考虑可枚举性，一律返回。
+3. Object.getOwnProperty-Symbols() ES6用来检索对象中的Symbol属性。
