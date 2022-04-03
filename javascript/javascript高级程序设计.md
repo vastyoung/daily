@@ -429,3 +429,193 @@ desc = uid / 2; //报错，不能转为数字类型
 1. Object.keys() 返回可枚举属性。
 2. Object.getOwnPropertyNames() 不考虑可枚举性，一律返回。
 3. Object.getOwnProperty-Symbols() ES6用来检索对象中的Symbol属性。
+
+## 第十章 函数
+
+函数是ECMAScript中最有意思的部分之一，这主要是因为函数实际上是对象。每个函数都是Function类型的实例，而 Function 也有属性和方法，跟其他引用类型一样。
+
+```javaScript
+//函数声明
+function sum (num1，num2) {
+    return num1 + num2；
+}
+
+//函数表达式
+let sum = function(num1，num2){
+    return num1 + num2；
+}；
+
+//箭头函数
+let sum = (num1，num2) => {
+    return num1 + num2;
+};
+```
+
+### 10.1 箭头函数
+
+箭头函数定义函数的方式和函数表达式很像。任何可以使用函数表达式的地方，都可以使用箭头函数。
+
+```javaScript
+//箭头函数
+let sum = (num1，num2) => {
+    return num1 + num2;
+};
+```
+
+### 10.2 函数名
+
+函数名是指向函数的指针。它们跟其他包含对象指针的变量具有相同的行为，一个函数可以有多个函数名。
+
+```javaScript
+function sum(num1, num2) {
+    return num1 + num2;
+}
+console.log(sum(10, 10)); // 20
+
+let anotherSum = sum;     //把 sum 设置为 null,就切断了它和函数之间的关联.
+console.log(anotherSum(10, 10)); // 20
+
+sum = null;
+console.log(anotherSum(10, 10)); // 20 
+```
+
+### 10.3 理解参数
+
+ECMAScript 函数既不关心传入的参数个数，也不关心这些参数的数据类型。定义函数时要接收两个参数，并不意味着调用时就传两个参数。你可以传一个、三个，甚至一个也不传，解释器都不会报错。
+
+因为 ECMAScript 函数的参数在内部表现为一个数组。函数被调用时总会接收一个数组，但函数并不关心这个数组中包含什么。
+
+### 10.4 没有重载
+
+```javaScript
+//在 ECMAScript 中定义了两个同名函数，则后定义的会覆盖先定义的.
+function addSomeNumber(num) {
+    return num + 100;
+}
+function addSomeNumber(num) {
+    return num + 200;
+}
+let result = addSomeNumber(100); // 300 
+```
+
+### 10.6 参数扩展与收集
+
+#### 10.6.1 扩展参数
+
+```javaScript
+let values = [1，2，3，4]；
+
+function getSum(){
+    let sum = 0;
+    for (let i = 0; i < arguments.length; ++i){
+        sum += arguments[i];
+    }
+    return sum;
+}
+console.log(getSum(...values)); //10
+console.log(getSum(-1, ...values)); // 9
+console.log(getSum(...values, 5)); // 15
+console.log(getSum(-1, ...values, 5)); // 14
+console.log(getSum(...values, ...[5,6,7])); // 28 
+```
+
+```javaScript
+let values = [1，2，3，4];
+
+function countArguments(){
+    console.log(arguments.length);
+}
+
+countArguments(-1, ...values); // 5
+countArguments(...values, 5); // 5
+countArguments(-1, ...values, 5); // 6
+countArguments(...values, ...[5,6,7]); // 7 
+```
+
+#### 10.6.2 收集参数
+
+在定义函数时，可以使用扩展操作符把不同长度的独立参数组合为一个数组。
+
+```javaScript
+function getSum(...values){
+    //顺序累加 values 中的所有值
+    //初始值的合为0
+    return values.reduce((x，y) => x + y，0)；
+}
+
+console.log(getSum(1，2，3))；//6
+```
+
+```javaScript
+//箭头函数
+let getSum = (...values) => {
+    return values.reduce((x, y) => x + y, 0);
+}
+console.log(getSum(1,2,3)); // 6
+```
+
+### 10.7 函数声明与函数表达式
+
+函数声明会在任何代码执行之前先读取并添加到执行上下文。这个过程叫做函数声明提升。在执行代码时，JavaScript 引擎会先执行一遍扫描，把发现的函数声明提升到源代码树的顶部。因此即使函数定义出现在调用它们的代码之后，引擎也会把函数声明提升到顶部。
+
+```javaScript
+// 没问题
+console.log(sum(10, 10));
+function sum(num1, num2) {
+    return num1 + num2;
+} 
+
+// 会出错
+console.log(sum(10, 10));
+let sum = function(num1, num2) {
+    return num1 + num2;
+}; 
+```
+
+在使用函数表达式初始化变量时，也可以给函数一个名称，比如 let sum =function sum() {}。
+
+### 10.8 函数作为值
+
+因为函数名在 ECMAScript 中就是变量，所以函数可以用在任何可以使用变量的地方。这意味着不仅可以把函数作为参数传给另一个函数，而且还可以在一个函数中返回另一个函数。
+
+```javaScript
+function callSomeFunction(someFunction, someArgument) {
+    return someFunction(someArgument);
+} 
+
+function add10(num){
+    return num + 10;
+}
+
+let result1 = callSomeFunction(add10,10);
+consolo.log(result1);   //20
+
+function getGreeting(name){
+    return "Hello，" + name;
+}
+
+let result2 = callSomeFunction(getGreeting，"Nicholas")；
+console.log(result2);   //"Hello，Nicholas"
+```
+
+### 10.9 函数内部
+
+#### 10.9.1 arguments
+
+arguments 它是一个类数组对象，包含调用函数时传入的所有参数。
+
+```javaScript
+function func1(a, b, c) {
+  console.log(arguments[0]);
+  // expected output: 1
+
+  console.log(arguments[1]);
+  // expected output: 2
+
+  console.log(arguments[2]);
+  // expected output: 3
+}
+
+func1(1, 2, 3);
+
+```
