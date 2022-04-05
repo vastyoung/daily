@@ -619,3 +619,7 @@ function func1(a, b, c) {
 func1(1, 2, 3);
 
 ```
+
+## 第十二章 BOM
+
+### 12.1 window 对象
