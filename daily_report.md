@@ -1,5 +1,9 @@
 # daliy report
 
+## 2022-04-07
+
+- 学习 mongodb 数据库
+
 ## 2022-04-05
 
 - 阅读 javaScript 高级程序设计

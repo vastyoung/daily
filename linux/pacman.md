@@ -17,3 +17,5 @@
 `pacman -Qs`: 列出本地安装了什么包
 
 `pacman -Ss zsh`: 在在线仓库软件列表中搜索 zsh 这个关键词
+
+ `yay` :AUR 仓库用 yay 命令安装.
