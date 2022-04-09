@@ -7,6 +7,8 @@
 
 `hostnamectl`: 查看用户信息,计算机名
 
+`ip -4 a` :查询ipv4地址
+
 `ip add`: 查看ip
 
 `man -hier`

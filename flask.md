@@ -18,7 +18,7 @@ python3 -m venv venv
 
 我们用一下命令激活我们的环境:
 
-`. venv/bin/activate`
+`. venv/bin/activate` (source venv/bin/activate)
 
 ### 安装Flask
 
