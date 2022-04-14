@@ -1,5 +1,13 @@
 # daliy report
 
+## 2022-04-13
+
+- python 操作 redis 数据库
+
+- [腾讯云](https://cloud.tencent.com/developer/article/1151834)
+
+- [python redis 菜鸟教程](https://www.runoob.com/w3cnote/python-redis-intro.html)
+
 ## 2022-04-12
 
 - python 操作 redis 数据库
