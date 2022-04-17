@@ -1,5 +1,11 @@
 # daliy report
 
+## 2022-04-17
+
+- 学习 redis
+
+- 学习 mysql
+
 ## 2022-04-13
 
 - python 操作 redis 数据库
