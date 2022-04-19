@@ -1,5 +1,15 @@
 # daliy report
 
+## 2022-04-19
+
+- python 连接 mysql
+
+## 2022-04-18
+
+- 学习 mysql
+
+- python 连接 mysql
+
 ## 2022-04-17
 
 - 学习 redis
