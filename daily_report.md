@@ -1,5 +1,11 @@
 # daliy report
 
+## 2022-04-23
+
+- 回顾 git 命令
+
+- [ss-quick](https://github.com/chaneyzorn/ss-quick.git)
+
 ## 2022-04-19
 
 - python 连接 mysql
