@@ -38,7 +38,7 @@ print('hello world')
 
 名称区分大小写。例如，myname 和 myName 并不等同。要注意到前者是小写字母 n 而后者是大写字母 N。
 
-有效 的名称可以是 i 或 name_2_3 ，而 2things，this is spaced out，my-name 或 >a1b2_c3都是无效 的名称。
+有效的名称可以是 i 或 name_2_3 ，而 2things，this is spaced out，my-name 或 >a1b2_c3都是无效 的名称。
 
 ```python
 #从其他信息中构建字符串。这正是 format() 方法
@@ -391,33 +391,27 @@ a = [99 , "bottles of beer", ["on", "the", "wall"]]
 ```python
 # This is my shopping list
 shoplist = ['apple', 'mango', 'carrot', 'banana']
-print('I have', len(shoplist), 'items to purchase.')
-print('These items are:', end=' ')
+
+print('I have', len(shoplist), 'items to purchase.')# I have 4 items to purchase.
+
+print('These items are:', end=' ')          # 为末尾end传递一个空字符串，这样print函数不会在字符串末尾添加一个换行符
 for item in shoplist:
-    print(item, end=' ')
-print('\nI also have to buy rice.')
+    print(item, end=' ')                    # These items are: apple mango carrot banana
+
+print('\nI also have to buy rice.')         # \n 换行符
+
 shoplist.append('rice')
-print('My shopping list is now', shoplist)
-print('I will sort my list now')
-shoplist.sort()
-print('Sorted shopping list is', shoplist)
-print('The first item I will buy is', shoplist[0])
+print('My shopping list is now', shoplist)  # My shopping list is now ['apple', 'mango', 'carrot', 'banana', 'rice']
+print('I will sort my list now')            # I will sort my list now
+
+shoplist.sort() # 排序
+print('Sorted shopping list is', shoplist)          # Sorted shopping list is ['apple', 'banana', 'carrot', 'mango', 'rice']
+print('The first item I will buy is', shoplist[0])  # The first item I will buy is apple
+
 olditem = shoplist[0]
 del shoplist[0]
-print('I bought the', olditem)
-print('My shopping list is now', shoplist)
-
-输出:
-$ python ds_using_list.py
-I have 4 items to purchase.
-These items are: apple mango carrot banana
-I also have to buy rice.
-My shopping list is now ['apple', 'mango', 'carrot', 'banana', 'rice']
-I will sort my list now
-Sorted shopping list is ['apple', 'banana', 'carrot', 'mango', 'rice']
-The first item I will buy is apple
-I bought the apple
-My shopping list is now ['banana', 'carrot', 'mango', 'rice']
+print('I bought the', olditem)              # I bought the apple
+print('My shopping list is now', shoplist)  # My shopping list is now ['banana', 'carrot', 'mango', 'rice']
 ```
 
 ### 列表方法
@@ -473,23 +467,21 @@ nlist = sorted(mylist,reverse=True)
 # 尽管括号是一个可选选项。
 # 明了胜过晦涩，显式优于隐式。
 zoo = ('python', 'elephant', 'penguin')
-print('Number of animals in the zoo is', len(zoo))
-new_zoo = 'monkey', 'camel', zoo
-print('Number of cages in the new zoo is', len(new_zoo))
-print('All animals in new zoo are', new_zoo)
-print('Animals brought from old zoo are', new_zoo[2])
-print('Last animal brought from old zoo is', new_zoo[2][2])
-print('Number of animals in the new zoo is',
-      len(new_zoo)-1+len(new_zoo[2]))
 
-#输出:
-$ python ds_using_tuple.py
-Number of animals in the zoo is 3
-Number of cages in the new zoo is 3
-All animals in new zoo are ('monkey', 'camel', ('python', 'elephant', 'penguin'))
-Animals brought from old zoo are ('python', 'elephant', 'penguin')
-Last animal brought from old zoo is penguin
-Number of animals in the new zoo is 5
+print('Number of animals in the zoo is', len(zoo))          # Number of animals in the zoo is 3
+
+new_zoo = 'monkey', 'camel', zoo
+
+print('Number of cages in the new zoo is', len(new_zoo))    # Number of cages in the new zoo is 3
+
+print('All animals in new zoo are', new_zoo)                # All animals in new zoo are ('monkey', 'camel', ('python', 'elephant', 'penguin'))
+
+print('Animals brought from old zoo are', new_zoo[2])       # Animals brought from old zoo are ('python', 'elephant', 'penguin')
+
+print('Last animal brought from old zoo is', new_zoo[2][2]) # Last animal brought from old zoo is penguin
+
+print('Number of animals in the new zoo is',
+      len(new_zoo)-1+len(new_zoo[2]))                       # Number of animals in the new zoo is 5
 ```
 
 ### 字典
@@ -774,10 +766,12 @@ x is still 50
 x = 50
 def func():
     global x
-    print('x is', x)
+        print('x is', x)
     x = 2
     print('Changed global x to', x)
+
 func()
+
 print('Value of x is', x)
 
 #输出:
@@ -794,6 +788,7 @@ global 语句用以声明 x 是一个全局变量——因此，当我们在函�
 ```python
 def say(message, times=1):
     print(message * times)
+
 say('Hello')
 say('World', 5)
 
@@ -1737,6 +1732,7 @@ import matplotlib.animation as ani
 fig = plt.figure()
 x = np.arange(0, 2*np.pi, 0.01) # x-array
 line, = plt.plot(x, np.sin(x))
+
 def animate(i):
     line.set_ydata(np.sin(x+i/10.0)) # update the data
     return line
@@ -1909,6 +1905,7 @@ with open("poem.txt") as f:
 ```python
 class Person:
     pass  # 一个空的代码块
+
 p = Person()
 print(p)
 

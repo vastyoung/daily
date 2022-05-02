@@ -9,18 +9,18 @@ import collections
 Card = collections.namedtuple('Card', ['rank', 'suit'])
 
 class FrenchDeck:
- ranks = [str(n) for n in range(2, 11)] + list('JQKA')
- suits = 'spades diamonds clubs hearts'.split() 
+    ranks = [str(n) for n in range(2, 11)] + list('JQKA')
+    suits = 'spades diamonds clubs hearts'.split() 
 
 def __init__(self):
- self._cards = [Card(rank, suit) for suit in self.suits
- for rank in self.ranks]
+    self._cards = [Card(rank, suit) for suit in self.suits
+    for rank in self.ranks]
 
- def __len__(self):
- return len(self._cards)
+def __len__(self):
+    return len(self._cards)
 
- def __getitem__(self, position):
- return self._cards[position]
+def __getitem__(self, position):
+    return self._cards[position]
 ```
 
 首先，我们用 collections.namedtuple 构建了一个简单的类来表示一张纸牌。自 Python 2.6
@@ -127,10 +127,12 @@ False
 给扑克牌排序的函数，梅花 2 的大小是 0，黑桃 A 是 51：
 
 ```python
+
 suit_values = dict(spades=3, hearts=2, diamonds=1, clubs=0)
+
 def spades_high(card):
- rank_value = FrenchDeck.ranks.index(card.rank)
- return rank_value * len(suit_values) + suit_values[card.suit]
+    rank_value = FrenchDeck.ranks.index(card.rank)
+    return rank_value * len(suit_values) + suit_values[card.suit]
 ```
 
 有了 spades_high 函数，就能对这摞牌进行升序排序了：
@@ -207,20 +209,20 @@ Vector(9, 12)
 from math import hypot
 class Vector:
  def __init__(self, x=0, y=0):
- self.x = x
- self.y = y
+    self.x = x
+    self.y = y
  def __repr__(self):
- return 'Vector(%r, %r)' % (self.x, self.y)
+    return 'Vector(%r, %r)' % (self.x, self.y)
  def __abs__(self):
- return hypot(self.x, self.y)
+    return hypot(self.x, self.y)
  def __bool__(self):
- return bool(abs(self))
+    return bool(abs(self))
  def __add__(self, other):
- x = self.x + other.x
- y = self.y + other.y
- return Vector(x, y)
+    x = self.x + other.x
+    y = self.y + other.y
+    return Vector(x, y)
  def __mul__(self, scalar):
- return Vector(self.x * scalar, self.y * scalar)
+    return Vector(self.x * scalar, self.y * scalar)
 ```
 
 ### 1.2.2　字符串表示形式
@@ -381,7 +383,7 @@ tuple、str 和 bytes。
 ```
 
 ```python
-#示例 2-2　把字符串变成 Unicode 码位的另外一种写法
+# 示例 2-2　把字符串变成 Unicode 码位的另外一种写法
 >>> symbols = '$¢£¥€¤'
 >>> codes = [ord(symbol) for symbol in symbols]     #从给定的字符值中获取数字值（获取ASCII值）
 >>> codes
@@ -391,7 +393,7 @@ tuple、str 和 bytes。
 #### 2.2.2　列表推导同filter和map的比较
 
 ```python
-示例 2-3　用列表推导和 map/filter 组合来创建同样的表单
+# 示例 2-3　用列表推导和 map/filter 组合来创建同样的表单
 >>> symbols = '$¢£¥€¤'
 >>> beyond_ascii = [ord(s) for s in symbols if ord(s) > 127] #ord(s)  [36, 162, 163, 165, 8364, 164]
 >>> beyond_ascii
@@ -1394,6 +1396,7 @@ Tests for the `in` operator::
 ```python
 示例 3-7 StrKeyDict0 在查询的时候把非字符串的键转换为字符串
 class StrKeyDict0(dict): ➊
+
  def __missing__(self, key):
  if isinstance(key, str): ➋
  raise KeyError(key)
@@ -1889,7 +1892,7 @@ b'caf\xc3\xa9'
 ```
 
 ```python
-示例 4-11 探索编码默认值
+# 示例 4-11 探索编码默认值
 import sys, locale
 expressions = """
  locale.getpreferredencoding()
@@ -2201,22 +2204,21 @@ lambda 关键字在 Python 表达式内创建匿名函数。
 ```python
 #示例 5-8 bingocall.py：调用 BingoCage 实例，从打乱的列表中取出一个元素
 import random
+
 class BingoCage:
     def __init__(self, items):
- self._items = list(items) ➊
- random.shuffle(self._items) ➋
- def pick(self): ➌
- try:
- return self._items.pop()
- except IndexError:
- raise LookupError('pick from empty BingoCage') ➍
- def __call__(self): ➎
- return self.pick()
-➊ __init__ 接受任何可迭代对象；在本地构建一个副本，防止列表参数的意外副作用。
-➋ shuffle 定能完成工作，因为 self._items 是列表。
-➌ 起主要作用的方法。
-➍ 如果 self._items 为空，抛出异常，并设定错误消息。
-➎ bingo.pick() 的快捷方式是 bingo()。
+        self._items = list(items)
+        random.shuffle(self._items) # shuffle() 方法将序列的所有元素随机排序。
+        print(self._items)
+
+    def pick(self):
+        try:
+            return self._items.pop() # pop() 函数用于移除列表中的一个元素（默认最后一个元素），并且返回该元素的值。
+        except IndexError:
+            raise LookupError('pick from empty BingoCage') 
+
+    def __call__(self):
+        return self.pick()
 ```
 
 ```python
