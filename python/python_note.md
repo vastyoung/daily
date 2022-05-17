@@ -1,5 +1,25 @@
 # python
 
+```python
+# https://docs.python.org/zh-cn/3/tutorial/inputoutput.html
+# f 后面可接 {} 表达式
+ss_log.info(f"please choose a config from 1-{len(configs)}")
+```
+
+```python
+# 单星号（*）：*agrs :将所有参数以元组的形式导入
+def foo(param1, *param2):
+    print (param1)      # 1
+    print (param2)      # (2，3，4，5)
+foo(1,2,3,4,5)
+
+# 双星号（**）：**kwargs :将所有参数以字典的形式导入
+def bar(param1, **param2):
+    print (param1)       # 1
+    print (param2)       # {'a':2，'b': 3}
+bar(1,a=2,b=3)
+```
+
 在你的操作系统中开启终端程序然后通过输入python并按下回车键来打开 Python 提示符
 
 `print("Hello World")` :打印 Hello World
@@ -496,26 +516,21 @@ ab = {
     'Matsumoto': 'matz@ruby-lang.org',
     'Spammer': 'spammer@hotmail.com'
 }
-print("Swaroop's address is", ab['Swaroop'])
+print("Swaroop's address is", ab['Swaroop'])    # Swaroop's address is swaroop@swaroopch.com
+
 # 删除一对键值—值配对
 del ab['Spammer']
-print('\nThere are {} contacts in the address-book\n'.format(len(ab)))
+print('\nThere are {} contacts in the address-book\n'.format(len(ab)))  # There are 3 contacts in the address-book
+
 #items() 方法的遍历：items() 方法把字典中每对 key 和 value 组成一个元组，并把这些元组放在列表中返回。
-for name, address in ab.items():
-    print('Contact {} at {}'.format(name, address))
+for name, address in ab.items():                        # Contact Swaroop at swaroop@swaroopch.com
+    print('Contact {} at {}'.format(name, address))     # Contact Matsumoto at matz@ruby-lang.org
+                                                        # Contact Larry at larry@wall.org                           
+                                                        
 # 添加一对键值—值配对
 ab['Guido'] = 'guido@python.org'
 if 'Guido' in ab:
-    print("\nGuido's address is", ab['Guido'])
-
-#输出:
-$ python ds_using_dict.py
-Swaroop's address is swaroop@swaroopch.com
-There are 3 contacts in the address-book
-Contact Swaroop at swaroop@swaroopch.com
-Contact Matsumoto at matz@ruby-lang.org
-Contact Larry at larry@wall.org
-Guido's address is guido@python.org
+    print("\nGuido's address is", ab['Guido'])      # Guido's address is guido@python.org
 ```
 
 ### 字典构造
@@ -574,41 +589,37 @@ shoplist = ['apple', 'mango', 'carrot', 'banana']
 name = 'swaroop'
 # Indexing or 'Subscription' operation #
 # 索引或“下标（Subscription）”操作符 #
-print('Item 0 is', shoplist[0])
-print('Item 1 is', shoplist[1])
-print('Item 2 is', shoplist[2])
-print('Item 3 is', shoplist[3])
-print('Item -1 is', shoplist[-1])
-print('Item -2 is', shoplist[-2])
-print('Character 0 is', name[0])
-# Slicing on a list #
-print('Item 1 to 3 is', shoplist[1:3])
-print('Item 2 to end is', shoplist[2:])
-print('Item 1 to -1 is', shoplist[1:-1])
-print('Item start to end is', shoplist[:])
-# 从某一字符串中切片 #
-print('characters 1 to 3 is', name[1:3])
-print('characters 2 to end is', name[2:])
-print('characters 1 to -1 is', name[1:-1])
-print('characters start to end is', name[:])
+print('Item 0 is', shoplist[0])             # Item 0 is apple
 
-#输出:
-$ python ds_seq.py
-Item 0 is apple
-Item 1 is mango
-Item 2 is carrot
-Item 3 is banana
-Item -1 is banana
-Item -2 is carrot
-Character 0 is s
-Item 1 to 3 is ['mango', 'carrot']
-Item 2 to end is ['carrot', 'banana']
-Item 1 to -1 is ['mango', 'carrot']
-Item start to end is ['apple', 'mango', 'carrot', 'banana']
-characters 1 to 3 is wa
-characters 2 to end is aroop
-characters 1 to -1 is waroo
-characters start to end is swaroop
+print('Item 1 is', shoplist[1])             # Item 1 is mango
+
+print('Item 2 is', shoplist[2])             # Item 2 is carrot
+
+print('Item 3 is', shoplist[3])             # Item 3 is banana
+
+print('Item -1 is', shoplist[-1])           # Item -1 is banana
+
+print('Item -2 is', shoplist[-2])           # Item -2 is carrot
+
+print('Character 0 is', name[0])            # Character 0 is s
+
+# Slicing on a list #
+print('Item 1 to 3 is', shoplist[1:3])      # Item 1 to 3 is ['mango', 'carrot']
+
+print('Item 2 to end is', shoplist[2:])     # Item 2 to end is ['carrot', 'banana']
+
+print('Item 1 to -1 is', shoplist[1:-1])    # Item 1 to -1 is ['mango', 'carrot']
+
+print('Item start to end is', shoplist[:])  # Item start to end is ['apple', 'mango', 'carrot', 'banana']
+
+# 从某一字符串中切片 #
+print('characters 1 to 3 is', name[1:3])    # characters 1 to 3 is wa
+
+print('characters 2 to end is', name[2:])   # characters 2 to end is aroop
+
+print('characters 1 to -1 is', name[1:-1])  # characters 1 to -1 is waroo
+
+print('characters start to end is', name[:])# characters start to end is swaroop
 ```
 
 你同样可以在切片操作中提供第三个参数，这一参数将被视为切片的步长（Step）（在默认情况下，步长大小为 1）：
@@ -633,8 +644,10 @@ characters start to end is swaroop
 >>> bri = set(['brazil', 'russia', 'india'])
 >>> 'india' in bri
 True
+
 >>> 'usa' in bri
 False
+
 >>> bric = bri.copy()
 >>> bric.add('china')
 #issuperset() 方法用于判断指定集合的所有元素是否都包含在原始的集合中，如果是则返回 True，否则返回 False
@@ -648,73 +661,53 @@ True
 ### 引用
 
 ```python
-print('Simple Assignment')
+print('Simple Assignment')                          # Simple Assignment
 shoplist = ['apple', 'mango', 'carrot', 'banana']
 # mylist 只是指向同一对象的另一种名称
 mylist = shoplist
 # 我购买了第一项项目，所以我将其从列表中删除
 del shoplist[0]
-print('shoplist is', shoplist)
-print('mylist is', mylist)
+print('shoplist is', shoplist)                      # shoplist is ['mango', 'carrot', 'banana']
+print('mylist is', mylist)                          # mylist is ['mango', 'carrot', 'banana']
 # 注意到 shoplist 和 mylist 二者都
 # 打印出了其中都没有 apple 的同样的列表，以此我们确认
 # 它们指向的是同一个对象
-print('Copy by making a full slice')
+print('Copy by making a full slice')                # Copy by making a full slice
 # 通过生成一份完整的切片制作一份列表的副本
 mylist = shoplist[:]
 # 删除第一个项目
 del mylist[0]
-print('shoplist is', shoplist)
-print('mylist is', mylist)
+print('shoplist is', shoplist)                      # shoplist is ['mango', 'carrot', 'banana']
+print('mylist is', mylist)                          # mylist is ['carrot', 'banana']
 # 注意到现在两份列表已出现不同
 
-#输出:
-$ python ds_reference.py
-Simple Assignment
-shoplist is ['mango', 'carrot', 'banana']
-mylist is ['mango', 'carrot', 'banana']
-Copy by making a full slice
-shoplist is ['mango', 'carrot', 'banana']
-mylist is ['carrot', 'banana']
 ```
 
 ```python
 # 这是一个字符串对象
 name = 'Swaroop'
-if name.startswith('Swa'):
-    print('Yes, the string starts with "Swa"')
+if name.startswith('Swa'):                          # startswith() 方法用于检查字符串是否是以指定子字符串开头
+    print('Yes, the string starts with "Swa"')      # Yes, the string starts with "Swa"
 if 'a' in name:
-    print('Yes, it contains the string "a"')
-if name.find('war') != -1:
-    print('Yes, it contains the string "war"')
+    print('Yes, it contains the string "a"')        # Yes, it contains the string "a"
+if name.find('war') != -1:                          #  find() 方法检测字符串中是否包含子字符串 str 
+    print('Yes, it contains the string "war"')      # Yes, it contains the string "war"
 delimiter = '_*_'
-mylist = ['Brazil', 'Russia', 'India', 'China']
-print(delimiter.join(mylist))
-
-#输出:
-$ python ds_str_methods.py
-Yes, the string starts with "Swa"
-Yes, it contains the string "a"
-Yes, it contains the string "war"
-Brazil_*_Russia_*_India_*_China
+mylist = ['Brazil', 'Russia', 'India', 'China']     # Brazil_*_Russia_*_India_*_China
+print(delimiter.join(mylist))                       # join() 方法用于将序列中的元素以指定的字符连接生成一个新的字符串
 ```
 
 ## 核心：函数
 
-数（Functions）是指可重复使用的程序片段。它们允许你为某个代码块赋予名字，允许你通过这一特殊的名字在你的程序任何地方来运行代码块，并可重复任何次数。这就是所谓的调用（Calling）函数。我们已经使用过了许多内置的函数，例如 len 和 range
+函数（Functions）是指可重复使用的程序片段。它们允许你为某个代码块赋予名字，允许你通过这一特殊的名字在你的程序任何地方来运行代码块，并可重复任何次数。这就是所谓的调用（Calling）函数。我们已经使用过了许多内置的函数，例如 len 和 range
 
 ```python
 def say_hello():
     # 该块属于这一函数
     print('hello world')
 # 函数结束
-say_hello()  # 调用函数
-say_hello()  # 再次调用函数
-
-#输出:
-$ python function1.py
-hello world
-hello world
+say_hello()  # 调用函数     # hello world
+say_hello()  # 再次调用函数 # hello world
 ```
 
 ```python
@@ -726,16 +719,11 @@ def print_max(a, b):
     else:
         print(b, 'is maximum')
 # 直接传递字面值
-print_max(3, 4)
+print_max(3, 4)     # 4 is maximum
 x = 5
 y = 7
 # 以参数的形式传递变量
-print_max(x, y)
-
-#输出:
-$ python function_param.py
-4 is maximum
-7 is maximum
+print_max(x, y)     # 7 is maximum
 ```
 
 第一次调用函数 print_max 时，我们以实参的形式直接向函数提供这一数字。在第二次调用时，我们将变量作为实参来调用函数。print_max(x, y) 将使得实参 x 的值将被赋值给形参 a，而实参 y 的值将被赋值给形参 b。在两次调用中，print_max 都以相同的方式工作。
@@ -745,17 +733,11 @@ $ python function_param.py
 ```python
 x = 50
 def func(x):
-    print('x is', x)
+    print('x is', x)                    # x is 50
     x = 2
-    print('Changed local x to', x)
+    print('Changed local x to', x)      # Changed local x to 2
 func(x)
-print('x is still', x)
-
-#输出:
-$ python function_local.py
-x is 50
-Changed local x to 2
-x is still 50
+print('x is still', x)                  # x is still 50
 ```
 
 ### global 语句
@@ -766,19 +748,13 @@ x is still 50
 x = 50
 def func():
     global x
-        print('x is', x)
+        print('x is', x)                # x is 50
     x = 2
-    print('Changed global x to', x)
+    print('Changed global x to', x)     # Changed global x to 2
 
 func()
 
-print('Value of x is', x)
-
-#输出:
-$ python function_global.py
-x is 50
-Changed global x to 2
-Value of x is 2
+print('Value of x is', x)               # Value of x is 2
 ```
 
 global 语句用以声明 x 是一个全局变量——因此，当我们在函数中为 x 进行赋值时，这一改动将影响到我们在主代码块中使用的 x 的值。
@@ -789,13 +765,8 @@ global 语句用以声明 x 是一个全局变量——因此，当我们在函�
 def say(message, times=1):
     print(message * times)
 
-say('Hello')
-say('World', 5)
-
-#输出:
-$ python function_default.py
-Hello
-WorldWorldWorldWorldWorld
+say('Hello')        # Hello
+say('World', 5)     # WorldWorldWorldWorldWorld
 ```
 
 ### 关键字参数
@@ -803,15 +774,9 @@ WorldWorldWorldWorldWorld
 ```python
 def func(a, b=5, c=10):
     print('a is', a, 'and b is', b, 'and c is', c)
-func(3, 7)
-func(25, c=24)
-func(c=50, a=100)
-
-#输出:
-$ python function_keyword.py
-a is 3 and b is 7 and c is 10
-a is 25 and b is 5 and c is 24
-a is 100 and b is 5 and c is 50
+func(3, 7)              # a is 3 and b is 7 and c is 10
+func(25, c=24)          # a is 25 and b is 5 and c is 24
+func(c=50, a=100)       # a is 100 and b is 5 and c is 50
 ```
 
 ### 可变参数
@@ -1726,7 +1691,7 @@ pl.ioff() #关闭实时绘图
 ### 动画模块 animation
 
 ```python
-import numpy as np
+import numpy as np  # as关键字用于创建别名。
 import matplotlib.pyplot as plt
 import matplotlib.animation as ani
 fig = plt.figure()
@@ -1983,6 +1948,7 @@ class Robot:
         # 当有人被创建时，机器人
         # 将会增加人口数量
         Robot.population += 1
+
     def die(self):
         """我挂了。"""
         print("{} is being destroyed!".format(self.name))
@@ -1992,42 +1958,32 @@ class Robot:
         else:
             print("There are still {:d} robots working.".format(
                 Robot.population))
+
     def say_hi(self):
         """来自机器人的诚挚问候
         没问题，你做得到。"""
         print("Greetings, my masters call me {}.".format(self.name))
+
     @classmethod
     def how_many(cls):
         """打印出当前的人口数量"""
         print("We have {:d} robots.".format(cls.population))
-droid1 = Robot("R2-D2")
-droid1.say_hi()
-Robot.how_many()
-droid2 = Robot("C-3PO")
-droid2.say_hi()
-Robot.how_many()
-print("\nRobots can do some work here.\n")
-print("Robots have finished their work. So let's destroy them.")
-droid1.die()
-droid2.die()
-Robot.how_many()
+        
+droid1 = Robot("R2-D2")     # (Initializing R2-D2)
+droid1.say_hi()             # Greetings, my masters call me R2-D2.
+Robot.how_many()            # We have 1 robots.
 
-#输出:
+droid2 = Robot("C-3PO")     # (Initializing C-3PO)
+droid2.say_hi()             # Greetings, my masters call me C-3PO.
+Robot.how_many()            # We have 2 robots.
 
-$ python oop_objvar.py
-(Initializing R2-D2)
-Greetings, my masters call me R2-D2.
-We have 1 robots.
-(Initializing C-3PO)
-Greetings, my masters call me C-3PO.
-We have 2 robots.
-Robots can do some work here.
-Robots have finished their work. So let's destroy them.
-R2-D2 is being destroyed!
-There are still 1 robots working.
-C-3PO is being destroyed!
-C-3PO was the last one.
-We have 0 robots.
+print("\nRobots can do some work here.\n")                          # Robots can do some work here.
+print("Robots have finished their work. So let's destroy them.")    # Robots have finished their work. So let's destroy them.
+droid1.die()                # R2-D2 is being destroyed!
+                            # There are still 1 robots working.
+droid2.die()                # C-3PO is being destroyed!
+                            # C-3PO was the last one.
+Robot.how_many()            # We have 0 robots.
 ```
 
 这是一个比较长的案例，但是它有助于展现类与对象变量的本质。在本例中，population 属于 Robot 类，因此它是一个类变量。name 变量属于一个对象（通过使用 self 分配），因此它是一个对象变量。
@@ -2066,27 +2022,33 @@ class SchoolMember:
         self.name = name
         self.age = age
         print('(Initialized SchoolMember: {})'.format(self.name))
+
     def tell(self):
         '''告诉我有关我的细节。'''
         print('Name:"{}" Age:"{}"'.format(self.name, self.age), end=" ")
+
 class Teacher(SchoolMember):
     '''代表一位老师。'''
     def __init__(self, name, age, salary):
         SchoolMember.__init__(self, name, age)
         self.salary = salary
         print('(Initialized Teacher: {})'.format(self.name))
+
     def tell(self):
         SchoolMember.tell(self)
         print('Salary: "{:d}"'.format(self.salary))
+
 class Student(SchoolMember):
     '''代表一位学生。'''
     def __init__(self, name, age, marks):
         SchoolMember.__init__(self, name, age)
         self.marks = marks
         print('(Initialized Student: {})'.format(self.name))
+
     def tell(self):
         SchoolMember.tell(self)
         print('Marks: "{:d}"'.format(self.marks))
+
 t = Teacher('Mrs. Shrividya', 40, 30000)
 s = Student('Swaroop', 25, 75)
 # 打印一行空白行
@@ -2101,8 +2063,10 @@ for member in members:
 $ python oop_subclass.py
 (Initialized SchoolMember: Mrs. Shrividya)
 (Initialized Teacher: Mrs. Shrividya)
+
 (Initialized SchoolMember: Swaroop)
 (Initialized Student: Swaroop)
+
 Name:"Mrs. Shrividya" Age:"40" Salary: "30000"
 Name:"Swaroop" Age:"25" Marks: "75"
 ```

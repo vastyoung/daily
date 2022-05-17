@@ -376,7 +376,7 @@ tuple、str 和 bytes。
 >>> symbols = '$¢£¥€¤'
 >>> codes = []
 >>> for symbol in symbols:
-... codes.append(ord(symbol)) #从给定的字符值中获取数字值（获取ASCII值）
+... codes.append(ord(symbol)) #ord()函数 从给定的字符值中获取数字值（获取ASCII值）
 ...
 >>> codes
 [36, 162, 163, 165, 8364, 164]
@@ -479,17 +479,17 @@ white L
 示例 2-7　把元组用作记录
 >>> lax_coordinates = (33.9425, -118.408056) ➊
 >>> city, year, pop, chg, area = ('Tokyo', 2003, 32450, 0.66, 8014) ➋
->>> traveler_ids = [('USA', '31195855'), ('BRA', 'CE342567'), ➌
-... ('ESP', 'XDA205856')]
+>>> traveler_ids = [('USA', '31195855'), ('BRA', 'CE342567'), ➌('ESP', 'XDA205856')]
 >>> for passport in sorted(traveler_ids): ➍
-... print('%s/%s' % passport) ➎
-...
+    print('%s/%s' % passport) ➎
+
 BRA/CE342567
 ESP/XDA205856
 USA/31195855
+
 >>> for country, _ in traveler_ids: ➏
-... print(country)
-...
+    print(country)
+
 USA
 BRA
 ES
@@ -629,10 +629,11 @@ City(name='Tokyo', country='JP', population=36.933, coordinates=(35.689722,
 >>> delhi_data = ('Delhi NCR', 'IN', 21.935, LatLong(28.613889, 77.208889))
 >>> delhi = City._make(delhi_data) ➋
 >>> delhi._asdict() ➌
-OrderedDict([('name', 'Delhi NCR'), ('country', 'IN'), ('population',
-21.935), ('coordinates', LatLong(lat=28.613889, long=77.208889))])
+
+OrderedDict([('name', 'Delhi NCR'), ('country', 'IN'), ('population',21.935), ('coordinates', LatLong(lat=28.613889, long=77.208889))])
 >>> for key, value in delhi._asdict().items():
- print(key + ':', value)
+    print(key + ':', value)
+
 name: Delhi NCR
 country: IN
 population: 21.935
@@ -854,7 +855,7 @@ TypeError: 'tuple' object does not support item assignment
 (1, 2, [30, 40, 50, 60])
 ```
 
-如果写成 t[2].extend([50, 60]) 就能避免这个异常
+如果写成 t[2].extend([50, 60]) 就能避免这个异常，extend() 函数用于在列表末尾一次性追加另一个序列中的多个值
 
 ```python
 #示例 2-16 s[a] = b 背后的字节码
@@ -935,22 +936,29 @@ bisect(haystack, needle) 在 haystack（干草垛）里搜索 needle（针）的
 #示例 2-17 在有序序列中用 bisect 查找某个元素的插入位置
 import bisect
 import sys
+
 HAYSTACK = [1, 4, 5, 6, 8, 12, 15, 20, 21, 23, 23, 26, 29, 30]
 NEEDLES = [0, 1, 2, 5, 8, 10, 22, 23, 29, 30, 31]
+
 ROW_FMT = '{0:2d} @ {1:2d} {2}{0:<2d}'
+
 def demo(bisect_fn):
- for needle in reversed(NEEDLES):
- position = bisect_fn(HAYSTACK, needle) ➊
- offset = position * ' |' ➋
- print(ROW_FMT.format(needle, position, offset)) ➌
-if __name__ == '__main__':
- if sys.argv[-1] == 'left': ➍
- bisect_fn = bisect.bisect_left
- else:
- bisect_fn = bisect.bisect
- print('DEMO:', bisect_fn.__name__) ➎
- print('haystack ->', ' '.join('%2d' % n for n in HAYSTACK))
- demo(bisect_fn)
+    for needle in reversed(NEEDLES):
+        position = bisect_fn(HAYSTACK, needle) ➊
+        offset = position * ' |' ➋
+        print(ROW_FMT.format(needle, position, offset)) ➌
+
+    if __name__ == '__main__':
+
+        if sys.argv[-1] == 'left': ➍
+            bisect_fn = bisect.bisect_left
+        else:
+            bisect_fn = bisect.bisect
+
+        print('DEMO:', bisect_fn.__name__) ➎
+        print('haystack ->', ' '.join('%2d' % n for n in HAYSTACK))
+        demo(bisect_fn)
+
 ➊ 用特定的 bisect 函数来计算元素应该出现的位置。
 ➋ 利用该位置来算出需要几个分隔符号。
 ➌ 把元素和其应该出现的位置打印出来。
@@ -988,13 +996,15 @@ insort(seq, item) 把变量 item 插入到序列 seq 中，并能保持 seq 的�
 示例 2-19 insort 可以保持有序序列的顺序
 import bisect
 import random
+
 SIZE=7
 random.seed(1729)
 my_list = []
+
 for i in range(SIZE):
- new_item = random.randrange(SIZE*2)
- bisect.insort(my_list, new_item)
- print('%2d ->' % new_item, my_list)
+    new_item = random.randrange(SIZE*2)
+    bisect.insort(my_list, new_item)
+    print('%2d ->' % new_item, my_list)
 ```
 
 insort 跟 bisect 一样，有 lo 和 hi 两个可选参数用来控制查找的范围。它也有个变体叫insort_left，这个变体在背后用的是 bisect_left。
@@ -1110,6 +1120,7 @@ array([ 3016362.69195522, 535281.10514262, 4566560.44373946])
 >>> floats *= .5 ➌
 >>> floats[-3:]
 array([ 1508181.34597761, 267640.55257131, 2283280.22186973])
+
 >>> from time import perf_counter as pc ➍
 >>> t0 = pc(); floats /= 3; pc() - t0 ➎
 0.03690556302899495
@@ -1216,24 +1227,24 @@ True
 ```python
 #示例 3-1　字典推导的应用
 >>> DIAL_CODES = [ ➊
-... (86, 'China'),
-... (91, 'India'),
-... (1, 'United States'),
-... (62, 'Indonesia'),
-... (55, 'Brazil'),
-... (92, 'Pakistan'),
-... (880, 'Bangladesh'),
-... (234, 'Nigeria'),
-... (7, 'Russia'),
-... (81, 'Japan'),
-... ]
+     (86, 'China'),
+     (91, 'India'),
+     (1, 'United States'),
+     (62, 'Indonesia'),
+     (55, 'Brazil'),
+     (92, 'Pakistan'),
+     (880, 'Bangladesh'),
+     (234, 'Nigeria'),
+     (7, 'Russia'),
+     (81, 'Japan'),
+     ]
 >>> country_code = {country: code for code, country in DIAL_CODES} ➋
 >>> country_code
 {'China': 86, 'India': 91, 'Bangladesh': 880, 'United States': 1,
 'Pakistan': 92, 'Japan': 81, 'Russia': 7, 'Brazil': 55, 'Nigeria':
 234, 'Indonesia': 62}
 >>> {code: country.upper() for country, code in country_code.items() ➌
-... if code < 66}
+    if code < 66}
 {1: 'UNITED STATES', 55: 'BRAZIL', 62: 'INDONESIA', 7: 'RUSSIA'}
 ➊ 一个承载成对数据的列表，它可以直接用在字典的构造方法中。
 ➋ 这里把配好对的数据左右换了下，国家名是键，区域码是值。
@@ -1251,21 +1262,27 @@ True
 """创建一个从单词到其出现情况的映射"""
 import sys
 import re
+
 WORD_RE = re.compile(r'\w+')
+
 index = {}
+
 with open(sys.argv[1], encoding='utf-8') as fp:
- for line_no, line in enumerate(fp, 1):
- for match in WORD_RE.finditer(line):
- word = match.group()
- column_no = match.start()+1
- location = (line_no, column_no)
- # 这其实是一种很不好的实现，这样写只是为了证明论点
- occurrences = index.get(word, []) ➊
- occurrences.append(location) ➋
- index[word] = occurrences ➌
+    for line_no, line in enumerate(fp, 1):
+        for match in WORD_RE.finditer(line):
+            word = match.group()
+            column_no = match.start()+1
+            location = (line_no, column_no)
+
+            # 这其实是一种很不好的实现，这样写只是为了证明论点
+            occurrences = index.get(word, []) ➊
+            occurrences.append(location) ➋
+            index[word] = occurrences ➌
+
 # 以字母顺序打印出结果
 for word in sorted(index, key=str.upper): ➍
- print(word, index[word])
+    print(word, index[word])
+
 ➊ 提取 word 出现的情况，如果还没有它的记录，返回 []。
 ➋ 把单词新出现的位置添加到列表的后面。
 ➌ 把新的列表放回字典中，这又牵扯到一次查询操作。
@@ -1297,15 +1314,19 @@ better [(3, 14), (4, 13), (5, 11), (6, 12), (7, 9), (8, 11),
 """创建从一个单词到其出现情况的映射"""
 import sys
 import re
+
 WORD_RE = re.compile(r'\w+')
+
 index = {}
+
 with open(sys.argv[1], encoding='utf-8') as fp:
- for line_no, line in enumerate(fp, 1):
- for match in WORD_RE.finditer(line):
- word = match.group()
- column_no = match.start()+1
- location = (line_no, column_no)
- index.setdefault(word, []).append(location) ➊
+    for line_no, line in enumerate(fp, 1):
+        for match in WORD_RE.finditer(line):
+            word = match.group()
+            column_no = match.start()+1
+            location = (line_no, column_no)
+            index.setdefault(word, []).append(location) ➊
+
 # 以字母顺序打印出结果
 for word in sorted(index, key=str.upper):
  print(word, index[word])
@@ -1314,11 +1335,11 @@ for word in sorted(index, key=str.upper):
 ```
 
 ```python
-也就是说，这样写：
+# 也就是说，这样写：
 my_dict.setdefault(key, []).append(new_value)
-跟这样写：
+# 跟这样写：
 if key not in my_dict:
- my_dict[key] = []
+    my_dict[key] = []
 my_dict[key].append(new_value)
 二者的效果是一样的，只不过后者至少要进行两次键查询——如果键不存在的话，就是三次，用 setdefault 只需要一次就可以完成整个操作。
 ```
@@ -1339,18 +1360,20 @@ my_dict[key].append(new_value)
 import sys
 import re
 import collections
+
 WORD_RE = re.compile(r'\w+')
 index = collections.defaultdict(list) ➊
+
 with open(sys.argv[1], encoding='utf-8') as fp:
- for line_no, line in enumerate(fp, 1):
- for match in WORD_RE.finditer(line):
- word = match.group()
- column_no = match.start()+1
- location = (line_no, column_no)
- index[word].append(location) ➋
-# 以字母顺序打印出结果
+    for line_no, line in enumerate(fp, 1):
+        for match in WORD_RE.finditer(line):
+            word = match.group()
+            column_no = match.start()+1
+            location = (line_no, column_no)
+            index[word].append(location) ➋
+            # 以字母顺序打印出结果
 for word in sorted(index, key=str.upper):
- print(word, index[word])
+    print(word, index[word])
 ➊ 把 list 构造方法作为 default_factory 来创建一个 defaultdict。
 ➋ 如果 index 并没有 word 的记录，那么 default_factory 会被调用，为查询不到的键创造
 一个值。这个值在这里是一个空的列表，然后这个空列表被赋值给 index[word]，继而
@@ -1377,7 +1400,6 @@ Tests for item retrieval using `d[key]` notation::
  'four'
  >>> d[1]
  Traceback (most recent call last):
- ...
  KeyError: '1'
 Tests for item retrieval using `d.get(key)` notation::
  >>> d.get('2')
@@ -1398,16 +1420,18 @@ Tests for the `in` operator::
 class StrKeyDict0(dict): ➊
 
  def __missing__(self, key):
- if isinstance(key, str): ➋
- raise KeyError(key)
- return self[str(key)] ➌
+    if isinstance(key, str): ➋
+        raise KeyError(key)
+    return self[str(key)] ➌
+
  def get(self, key, default=None):
- try:
- return self[key] ➍
- except KeyError:
- return default ➎
+    try:
+        return self[key] ➍
+    except KeyError:
+        return default ➎
+
  def __contains__(self, key):
- return key in self.keys() or str(key) in self.keys() ➏
+    return key in self.keys() or str(key) in self.keys() ➏
 ➊ StrKeyDict0 继承了 dict。
 ➋ 如果找不到的键本身就是字符串，那就抛出 KeyError 异常。
 ➌ 如果找不到的键不是字符串，那么把它转换成字符串再进行查找。
@@ -1447,15 +1471,19 @@ data 的属性，是 dict 的实例，这个属性实际上是 UserDict 最终�
 ```python
 #示例 3-8　无论是添加、更新还是查询操作，StrKeyDict 都会把非字符串的键转换为字符串
 import collections
+
 class StrKeyDict(collections.UserDict): ➊
+
  def __missing__(self, key): ➋
- if isinstance(key, str):
- raise KeyError(key)
- return self[str(key)]
+    if isinstance(key, str):
+        raise KeyError(key)
+    return self[str(key)]
+
  def __contains__(self, key):
- return str(key) in self.data ➌
+    return str(key) in self.data ➌
+
  def __setitem__(self, key, item):
- self.data[str(key)] = item ➍
+    self.data[str(key)] = item ➍
 ➊ StrKeyDict 是对 UserDict 的扩展。
 ➋ __missing__ 跟示例 3-7 里的一模一样。
 ➌ __contains__ 则更简洁些。这里可以放心假设所有已经存储的键都是字符串。因此，只
@@ -1506,13 +1534,13 @@ found = len(needles & haystack)
 #示例 3-11 needles 的元素在 haystack 里出现的次数（作用和示例 3-10 中的相同）
 found = 0
 for n in needles:
- if n in haystack:
- found += 1
+    if n in haystack:
+        found += 1
 ```
 
 ```python
-示例 3-12 needles 的元素在 haystack 里出现的次数，这次的代码可以用在任何可迭代对
-象上
+示例 3-12 needles 的元素在 haystack 里出现的次数，这次的代码可以用在任何可迭代对象上
+
 found = len(set(needles) & set(haystack))
 # 另一种写法：
 found = len(set(needles).intersection(haystack))
@@ -1526,7 +1554,7 @@ found = len(set(needles).intersection(haystack))
 <class 'set'>
 >>> s
 {1}
->>> s.pop()
+>>> s.pop()    # 移除列表中一个元素 (默认最后一个元素)
 1
 >>> s
 set()
@@ -1559,8 +1587,7 @@ frozenset({0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
 #### 3.8.2　集合推导
 
 ```python
-示例 3-13 新建一个 Latin-1 字符集合，该集合里的每个字符的 Unicode 名字里都有
-“SIGN”这个单词
+示例 3-13 新建一个 Latin-1 字符集合，该集合里的每个字符的 Unicode 名字里都有“SIGN”这个单词
 >>> from unicodedata import name ➊
 >>> {chr(i) for i in range(32, 256) if 'SIGN' in name(chr(i),'')} ➋
 {'§', '=', '¢', '#', '¤', '<', '¥', 'μ', '×', '$', '¶', '£', '©',
@@ -1576,9 +1603,10 @@ frozenset({0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
 ```python
 #示例 3-14 在 haystack 里查找 needles 的元素，并计算找到的元素的个数
 found = 0
+
 for n in needles:
- if n in haystack:
- found += 1
+    if n in haystack:
+        found += 1
 ```
 
 然后这段基准测试重复了 4 次，每次都把 haystack 的大小变成了上一次的 10 倍，直到里面有 1000 万个元素。
@@ -2081,11 +2109,11 @@ Using Normal Form C with case folding:
  True
 """
 from unicodedata import normalize
-def nfc_equal(str1, str2):
- return normalize('NFC', str1) == normalize('NFC', str2)
-def fold_equal(str1, str2):
- return (normalize('NFC', str1).casefold() ==
- normalize('NFC', str2).casefold())
+    def nfc_equal(str1, str2):
+        return normalize('NFC', str1) == normalize('NFC', str2)
+
+    def fold_equal(str1, str2):
+        return (normalize('NFC', str1).casefold() ==normalize('NFC', str2).casefold())
 ```
 
 ## 第 5 章 一等函数
@@ -2095,9 +2123,9 @@ def fold_equal(str1, str2):
 ```python
 #示例 5-1　创建并测试一个函数，然后读取它的 __doc__ 属性，再检查它的类型
 >>> def factorial(n): ➊
-... '''returns n!'''
-... return 1 if n < 2 else n * factorial(n-1)
-...
+     '''returns n!'''
+    return 1 if n < 2 else n * factorial(n-1)
+
 >>> factorial(42)
 1405006117752879898543142606244511569936384000000000
 >>> factorial.__doc__ ➋
@@ -2146,7 +2174,7 @@ def fold_equal(str1, str2):
 ```
 
 ```python
-示例 5-5　计算阶乘列表：map 和 filter 与列表推导比较
+# 示例 5-5　计算阶乘列表：map 和 filter 与列表推导比较
 >>> list(map(fact, range(6))) ➊
 [1, 1, 2, 6, 24, 120]
 >>> [fact(n) for n in range(6)] ➋
@@ -2248,7 +2276,7 @@ True
 ```
 
 ```python
-示例 5-9　列出常规对象没有而函数有的属性
+# 示例 5-9　列出常规对象没有而函数有的属性
 >>> class C: pass # ➊
 >>> obj = C() # ➋
 >>> def func(): pass # ➌
@@ -2271,27 +2299,24 @@ def tag(name, *content, cls=None, **attrs):
  if cls is not None:
     attrs['class'] = cls
  if attrs:
-    attr_str = ''.join(' %s="%s"' % (attr, value)
- for attr, value
-    in sorted(attrs.items()))
+    attr_str = ''.join(' %s="%s"' % (attr, value)for attr, value in sorted(attrs.items()))
  else:
     attr_str = ''
  if content:
- return '\n'.join('<%s%s>%s</%s>' %
- (name, attr_str, c, name) for c in content)
+    return '\n'.join('<%s%s>%s</%s>' %(name, attr_str, c, name) for c in content)
  else:
- return '<%s%s />' % (name, attr_str)
+    return '<%s%s />' % (name, attr_str)
 ```
 
 ### 5.8　获取关于参数的信息
 
 ```python
-示例 5-12 Bobo 知道 hello 需要 person 参数，并且从 HTTP 请求中获取它
+# 示例 5-12 Bobo 知道 hello 需要 person 参数，并且从 HTTP 请求中获取它
 import bobo
 
 @bobo.query('/')
 def hello(person):
- return 'Hello %s!' % person
+    return 'Hello %s!' % person
 ```
 
 ```python
@@ -2361,8 +2386,8 @@ def clip(text, max_len=80):
 >>> str(sig)
 '(text, max_len=80)'
 >>> for name, param in sig.parameters.items():
-... print(param.kind, ':', name, '=', param.default)
-...
+    print(param.kind, ':', name, '=', param.default)
+
 POSITIONAL_OR_KEYWORD : text = <class 'inspect._empty'>
 POSITIONAL_OR_KEYWORD : max_len = 80
 ```
@@ -2385,22 +2410,21 @@ POSITIONAL_ONLY
 #示例 5-18 把 tag 函数（见示例 5-10）的签名绑定到一个参数字典上 3
 >>> import inspect
 >>> sig = inspect.signature(tag) ➊
->>> my_tag = {'name': 'img', 'title': 'Sunset Boulevard',
-... 'src': 'sunset.jpg', 'cls': 'framed'}
+>>> my_tag = {'name': 'img', 'title': 'Sunset Boulevard','src': 'sunset.jpg', 'cls': 'framed'}
 >>> bound_args = sig.bind(**my_tag) ➋
 >>> bound_args
 <inspect.BoundArguments object at 0x...> ➌
 >>> for name, value in bound_args.arguments.items(): ➍
-... print(name, '=', value)
-...
+     print(name, '=', value)
+
 name = img
 cls = framed
 attrs = {'title': 'Sunset Boulevard', 'src': 'sunset.jpg'}
 >>> del my_tag['name'] ➎
 >>> bound_args = sig.bind(**my_tag) ➏
 Traceback (most recent call last):
- ...
 TypeError: 'name' parameter lacking default value
+
 ➊ 获取 tag 函数（见示例 5-10）的签名。
 ➋ 把一个字典参数传给 .bind() 方法。
 ➌ 得到一个 inspect.BoundArguments 对象。
@@ -2439,8 +2463,8 @@ return text[:end].rstrip()
 >>> sig.return_annotation
 <class 'str'>
 >>> for param in sig.parameters.values():
-... note = repr(param.annotation).ljust(13)
-... print(note, ':', param.name, '=', param.default)
+    note = repr(param.annotation).ljust(13)
+    print(note, ':', param.name, '=', param.default)
 <class 'str'> : text = <class 'inspect._empty'>
 'int > 0' : max_len = 80
 ```
@@ -2453,7 +2477,7 @@ return text[:end].rstrip()
 #示例 5-21 使用 reduce 函数和一个匿名函数计算阶乘
 from functools import reduce
 def fact(n):
- return reduce(lambda a, b: a*b, range(1, n+1))
+    return reduce(lambda a, b: a*b, range(1, n+1))
 ```
 
 ```python
@@ -2461,18 +2485,18 @@ def fact(n):
 from functools import reduce
 from operator import mul
 def fact(n):
- return reduce(mul, range(1, n+1))
+    return reduce(mul, range(1, n+1))
 ```
 
 ```python
 #示例 5-23 演示使用 itemgetter 排序一个元组列表（数据来自示例 2-8）
 >>> metro_data = [
-... ('Tokyo', 'JP', 36.933, (35.689722, 139.691667)),
-... ('Delhi NCR', 'IN', 21.935, (28.613889, 77.208889)),
-... ('Mexico City', 'MX', 20.142, (19.433333, -99.133333)),
-... ('New York-Newark', 'US', 20.104, (40.808611, -74.020386)),
-... ('Sao Paulo', 'BR', 19.649, (-23.547778, -46.635833)),
-... ]
+    ('Tokyo', 'JP', 36.933, (35.689722, 139.691667)),
+    ('Delhi NCR', 'IN', 21.935, (28.613889, 77.208889)),
+    ('Mexico City', 'MX', 20.142, (19.433333, -99.133333)),
+    ('New York-Newark', 'US', 20.104, (40.808611, -74.020386)),
+    ('Sao Paulo', 'BR', 19.649, (-23.547778, -46.635833)),
+    ]
 >>>
 >>> from operator import itemgetter
 >>> for city in sorted(metro_data, key=itemgetter(1)):
@@ -2489,8 +2513,8 @@ def fact(n):
 如果把多个参数传给 itemgetter，它构建的函数会返回提取的值构成的元组：
 >>> cc_name = itemgetter(1, 0)
 >>> for city in metro_data:
-... print(cc_name(city))
-...
+    print(cc_name(city))
+
 ('JP', 'Tokyo')
 ('IN', 'Delhi NCR')
 ('MX', 'Mexico City')
@@ -2505,18 +2529,17 @@ def fact(n):
 >>> LatLong = namedtuple('LatLong', 'lat long') # ➊
 >>> Metropolis = namedtuple('Metropolis', 'name cc pop coord') # ➋
 >>> metro_areas = [Metropolis(name, cc, pop, LatLong(lat, long)) # ➌
-... for name, cc, pop, (lat, long) in metro_data]
+     for name, cc, pop, (lat, long) in metro_data]
 >>> metro_areas[0]
-Metropolis(name='Tokyo', cc='JP', pop=36.933, coord=LatLong(lat=35.689722,
-long=139.691667))
+Metropolis(name='Tokyo', cc='JP', pop=36.933, coord=LatLong(lat=35.689722,long=139.691667))
 >>> metro_areas[0].coord.lat # ➍
 35.689722
 >>> from operator import attrgetter
 >>> name_lat = attrgetter('name', 'coord.lat') # ➎
 >>>
 >>> for city in sorted(metro_areas, key=attrgetter('coord.lat')): # ➏
-... print(name_lat(city)) # ➐
-...
+    print(name_lat(city)) # ➐
+
 ('Sao Paulo', -23.547778)
 ('Mexico City', 19.433333)
 ('Delhi NCR', 28.613889)
@@ -2636,6 +2659,7 @@ class LineItem:
         self.product = product
         self.quantity = quantity
         self.price = price
+
     def total(self):
         return self.price * self.quantity
 
@@ -2645,21 +2669,21 @@ class Order: # 上下文
         self.cart = list(cart)
         self.promotion = promotion
 
- def total(self):
-    if not hasattr(self, '__total'): 
-        self.__total = sum(item.total() for item in self.cart)
- return self.__total
+    def total(self):
+        if not hasattr(self, '__total'): 
+            self.__total = sum(item.total() for item in self.cart)
+        return self.__total
 
- def due(self):
-    if self.promotion is None:
-        discount = 0
-    else:
-        discount = self.promotion.discount(self)
-    return self.total() - discount
+    def due(self):
+        if self.promotion is None:
+            discount = 0
+        else:
+            discount = self.promotion.discount(self)
+        return self.total() - discount
 
- def __repr__(self):
-    fmt = '<Order total: {:.2f} due: {:.2f}>'
-    return fmt.format(self.total(), self.due())
+    def __repr__(self):
+        fmt = '<Order total: {:.2f} due: {:.2f}>'
+        return fmt.format(self.total(), self.due())
 
 class Promotion(ABC): # 策略：抽象基类
 
@@ -2698,18 +2722,18 @@ class LargeOrderPromo(Promotion): # 第三个具体策略
  >>> joe = Customer('John Doe', 0) ➊
  >>> ann = Customer('Ann Smith', 1100)
  >>> cart = [LineItem('banana', 4, .5), ➋
- ... LineItem('apple', 10, 1.5),
- ... LineItem('watermellon', 5, 5.0)]
+            LineItem('apple', 10, 1.5),
+            LineItem('watermellon', 5, 5.0)]
  >>> Order(joe, cart, FidelityPromo()) ➌
  <Order total: 42.00 due: 42.00>
  >>> Order(ann, cart, FidelityPromo()) ➍
  <Order total: 42.00 due: 39.90>
  >>> banana_cart = [LineItem('banana', 30, .5), ➎
- ... LineItem('apple', 10, 1.5)]
+                    LineItem('apple', 10, 1.5)]
  >>> Order(joe, banana_cart, BulkItemPromo()) ➏
  <Order total: 30.00 due: 28.50>
  >>> long_order = [LineItem(str(item_code), 1, 1.0) ➐
- ... for item_code in range(10)]
+    for item_code in range(10)]
  >>> Order(joe, long_order, LargeOrderPromo()) ➑
  <Order total: 10.00 due: 9.30>
  >>> Order(joe, cart, LargeOrderPromo())
@@ -2793,18 +2817,18 @@ return discount
  >>> joe = Customer('John Doe', 0) ➊
  >>> ann = Customer('Ann Smith', 1100)
  >>> cart = [LineItem('banana', 4, .5),
- ... LineItem('apple', 10, 1.5),
- ... LineItem('watermellon', 5, 5.0)]
+            LineItem('apple', 10, 1.5),
+            LineItem('watermellon', 5, 5.0)]
  >>> Order(joe, cart, fidelity_promo) ➋
  <Order total: 42.00 due: 42.00>
  >>> Order(ann, cart, fidelity_promo)
  <Order total: 42.00 due: 39.90>
  >>> banana_cart = [LineItem('banana', 30, .5),
- ... LineItem('apple', 10, 1.5)]
+                    LineItem('apple', 10, 1.5)]
  >>> Order(joe, banana_cart, bulk_item_promo) ➌
  <Order total: 30.00 due: 28.50>
  >>> long_order = [LineItem(str(item_code), 1, 1.0)
- ... for item_code in range(10)]
+        for item_code in range(10)]
  >>> Order(joe, long_order, large_order_promo)
  <Order total: 10.00 due: 9.30>
  >>> Order(joe, cart, large_order_promo)
@@ -2902,7 +2926,6 @@ def target():
 #上述代码的效果与下述写法一样：
 def target():
     print('running target()')
-
 target = decorate(target)
 ```
 
