@@ -1,5 +1,9 @@
 # daliy report
 
+## 2022-05-28
+
+- ss_quick_test
+
 ## 2022-05-01
 
 - 砸一下 python 代码
