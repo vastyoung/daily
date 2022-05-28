@@ -1,0 +1,25 @@
+{
+    "ip_list": [
+        {
+            "ip": "192.168.0.105",
+            "port": 6666
+        },
+        {
+            "ip": "192.168.0.105",
+            "port": 8888
+        },
+        {
+            "ip": "bilibili.com",
+            "port":443
+        },
+        {
+            "ip": "www.bilibili.com",
+            "port":443
+        },
+        {
+            "ip": "www.jd.com",
+            "port":443
+        }
+
+    ]
+}

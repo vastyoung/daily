@@ -1,0 +1,59 @@
+{
+  "configs": [
+    {
+      "method": "rc4-md5",
+      "password": "BoomCloud2020",
+      "remarks": "新加坡IPLC 05",
+      "server": "yyds.obmm.xyz",
+      "server_port": 735,
+      "obfs": "http_simple",
+      "protocol": "origin",
+      "group": "group",
+      "obfsparam": "5799-13871934303xx.download.microsoft.com"
+    },
+    {
+      "method": "rc4-md5",
+      "password": "BoomCloud2020",
+      "remarks": "新加坡IPLC 06",
+      "server": "yyds.obmm.xyz",
+      "server_port": 736,
+      "obfs": "http_simple",
+      "protocol": "origin",
+      "group": "group",
+      "obfsparam": "5799-13871934303xx.download.microsoft.com"
+    },
+    {
+      "method": "rc4-md5",
+      "password": "BoomCloud2020",
+      "remarks": "俄罗斯IPLC 01",
+      "server": "yyds.obmm.xyz",
+      "server_port": 744,
+      "obfs": "http_simple",
+      "protocol": "origin",
+      "group": "group",
+      "obfsparam": "5799-13871934303xx.download.microsoft.com"
+    },
+    {
+      "method": "rc4-md5",
+      "password": "BoomCloud2020",
+      "remarks": "意大利IPLC 01",
+      "server": "yyds.obmm.xyz",
+      "server_port": 745,
+      "obfs": "http_simple",
+      "protocol": "origin",
+      "group": "group",
+      "obfsparam": "5799-13871934303xx.download.microsoft.com"
+    },
+    {
+      "method": "rc4-md5",
+      "password": "BoomCloud2020",
+      "remarks": "俄罗斯IPLC 02",
+      "server": "yyds.obmm.xyz",
+      "server_port": 746,
+      "obfs": "http_simple",
+      "protocol": "origin",
+      "group": "group",
+      "obfsparam": "5799-13871934303xx.download.microsoft.com"
+    }
+  ]
+}
